@@ -1,0 +1,47 @@
+{
+  "name": "@depay/ethereum-contracts",
+  "description": "Ethereum contracts for the DePay decentralized payment protocol.",
+  "version": "1.0.0",
+  "homepage": "https://depay.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/depayapp/ethereum-contracts"
+  },
+  "keywords": [
+    "depay",
+    "ethereum",
+    "contracts",
+    "payments",
+    "decentralized",
+    "defi"
+  ],
+  "files": [
+    "contracts",
+    "build"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.6",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^2.4.1",
+    "ethereumjs-util": "^6.2.0",
+    "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "solc": "0.5.16"
+  },
+  "scripts": {
+    "lint": "yarn prettier ./test/*.ts --check",
+    "lint:fix": "yarn prettier ./test/*.ts --write",
+    "clean": "rimraf ./build/",
+    "precompile": "yarn clean",
+    "compile": "waffle .waffle.json",
+    "pretest": "yarn compile",
+    "test": "mocha",
+    "prepublishOnly": "yarn test"
+  },
+  "license": "GPL-3.0-only"
+}
