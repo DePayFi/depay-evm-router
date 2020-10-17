@@ -5,23 +5,38 @@ pragma solidity >= 0.6.0;
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
  *
- * Inheriting from `ReentrancyGuard` will make the `nonReentrant` modifier
- * available, which can be aplied to functions to make sure there are no nested
+ * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier
+ * available, which can be applied to functions to make sure there are no nested
  * (reentrant) calls to them.
  *
  * Note that because there is a single `nonReentrant` guard, functions marked as
  * `nonReentrant` may not call one another. This can be worked around by making
  * those functions `private`, and then adding `external` `nonReentrant` entry
  * points to them.
+ *
+ * TIP: If you would like to learn more about reentrancy and alternative ways
+ * to protect against it, check out our blog post
+ * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
  */
 contract ReentrancyGuard {
-    /// @dev counter to allow mutex lock with only one SSTORE operation
-    uint256 private _guardCounter;
+    // Booleans are more expensive than uint256 or any type that takes up a full
+    // word because each write operation emits an extra SLOAD to first read the
+    // slot's contents, replace the bits taken up by the boolean, and then write
+    // back. This is the compiler's defense against contract upgrades and
+    // pointer aliasing, and it cannot be disabled.
+
+    // The values being non-zero value makes deployment a bit more expensive,
+    // but in exchange the refund on every call to nonReentrant will be lower in
+    // amount. Since refunds are capped to a percentage of the total
+    // transaction's gas, it is best to keep them low in cases like this one, to
+    // increase the likelihood of the full refund coming into effect.
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+
+    uint256 private _status;
 
     constructor () internal {
-        // The counter starts at one to prevent changing it from zero to a non-zero
-        // value, which is a more expensive operation.
-        _guardCounter = 1;
+        _status = _NOT_ENTERED;
     }
 
     /**
@@ -32,20 +47,33 @@ contract ReentrancyGuard {
      * `private` function that does the actual work.
      */
     modifier nonReentrant() {
-        _guardCounter += 1;
-        uint256 localCounter = _guardCounter;
+        // On the first call to nonReentrant, _notEntered will be true
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+
+        // Any calls to nonReentrant after this point will fail
+        _status = _ENTERED;
+
         _;
-        require(localCounter == _guardCounter, "ReentrancyGuard: reentrant call");
+
+        // By storing the original value once again, a refund is triggered (see
+        // https://eips.ethereum.org/EIPS/eip-2200)
+        _status = _NOT_ENTERED;
     }
 }
 
 interface IDePayV1RouterBeta {
+    
+    event SwapDebug(
+        address[] path,
+        uint amountIn,
+        uint amountOut
+    );
   
     function swap(
         address[] calldata path,
         uint amountIn,
         uint amountOut
-    ) external returns(uint);
+    ) external;
     
     function contractAddress() external view returns(address);
     
@@ -89,9 +117,8 @@ contract DePayV1UniswapRouterBeta is IDePayV1RouterBeta, ReentrancyGuard {
         address[] calldata path,
         uint amountIn,
         uint amountOut
-    ) external override nonReentrant returns(uint) {
-        uint[] memory amounts = _swap(path, amountIn, amountOut);
-        return amounts[0];
+    ) external override nonReentrant {
+        emit SwapDebug(path, amountIn, amountOut);
     }
     
     function contractAddress() external view override returns(address) {
@@ -110,34 +137,4 @@ contract DePayV1UniswapRouterBeta is IDePayV1RouterBeta, ReentrancyGuard {
         block.timestamp + 60 minutes;
     }
     
-    function _swap(
-        address[] memory path,
-        uint amountIn,
-        uint amountOut
-    ) private returns(uint[] memory) {
-        if(path[0] == ZERO) {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: msg.value}(
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        } else if (path[path.length-1] == ZERO) {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
-                amountIn,
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        } else {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactTokensForTokens(
-                amountIn,
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        }
-    }
 }

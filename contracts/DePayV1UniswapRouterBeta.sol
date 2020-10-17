@@ -5,12 +5,18 @@ pragma solidity >= 0.6.0;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.2.0/contracts/utils/ReentrancyGuard.sol";
 
 interface IDePayV1RouterBeta {
+    
+    event SwapDebug(
+        address[] path,
+        uint amountIn,
+        uint amountOut
+    );
   
     function swap(
         address[] calldata path,
         uint amountIn,
         uint amountOut
-    ) external returns(uint);
+    ) external;
     
     function contractAddress() external view returns(address);
     
@@ -54,9 +60,8 @@ contract DePayV1UniswapRouterBeta is IDePayV1RouterBeta, ReentrancyGuard {
         address[] calldata path,
         uint amountIn,
         uint amountOut
-    ) external override nonReentrant returns(uint) {
-        uint[] memory amounts = _swap(path, amountIn, amountOut);
-        return amounts[0];
+    ) external override nonReentrant {
+        emit SwapDebug(path, amountIn, amountOut);
     }
     
     function contractAddress() external view override returns(address) {
@@ -75,34 +80,4 @@ contract DePayV1UniswapRouterBeta is IDePayV1RouterBeta, ReentrancyGuard {
         block.timestamp + 60 minutes;
     }
     
-    function _swap(
-        address[] memory path,
-        uint amountIn,
-        uint amountOut
-    ) private returns(uint[] memory) {
-        if(path[0] == ZERO) {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: msg.value}(
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        } else if (path[path.length-1] == ZERO) {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
-                amountIn,
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        } else {
-            return IUniswapV2Router01(UniswapV2Router02).swapExactTokensForTokens(
-                amountIn,
-                amountOut,
-                path,
-                msg.sender,
-                deadline()
-            );
-        }
-    }
 }

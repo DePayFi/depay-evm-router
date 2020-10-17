@@ -814,6 +814,16 @@ contract Ownable is Context {
 }
 
 interface IDePayV1ProcessorBeta {
+    
+    event ApproveAllDebug(
+        address[] path
+    );
+    
+    event SwapDebug(
+        address[] path,
+        uint amountIn,
+        uint amountOut
+    );
   
     event Payment(
         uint indexed id,
@@ -840,7 +850,7 @@ interface IDePayV1RouterBeta {
         address[] calldata path,
         uint amountIn,
         uint amountOut
-    ) external returns(uint);
+    ) external;
     
     function contractAddress() external view returns(address);
     
@@ -870,11 +880,11 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
         if(path[0] == ZERO) { require(msg.value >= amountIn, 'DePay: Insufficient amount payed in.'); }
         
         if(path.length <= 1) {
-            directWalletPayment(receiver, path[0], amountOut);
+            _pay(receiver, msg.sender, path[0], amountOut);
         } else {
             transferIn(path[0], amountIn);
-            swap(routerId, path, amountIn, amountOut);
-            fromContractPayment(receiver, path[path.length-1], amountOut);
+            //swap(routerId, path, amountIn, amountOut);
+            _pay(receiver, address(this), path[path.length-1], amountOut);
         }
         
         emit Payment(id, msg.sender, receiver, context);
@@ -889,13 +899,12 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
     function swap(uint routerId, address[] memory path, uint amountIn, uint amountOut) private {
         uint balanceBefore = balance(path[path.length-1]);
         
-        approveAll(IDePayV1RouterBeta(routers[routerId]).requiresApproval(path), IDePayV1RouterBeta(routers[routerId]).contractAddress());
+        approveAll(path, IDePayV1RouterBeta(routers[routerId]).contractAddress());
         
-        // uint swappedAmount = IDePayV1RouterBeta(routers[routerId]).swap(path, amountIn, amountOut);
-        // require(swappedAmount >= amountOut, 'DePay: Swapped amount insufficient.');
-        
+        // routers[routerId].delegatecall(abi.encodeWithSignature("swap(address[],uint256, uint256)", path, amountIn, amountOut));
+
         uint balanceAfter = balance(path[path.length-1]);
-        require(balanceAfter >= balanceBefore, 'DePay: Insufficient balance after swap.');
+        // require(balanceAfter > (balanceBefore + amountOut), 'DePay: Insufficient balance after swap.');
     }
     
     function approveAll(address[] memory tokens, address contractAddress) private {
@@ -912,19 +921,15 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
         }
     }
     
-    function directWalletPayment(address payable receiver, address token, uint amount) private {
+    function _pay(address payable receiver, address from, address token, uint amount) private {
         if(token == ZERO) {
             receiver.transfer(amount);
         } else {
-            ERC20(token).transferFrom(msg.sender, receiver, amount);
-        }
-    }
-    
-    function fromContractPayment(address payable receiver, address token, uint amount) private {
-        if(token == ZERO) {
-            receiver.transfer(amount);
-        } else {
-            ERC20(token).transferFrom(address(this), receiver, amount);
+            if(from == address(this)) {
+                ERC20(token).transfer(receiver, amount);
+            } else {
+                ERC20(token).transferFrom(from, receiver, amount);
+            }
         }
     }
     
