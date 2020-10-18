@@ -815,12 +815,6 @@ contract Ownable is Context {
 
 interface IDePayV1ProcessorBeta {
     
-    event BalanceDebug(
-        address[] path,
-        uint balanceBefore,
-        uint balanceAfter
-    );
-    
     event Payment(
         uint indexed id,
         address indexed sender,
@@ -832,7 +826,8 @@ interface IDePayV1ProcessorBeta {
         uint amountIn,
         uint amountOut,
         address payable receiver,
-        uint id
+        uint id,
+        uint routerId
     ) external payable;
 
 }
@@ -864,13 +859,26 @@ interface IUniswapV2Router01 {
     
 }
 
+interface IMooniswap {
+    
+    function swap(
+        address fromToken,
+        address toToken,
+        uint256 amount, 
+        uint256 minReturn, 
+        address referrer
+    ) external payable returns(uint256 result);
+    
+}
+
 contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard {
     
     address[] public routers;
     address private ZERO = 0x0000000000000000000000000000000000000000;
     uint private MAXINT = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
     address public UniswapV2Router02 = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    address public WETH = 0xc778417E063141139Fce010982780140Aa0cD5Ab;
+    address public Mooniswap = 0x798934cdcfAe18764ef4819274687Df3fB24B99B;
+    address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     
     receive() external payable {
         // accepts eth payments which are required to
@@ -882,7 +890,8 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
         uint amountIn,
         uint amountOut,
         address payable receiver,
-        uint id
+        uint id,
+        uint routerId
     ) external payable override nonReentrant {
         if(path[0] == ZERO) { require(msg.value >= amountIn, 'DePay: Insufficient amount payed in.'); }
         
@@ -890,7 +899,7 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
             _pay(receiver, msg.sender, path[0], amountOut);
         } else {
             transferIn(path[0], amountIn);
-            swap(path, amountIn, amountOut);
+            swap(path, amountIn, amountOut, routerId);
             _pay(receiver, address(this), path[path.length-1], amountOut);
         }
         
@@ -903,9 +912,15 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
         }
     }
     
-    function swap(address[] memory path, uint amountIn, uint amountOut) private {
+    function swap(address[] memory path, uint amountIn, uint amountOut, uint routerId) private {
         uint balanceBefore = balance(path[path.length-1]);
-        swapOnUniswap(path, amountIn, amountOut);
+        
+        if(routerId == 0) {
+            swapOnUniswap(path, amountIn, amountOut);
+        } else if(routerId == 1) {
+            swapOnMooniswap(path, amountIn, amountOut);
+        }
+
         require(balance(path[path.length-1]) >= (balanceBefore + amountOut), 'DePay: Insufficient balance after swap.');
     }
     
@@ -948,6 +963,34 @@ contract DePayV1ProcessorBeta is IDePayV1ProcessorBeta, Ownable, ReentrancyGuard
                 uniPath,
                 address(this),
                 swapDeadline()
+            );
+        }
+    }
+    
+    function swapOnMooniswap(address[] memory path, uint amountIn, uint amountOut) private {
+        
+        if( 
+            path[0] != ZERO &&
+            ERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn
+        ) {
+            ERC20(path[0]).approve(Mooniswap, MAXINT);
+        }
+        
+        if(path[0] == ZERO) {
+            IMooniswap(Mooniswap).swap{value: amountIn}(
+                path[0],
+                path[path.length-1],
+                amountIn,
+                amountOut,
+                address(this)
+            );
+        } else {
+            IMooniswap(Mooniswap).swap(
+                path[0],
+                path[path.length-1],
+                amountIn,
+                amountOut,
+                address(this)
             );
         }
     }
