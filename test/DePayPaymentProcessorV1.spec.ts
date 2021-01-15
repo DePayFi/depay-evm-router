@@ -56,11 +56,40 @@ describe('DePayPaymentProcessorV1', () => {
     expect(owner).to.equal(ownerWallet.address)
   })
 
-  it.only('contract can be payed with ETH (required for ETH transfers and swapping)', async () => {
+  it('contract can receive ETH (required for ETH transfers and swapping)', async () => {
     const {contract, otherWallet} = await loadFixture(fixture)
 
     await expect(
       await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })
     ).to.changeEtherBalance(contract, 100)
   })
+
+  it('allows owner to withdraw ETH that remained in the contract', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })
+    
+    await expect(
+      await contract.connect(ownerWallet).withdraw('0x0000000000000000000000000000000000000000', 100)
+    ).to.changeEtherBalance(ownerWallet, 100)
+  })
+
+  it('does not allow others to withdraw ETH that remained in the contract', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })
+    
+    await expect(
+      contract.connect(otherWallet).withdraw('0x0000000000000000000000000000000000000000', 100)
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
+    )
+  })
+
+  // it('can withdraw tokens that have been sent into the contract', async () => {
+  //   const {contract, otherWallet} = await loadFixture(fixture)
+  //   await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })
+
+  //   await expect(
+  //     await contract.connect(wallet).withdraw(token, amount)
+  //   ).to.changeEtherBalance(contract, 100)
+  // })
 })
