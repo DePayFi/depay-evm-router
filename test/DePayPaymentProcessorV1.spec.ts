@@ -68,12 +68,30 @@ describe('DePayPaymentProcessorV1', () => {
   it('allows to perform simple ETH payments without conversion', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
-    await contract.connect(otherWallet).pay(
-      ['0x0000000000000000000000000000000000000000'],
-      100,
-      100,
-      ownerWallet.address,
-      { value: 100 }
+    await expect(
+      await contract.connect(otherWallet).pay(
+        ['0x0000000000000000000000000000000000000000'],
+        100,
+        100,
+        ownerWallet.address,
+        { value: 100 }
+      )
+    ).to.changeEtherBalance(ownerWallet, 100)
+  })
+
+  it('fails if the sent ETH value is to low to forward eth to the receiver', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    await expect(
+      contract.connect(otherWallet).pay(
+        ['0x0000000000000000000000000000000000000000'],
+        100,
+        100,
+        ownerWallet.address,
+        { value: 99 }
+      )
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert DePay: Insufficient ETH amount payed in.'
     )
   })
 
