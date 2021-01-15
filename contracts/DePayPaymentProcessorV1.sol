@@ -3,22 +3,21 @@
 pragma solidity >=0.7.5 <0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "hardhat/console.sol"; // TO BE REMOVED
-
 contract DePayPaymentProcessorV1 is Ownable {
   
-  using SafeMath for uint256;
-  using SafeERC20 for IERC20;
+  using SafeMath for uint;
 
   // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
   address private ZERO = 0x0000000000000000000000000000000000000000;
 
   // The maximum integer used for approvals
   uint private MAXINT = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+
+  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
+  bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
   event Payment(
     address indexed sender,
@@ -50,8 +49,20 @@ contract DePayPaymentProcessorV1 is Ownable {
     if(token == ZERO) {
       receiver.transfer(amountOut);
     } else {
-      IERC20(token).safeTransferFrom(from, receiver, amountOut);
+      _transferIn(token, amountOut);
+      _safeTransfer(token, receiver, amountOut);
     }
+  }
+
+  // makes sure to transfer in the token used as means of payment
+  function _transferIn(address token, uint amount) private {
+    IERC20(token).transferFrom(msg.sender, address(this), amount);
+  }
+
+  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
+  function _safeTransfer(address token, address to, uint value) private {
+    (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
+    require(success && (data.length == 0 || abi.decode(data, (bool))), 'DePay: TRANSFER_FAILED');
   }
   
   function payableOwner() view private returns(address payable) {
@@ -66,7 +77,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     if(tokenAddress == ZERO) {
       payableOwner().transfer(amount);
     } else {
-      IERC20(tokenAddress).safeTransfer(payableOwner(), amount);
+      _safeTransfer(tokenAddress, payableOwner(), amount);
     }
     return true;
   }
