@@ -79,6 +79,20 @@ describe('DePayPaymentProcessorV1', () => {
     ).to.changeEtherBalance(ownerWallet, 100)
   })
 
+  it('emits a Payment event', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    await expect(
+      contract.connect(otherWallet).pay(
+        ['0x0000000000000000000000000000000000000000'],
+        100,
+        100,
+        ownerWallet.address,
+        { value: 100 }
+      )
+    ).to.emit(contract, 'Payment')
+    .withArgs(otherWallet.address, ownerWallet.address);
+  })
+
   it('fails if the sent ETH value is to low to forward eth to the receiver', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
@@ -93,6 +107,21 @@ describe('DePayPaymentProcessorV1', () => {
     ).to.be.revertedWith(
       'VM Exception while processing transaction: revert DePay: Insufficient ETH amount payed in.'
     )
+  })
+
+  it('allows for direct token transfers without conversion', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const testTokenContract = await deployContract(otherWallet, TestToken)
+    await testTokenContract.connect(otherWallet).approve(contract.address, 100)
+    
+    await expect(() => 
+      contract.connect(otherWallet).pay(
+        [testTokenContract.address],
+        100,
+        100,
+        ownerWallet.address
+      )
+    ).to.changeTokenBalance(testTokenContract, ownerWallet, 100)
   })
 
   it('allows owner to withdraw ETH that remained in the contract', async () => {

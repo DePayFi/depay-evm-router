@@ -4,6 +4,11 @@ pragma solidity >=0.7.5 <0.8.0;
 
 interface IDePayPaymentProcessorV1 {
 
+  event Payment(
+    address indexed sender,
+    address payable indexed receiver
+  );
+
   function pay(
     address[] calldata path,
     uint amountIn,

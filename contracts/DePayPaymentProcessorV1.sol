@@ -7,15 +7,23 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
+import "hardhat/console.sol"; // TO BE REMOVED
+
 contract DePayPaymentProcessorV1 is Ownable {
   
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicating ETH transfer (because it does not have an address, like a token does)
+  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
   address private ZERO = 0x0000000000000000000000000000000000000000;
 
+  // The maximum integer used for approvals
   uint private MAXINT = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+
+  event Payment(
+    address indexed sender,
+    address payable indexed receiver
+  );
 
   receive() external payable {
     // accepts eth payments which are required to
@@ -31,13 +39,19 @@ contract DePayPaymentProcessorV1 is Ownable {
   ) external payable returns(bool) {
     if(path[0] == ZERO) { require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in.'); }
 
-    _pay(receiver, msg.sender, path[0], amountOut);
+    _pay(receiver, msg.sender, path[path.length-1], amountOut);
+
+    emit Payment(msg.sender, receiver);
 
     return true;
   }
 
-  function _pay(address payable receiver, address from, address token, uint amount) private {
-    receiver.transfer(amount);
+  function _pay(address payable receiver, address from, address token, uint amountOut) private {
+    if(token == ZERO) {
+      receiver.transfer(amountOut);
+    } else {
+      IERC20(token).safeTransferFrom(from, receiver, amountOut);
+    }
   }
   
   function payableOwner() view private returns(address payable) {
