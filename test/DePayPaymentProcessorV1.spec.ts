@@ -65,6 +65,18 @@ describe('DePayPaymentProcessorV1', () => {
     ).to.changeEtherBalance(contract, 100)
   })
 
+  it('allows to perform simple ETH payments without conversion', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    await contract.connect(otherWallet).pay(
+      ['0x0000000000000000000000000000000000000000'],
+      100,
+      100,
+      ownerWallet.address,
+      { value: 100 }
+    )
+  })
+
   it('allows owner to withdraw ETH that remained in the contract', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
     await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })

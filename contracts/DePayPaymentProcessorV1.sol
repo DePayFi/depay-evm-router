@@ -20,18 +20,36 @@ contract DePayPaymentProcessorV1 is Ownable {
   receive() external payable {
     // accepts eth payments which are required to
     // swap and pay from ETH to any token
+    // especially unwrapping WETH as part of token conversions
+  }
+
+  function pay(
+    address[] calldata path,
+    uint amountIn,
+    uint amountOut,
+    address payable receiver
+  ) external payable returns(bool) {
+    
+    _pay(receiver, msg.sender, path[0], amountOut);
+
+    return true;
+  }
+
+  function _pay(address payable receiver, address from, address token, uint amount) private {
+    receiver.transfer(amount);
   }
   
   function payableOwner() view private returns(address payable) {
     return payable(owner());
   }
-    
+
+  // allows to withdraw accidentally sent ETH or tokens
   function withdraw(
     address tokenAddress,
     uint amount
   ) external onlyOwner returns(bool) {
     if(tokenAddress == ZERO) {
-        payableOwner().transfer(amount);
+      payableOwner().transfer(amount);
     } else {
       IERC20(tokenAddress).safeTransfer(payableOwner(), amount);
     }
