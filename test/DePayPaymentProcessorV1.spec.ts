@@ -8,6 +8,7 @@ import {
   solidity,
 } from 'ethereum-waffle'
 import IERC20 from '../artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
+import TestToken from '../artifacts/contracts/test/TestToken.sol/TestToken.json'
 import DePayPaymentProcessorV1 from '../artifacts/contracts/DePayPaymentProcessorV1.sol/DePayPaymentProcessorV1.json'
 import IDePayPaymentProcessorV1 from '../artifacts/contracts/interfaces/IDePayPaymentProcessorV1.sol/IDePayPaymentProcessorV1.json'
 
@@ -84,12 +85,25 @@ describe('DePayPaymentProcessorV1', () => {
     )
   })
 
-  // it('can withdraw tokens that have been sent into the contract', async () => {
-  //   const {contract, otherWallet} = await loadFixture(fixture)
-  //   await otherWallet.sendTransaction({ to: contract.address, value: 100, gasPrice: 0 })
+  it('allows owner to withdraw tokens that remained in the contract', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const testTokenContract = await deployContract(otherWallet, TestToken)
+    await testTokenContract.transfer(contract.address, 100)
 
-  //   await expect(
-  //     await contract.connect(wallet).withdraw(token, amount)
-  //   ).to.changeEtherBalance(contract, 100)
-  // })
+    await expect(() => 
+      contract.connect(ownerWallet).withdraw(testTokenContract.address, 100)
+    ).to.changeTokenBalance(testTokenContract, ownerWallet, 100)
+  })
+
+  it('does not allow others to withdraw tokens that remained in the contract', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const testTokenContract = await deployContract(otherWallet, TestToken)
+    await testTokenContract.transfer(contract.address, 100)
+
+    await expect(
+      contract.connect(otherWallet).withdraw(testTokenContract.address, 100)
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
+    )
+  })
 })
