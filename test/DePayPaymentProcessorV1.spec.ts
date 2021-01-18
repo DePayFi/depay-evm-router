@@ -419,30 +419,17 @@ describe('DePayPaymentProcessorV1', () => {
     let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
     let amountIn = amounts[0].toNumber()
 
-    console.log('wallet', ownerWallet.address)
-    console.log('payment processor address', contract.address)
-    console.log('uniswap processor address', processorContract.address)
-
-    await pay({
-      contract,
-      wallet: ownerWallet,
-      path: path,
-      amountIn: amountIn,
-      amountOut: amountOut,
-      receiver: otherWallet.address,
-      preProcessors: [processorContract.address]
-    })
-
-    let allowance
-    allowance = await token0.allowance(contract.address, uniswapRouter.address)
-    console.log('allowance contract', allowance.toString())
-
-    allowance = await token0.allowance(ownerWallet.address, uniswapRouter.address)
-    console.log('ownerWallet contract', allowance.toString())
-
-    allowance = await token0.allowance(processorContract.address, uniswapRouter.address)
-    console.log('processorContract contract', allowance.toString())
-
+    await expect(() => 
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: path,
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address,
+        preProcessors: [processorContract.address]
+      })
+    ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
 
   it('allows owner to withdraw ETH that remained in the contract', async () => {

@@ -45,8 +45,8 @@ contract DePayPaymentProcessorV1 is Ownable {
     if(path[0] != ZERO) { _transferIn(path[0], amountIn); }
 
     _process(preProcessors, path, amountIn, amountOut);
-    // _pay(receiver, path[path.length-1], amountOut);
-    // _process(postProcessors, path, amountIn, amountOut);
+    _pay(receiver, path[path.length-1], amountOut);
+    _process(postProcessors, path, amountIn, amountOut);
 
     emit Payment(msg.sender, receiver);
 

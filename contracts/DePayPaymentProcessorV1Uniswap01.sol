@@ -38,7 +38,7 @@ contract DePayPaymentProcessorV1Uniswap01 {
   ) external payable returns(bool) {
     if( 
       path[0] != ZERO &&
-      IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn 
+      IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn
     ) {
       IERC20(path[0]).approve(UniswapV2Router02, MAXINT-1);
     }
@@ -59,13 +59,13 @@ contract DePayPaymentProcessorV1Uniswap01 {
         //     MAXINT-1
         // );
     } else {
-      // IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
-      //   amountIn,
-      //   amountOut,
-      //   path,
-      //   address(this),
-      //   MAXINT-1
-      // );
+      IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
+        amountIn,
+        amountOut,
+        path,
+        address(this),
+        MAXINT-1
+      );
     }
 
     return true;
