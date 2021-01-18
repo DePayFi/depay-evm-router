@@ -437,7 +437,7 @@ describe('DePayPaymentProcessorV1', () => {
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })
     
     await expect(
-      await contract.connect(ownerWallet).withdraw('0x0000000000000000000000000000000000000000', 100)
+      await contract.connect(ownerWallet).withdraw('0x0000000000000000000000000000000000000000', 1000)
     ).to.changeEtherBalance(ownerWallet, 1000)
   })
 
