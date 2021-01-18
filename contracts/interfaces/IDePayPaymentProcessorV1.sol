@@ -13,8 +13,18 @@ interface IDePayPaymentProcessorV1 {
     address[] calldata path,
     uint amountIn,
     uint amountOut,
-    address payable receiver
+    address payable receiver,
+    address[] calldata preProcessors,
+    address[] calldata postProcessors
   ) external payable returns(bool);
+
+  function addProcessor(
+    address processor
+  ) external returns(bool);
+
+  function isWhitelisted(
+    address processorAddress
+  ) external view returns(bool);
 
   function withdraw(
     address tokenAddress, 

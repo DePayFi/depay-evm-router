@@ -1,10 +1,24 @@
 /**
- *Submitted for verification at Etherscan.io on 2020-05-05
+ *Submitted for verification at Etherscan.io on 2020-05-04
 */
 
-// File: contracts/interfaces/IUniswapV2Pair.sol
+pragma solidity =0.5.16;
 
-pragma solidity >=0.5.0;
+interface IUniswapV2Factory {
+    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+
+    function feeTo() external view returns (address);
+    function feeToSetter() external view returns (address);
+
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+    function allPairs(uint) external view returns (address pair);
+    function allPairsLength() external view returns (uint);
+
+    function createPair(address tokenA, address tokenB) external returns (address pair);
+
+    function setFeeTo(address) external;
+    function setFeeToSetter(address) external;
+}
 
 interface IUniswapV2Pair {
     event Approval(address indexed owner, address indexed spender, uint value);
@@ -57,10 +71,6 @@ interface IUniswapV2Pair {
     function initialize(address, address) external;
 }
 
-// File: contracts/interfaces/IUniswapV2ERC20.sol
-
-pragma solidity >=0.5.0;
-
 interface IUniswapV2ERC20 {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
@@ -83,31 +93,25 @@ interface IUniswapV2ERC20 {
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
 
-// File: contracts/libraries/SafeMath.sol
+interface IERC20 {
+    event Approval(address indexed owner, address indexed spender, uint value);
+    event Transfer(address indexed from, address indexed to, uint value);
 
-pragma solidity =0.5.16;
+    function name() external view returns (string memory);
+    function symbol() external view returns (string memory);
+    function decimals() external view returns (uint8);
+    function totalSupply() external view returns (uint);
+    function balanceOf(address owner) external view returns (uint);
+    function allowance(address owner, address spender) external view returns (uint);
 
-// a library for performing overflow-safe math, courtesy of DappHub (https://github.com/dapphub/ds-math)
-
-library SafeMath {
-    function add(uint x, uint y) internal pure returns (uint z) {
-        require((z = x + y) >= x, 'ds-math-add-overflow');
-    }
-
-    function sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, 'ds-math-sub-underflow');
-    }
-
-    function mul(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x, 'ds-math-mul-overflow');
-    }
+    function approve(address spender, uint value) external returns (bool);
+    function transfer(address to, uint value) external returns (bool);
+    function transferFrom(address from, address to, uint value) external returns (bool);
 }
 
-// File: contracts/UniswapV2ERC20.sol
-
-pragma solidity =0.5.16;
-
-
+interface IUniswapV2Callee {
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) external;
+}
 
 contract UniswapV2ERC20 is IUniswapV2ERC20 {
     using SafeMath for uint;
@@ -198,114 +202,6 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
         _approve(owner, spender, value);
     }
 }
-
-// File: contracts/libraries/Math.sol
-
-pragma solidity =0.5.16;
-
-// a library for performing various math operations
-
-library Math {
-    function min(uint x, uint y) internal pure returns (uint z) {
-        z = x < y ? x : y;
-    }
-
-    // babylonian method (https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method)
-    function sqrt(uint y) internal pure returns (uint z) {
-        if (y > 3) {
-            z = y;
-            uint x = y / 2 + 1;
-            while (x < z) {
-                z = x;
-                x = (y / x + x) / 2;
-            }
-        } else if (y != 0) {
-            z = 1;
-        }
-    }
-}
-
-// File: contracts/libraries/UQ112x112.sol
-
-pragma solidity =0.5.16;
-
-// a library for handling binary fixed point numbers (https://en.wikipedia.org/wiki/Q_(number_format))
-
-// range: [0, 2**112 - 1]
-// resolution: 1 / 2**112
-
-library UQ112x112 {
-    uint224 constant Q112 = 2**112;
-
-    // encode a uint112 as a UQ112x112
-    function encode(uint112 y) internal pure returns (uint224 z) {
-        z = uint224(y) * Q112; // never overflows
-    }
-
-    // divide a UQ112x112 by a uint112, returning a UQ112x112
-    function uqdiv(uint224 x, uint112 y) internal pure returns (uint224 z) {
-        z = x / uint224(y);
-    }
-}
-
-// File: contracts/interfaces/IERC20.sol
-
-pragma solidity >=0.5.0;
-
-interface IERC20 {
-    event Approval(address indexed owner, address indexed spender, uint value);
-    event Transfer(address indexed from, address indexed to, uint value);
-
-    function name() external view returns (string memory);
-    function symbol() external view returns (string memory);
-    function decimals() external view returns (uint8);
-    function totalSupply() external view returns (uint);
-    function balanceOf(address owner) external view returns (uint);
-    function allowance(address owner, address spender) external view returns (uint);
-
-    function approve(address spender, uint value) external returns (bool);
-    function transfer(address to, uint value) external returns (bool);
-    function transferFrom(address from, address to, uint value) external returns (bool);
-}
-
-// File: contracts/interfaces/IUniswapV2Factory.sol
-
-pragma solidity >=0.5.0;
-
-interface IUniswapV2Factory {
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
-
-    function feeTo() external view returns (address);
-    function feeToSetter() external view returns (address);
-
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
-    function allPairs(uint) external view returns (address pair);
-    function allPairsLength() external view returns (uint);
-
-    function createPair(address tokenA, address tokenB) external returns (address pair);
-
-    function setFeeTo(address) external;
-    function setFeeToSetter(address) external;
-}
-
-// File: contracts/interfaces/IUniswapV2Callee.sol
-
-pragma solidity >=0.5.0;
-
-interface IUniswapV2Callee {
-    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) external;
-}
-
-// File: contracts/UniswapV2Pair.sol
-
-pragma solidity =0.5.16;
-
-
-
-
-
-
-
 
 contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using SafeMath  for uint;
@@ -496,5 +392,107 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     // force reserves to match balances
     function sync() external lock {
         _update(IERC20(token0).balanceOf(address(this)), IERC20(token1).balanceOf(address(this)), reserve0, reserve1);
+    }
+}
+
+contract UniswapV2Factory is IUniswapV2Factory {
+    address public feeTo;
+    address public feeToSetter;
+
+    mapping(address => mapping(address => address)) public getPair;
+    address[] public allPairs;
+
+    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+
+    constructor(address _feeToSetter) public {
+        feeToSetter = _feeToSetter;
+    }
+
+    function allPairsLength() external view returns (uint) {
+        return allPairs.length;
+    }
+
+    function createPair(address tokenA, address tokenB) external returns (address pair) {
+        require(tokenA != tokenB, 'UniswapV2: IDENTICAL_ADDRESSES');
+        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        require(token0 != address(0), 'UniswapV2: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'UniswapV2: PAIR_EXISTS'); // single check is sufficient
+        bytes memory bytecode = type(UniswapV2Pair).creationCode;
+        bytes32 salt = keccak256(abi.encodePacked(token0, token1));
+        assembly {
+            pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
+        }
+        IUniswapV2Pair(pair).initialize(token0, token1);
+        getPair[token0][token1] = pair;
+        getPair[token1][token0] = pair; // populate mapping in the reverse direction
+        allPairs.push(pair);
+        emit PairCreated(token0, token1, pair, allPairs.length);
+    }
+
+    function setFeeTo(address _feeTo) external {
+        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
+        feeTo = _feeTo;
+    }
+
+    function setFeeToSetter(address _feeToSetter) external {
+        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
+        feeToSetter = _feeToSetter;
+    }
+}
+
+// a library for performing overflow-safe math, courtesy of DappHub (https://github.com/dapphub/ds-math)
+
+library SafeMath {
+    function add(uint x, uint y) internal pure returns (uint z) {
+        require((z = x + y) >= x, 'ds-math-add-overflow');
+    }
+
+    function sub(uint x, uint y) internal pure returns (uint z) {
+        require((z = x - y) <= x, 'ds-math-sub-underflow');
+    }
+
+    function mul(uint x, uint y) internal pure returns (uint z) {
+        require(y == 0 || (z = x * y) / y == x, 'ds-math-mul-overflow');
+    }
+}
+
+// a library for performing various math operations
+
+library Math {
+    function min(uint x, uint y) internal pure returns (uint z) {
+        z = x < y ? x : y;
+    }
+
+    // babylonian method (https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method)
+    function sqrt(uint y) internal pure returns (uint z) {
+        if (y > 3) {
+            z = y;
+            uint x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
+        }
+    }
+}
+
+// a library for handling binary fixed point numbers (https://en.wikipedia.org/wiki/Q_(number_format))
+
+// range: [0, 2**112 - 1]
+// resolution: 1 / 2**112
+
+library UQ112x112 {
+    uint224 constant Q112 = 2**112;
+
+    // encode a uint112 as a UQ112x112
+    function encode(uint112 y) internal pure returns (uint224 z) {
+        z = uint224(y) * Q112; // never overflows
+    }
+
+    // divide a UQ112x112 by a uint112, returning a UQ112x112
+    function uqdiv(uint224 x, uint112 y) internal pure returns (uint224 z) {
+        z = x / uint224(y);
     }
 }
