@@ -41,8 +41,11 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata preProcessors,
     address[] calldata postProcessors
   ) external payable returns(bool) {
-    if(path[0] == ZERO) { require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); }
-    if(path[0] != ZERO) { _transferIn(path[0], amountIn); }
+    if(path[0] == ZERO) { 
+      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+    } else {
+      _transferIn(path[0], amountIn);
+    }
 
     _process(preProcessors, path, amountIn, amountOut);
     _pay(receiver, path[path.length-1], amountOut);

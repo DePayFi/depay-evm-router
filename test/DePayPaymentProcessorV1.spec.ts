@@ -432,6 +432,94 @@ describe('DePayPaymentProcessorV1', () => {
     ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
 
+  it('swaps ETH to token via uniswap to perform a payment', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {processorContract} = await deployAndAddUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+    
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [WETH.address, token0.address])
+    let amountIn = amounts[0].toNumber()
+
+    await expect(() => 
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: [ZERO, token0.address],
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address,
+        preProcessors: [processorContract.address],
+        value: amountIn
+      })
+    ).to.changeTokenBalance(token0, otherWallet, 1000)
+  })
+
+  it('swaps tokens for ETH via uniswap to performf a payment', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {processorContract} = await deployAndAddUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+    
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [token0.address, WETH.address])
+    let amountIn = amounts[0].toNumber()
+
+    await expect(() => 
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: [token0.address, ZERO],
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address,
+        preProcessors: [processorContract.address],
+        value: amountIn
+      })
+    ).to.changeEtherBalance(otherWallet, 1000)
+  })
+
   it('allows owner to withdraw ETH that remained in the contract', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })

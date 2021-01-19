@@ -4,24 +4,16 @@ pragma solidity >=0.7.5 <0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./interfaces/IUniswapV2Router02.sol";
 
 contract DePayPaymentProcessorV1Uniswap01 {
   
   using SafeMath for uint;
 
-  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
-  address private ZERO = 0x0000000000000000000000000000000000000000;
-
-  // The maximum integer used for approvals
-  uint private MAXINT = (2**256)-1;
-
+  uint public immutable MAXINT = (2**256)-1;
+  address public immutable ZERO = 0x0000000000000000000000000000000000000000;
   address public immutable WETH;
   address public immutable UniswapV2Router02;
-
-  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
-  bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
   constructor (
     address _WETH,
@@ -36,35 +28,45 @@ contract DePayPaymentProcessorV1Uniswap01 {
     uint amountIn,
     uint amountOut
   ) external payable returns(bool) {
+    
     if( 
       path[0] != ZERO &&
       IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn
     ) {
-      IERC20(path[0]).approve(UniswapV2Router02, MAXINT-1);
+      IERC20(path[0]).approve(UniswapV2Router02, MAXINT);
+    }
+
+    address[] memory uniPath = new address[](path.length);
+    for (uint i=0; i<path.length; i++) {
+        if(path[i] == ZERO) {
+            uniPath[i] = WETH;
+        } else {
+            uniPath[i] = path[i];
+        }
     }
 
     if(path[0] == ZERO) {
-        // IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amountIn}(
-        //     amountOut,
-        //     path,
-        //     address(this),
-        //     MAXINT-1
-        // );
+      IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amountIn}(
+        amountOut,
+        uniPath,
+        address(this),
+        MAXINT
+      );
     } else if (path[path.length-1] == ZERO) {
-        // IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
-        //     amountIn,
-        //     amountOut,
-        //     path,
-        //     address(this),
-        //     MAXINT-1
-        // );
+      IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
+        amountIn,
+        amountOut,
+        uniPath,
+        address(this),
+        MAXINT
+      );
     } else {
       IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
         amountIn,
         amountOut,
-        path,
+        uniPath,
         address(this),
-        MAXINT-1
+        MAXINT
       );
     }
 
