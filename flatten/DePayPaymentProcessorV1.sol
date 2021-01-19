@@ -622,7 +622,7 @@ contract DePayPaymentProcessorV1 is Ownable {
   // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
   bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
-  // List of whitelisted payment processors
+  // List of approved payment processors
   mapping (address => address) private processors;
 
   event Payment(
@@ -678,7 +678,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     require(success && (data.length == 0 || abi.decode(data, (bool))), 'DePay: Safe transfer failed!');
   }
 
-  function addProcessor(address processor) external onlyOwner returns(bool) {
+  function approveProcessor(address processor) external onlyOwner returns(bool) {
     processors[processor] = processor;
     return true;
   }
@@ -690,7 +690,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     uint amountOut
   ) internal {
     for (uint256 i = 0; i < _processors.length; i++) {
-      require(_isWhitelisted(_processors[i]), 'DePay: Processor not whitelisted!');
+      require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
       address processor = processors[_processors[i]];
       (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
           IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut
@@ -699,13 +699,13 @@ contract DePayPaymentProcessorV1 is Ownable {
     }
   }
 
-  function isWhitelisted(
+  function isApproved(
     address processorAddress
   ) external view returns(bool){
-    return _isWhitelisted(processorAddress);
+    return _isApproved(processorAddress);
   }
 
-  function _isWhitelisted(
+  function _isApproved(
     address processorAddress
   ) internal view returns(bool) {
     return (processors[processorAddress] != ZERO);

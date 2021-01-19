@@ -20,11 +20,11 @@ interface IDePayPaymentProcessorV1 {
     address[] calldata postProcessors
   ) external payable returns(bool);
 
-  function addProcessor(
+  function approveProcessor(
     address processor
   ) external returns(bool);
 
-  function isWhitelisted(
+  function isApproved(
     address processorAddress
   ) external view returns(bool);
 
