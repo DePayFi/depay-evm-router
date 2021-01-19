@@ -79,6 +79,104 @@ interface IERC20 {
 }
 
 
+// Dependency file: @openzeppelin/contracts/GSN/Context.sol
+
+
+// pragma solidity >=0.6.0 <0.8.0;
+
+/*
+ * @dev Provides information about the current execution context, including the
+ * sender of the transaction and its data. While these are generally available
+ * via msg.sender and msg.data, they should not be accessed in such a direct
+ * manner, since when dealing with GSN meta-transactions the account sending and
+ * paying for execution may not be the actual sender (as far as an application
+ * is concerned).
+ *
+ * This contract is only required for intermediate, library-like contracts.
+ */
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address payable) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view virtual returns (bytes memory) {
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        return msg.data;
+    }
+}
+
+
+// Dependency file: @openzeppelin/contracts/access/Ownable.sol
+
+
+// pragma solidity >=0.6.0 <0.8.0;
+
+// import "@openzeppelin/contracts/GSN/Context.sol";
+/**
+ * @dev Contract module which provides a basic access control mechanism, where
+ * there is an account (an owner) that can be granted exclusive access to
+ * specific functions.
+ *
+ * By default, the owner account will be the one that deploys the contract. This
+ * can later be changed with {transferOwnership}.
+ *
+ * This module is used through inheritance. It will make available the modifier
+ * `onlyOwner`, which can be applied to your functions to restrict their use to
+ * the owner.
+ */
+abstract contract Ownable is Context {
+    address private _owner;
+
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev Initializes the contract setting the deployer as the initial owner.
+     */
+    constructor () internal {
+        address msgSender = _msgSender();
+        _owner = msgSender;
+        emit OwnershipTransferred(address(0), msgSender);
+    }
+
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view returns (address) {
+        return _owner;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
+        _;
+    }
+
+    /**
+     * @dev Leaves the contract without owner. It will not be possible to call
+     * `onlyOwner` functions anymore. Can only be called by the current owner.
+     *
+     * NOTE: Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public virtual onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
+    }
+}
+
+
 // Dependency file: @openzeppelin/contracts/math/SafeMath.sol
 
 
@@ -487,101 +585,18 @@ library SafeERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/GSN/Context.sol
+// Dependency file: contracts/interfaces/IDePayPaymentProcessorV1Processor.sol
 
 
-// pragma solidity >=0.6.0 <0.8.0;
+// pragma solidity >=0.7.5 <0.8.0;
 
-/*
- * @dev Provides information about the current execution context, including the
- * sender of the transaction and its data. While these are generally available
- * via msg.sender and msg.data, they should not be accessed in such a direct
- * manner, since when dealing with GSN meta-transactions the account sending and
- * paying for execution may not be the actual sender (as far as an application
- * is concerned).
- *
- * This contract is only required for intermediate, library-like contracts.
- */
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
-        return msg.sender;
-    }
+interface IDePayPaymentProcessorV1Processor {
 
-    function _msgData() internal view virtual returns (bytes memory) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
-        return msg.data;
-    }
-}
-
-
-// Dependency file: @openzeppelin/contracts/access/Ownable.sol
-
-
-// pragma solidity >=0.6.0 <0.8.0;
-
-// import "@openzeppelin/contracts/GSN/Context.sol";
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
-abstract contract Ownable is Context {
-    address private _owner;
-
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor () internal {
-        address msgSender = _msgSender();
-        _owner = msgSender;
-        emit OwnershipTransferred(address(0), msgSender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(_owner == _msgSender(), "Ownable: caller is not the owner");
-        _;
-    }
-
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public virtual onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
+  function process(
+    address[] calldata path,
+    uint amountIn,
+    uint amountOut
+  ) external payable returns(bool);
 }
 
 
@@ -591,49 +606,125 @@ abstract contract Ownable is Context {
 pragma solidity >=0.7.5 <0.8.0;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/math/SafeMath.sol";
+// import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+// import 'contracts/interfaces/IDePayPaymentProcessorV1Processor.sol';
 
 contract DePayPaymentProcessorV1 is Ownable {
   
-  using SafeMath for uint256;
+  using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicating ETH transfer (because it does not have an address, like a token does)
+  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
   address private ZERO = 0x0000000000000000000000000000000000000000;
 
-  uint private MAXINT = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
+  bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
+
+  // List of whitelisted payment processors
+  mapping (address => address) private processors;
+
+  event Payment(
+    address indexed sender,
+    address payable indexed receiver
+  );
 
   receive() external payable {
     // accepts eth payments which are required to
     // swap and pay from ETH to any token
+    // especially unwrapping WETH as part of token conversions
+  }
+
+  function pay(
+    address[] calldata path,
+    uint amountIn,
+    uint amountOut,
+    address payable receiver,
+    address[] calldata preProcessors,
+    address[] calldata postProcessors
+  ) external payable returns(bool) {
+    if(path[0] == ZERO) { 
+      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+    } else {
+      _transferIn(path[0], amountIn);
+    }
+
+    _process(preProcessors, path, amountIn, amountOut);
+    _pay(receiver, path[path.length-1], amountOut);
+    _process(postProcessors, path, amountIn, amountOut);
+
+    emit Payment(msg.sender, receiver);
+
+    return true;
+  }
+
+  function _pay(address payable receiver, address token, uint amountOut) private {
+    if(token == ZERO) {
+      receiver.transfer(amountOut);
+    } else {
+      _safeTransfer(token, receiver, amountOut);
+    }
+  }
+
+  // makes sure to transfer in the token used as means of payment
+  function _transferIn(address token, uint amount) private {
+    IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
+  }
+
+  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
+  function _safeTransfer(address token, address to, uint value) private {
+    (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
+    require(success && (data.length == 0 || abi.decode(data, (bool))), 'DePay: Safe transfer failed!');
+  }
+
+  function addProcessor(address processor) external onlyOwner returns(bool) {
+    processors[processor] = processor;
+    return true;
+  }
+
+  function _process(
+    address[] calldata _processors,
+    address[] calldata path,
+    uint amountIn,
+    uint amountOut
+  ) internal {
+    for (uint256 i = 0; i < _processors.length; i++) {
+      require(_isWhitelisted(_processors[i]), 'DePay: Processor not whitelisted!');
+      address processor = processors[_processors[i]];
+      (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
+          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut
+      ));
+      require(success, string(returnData));
+    }
+  }
+
+  function isWhitelisted(
+    address processorAddress
+  ) external view returns(bool){
+    return _isWhitelisted(processorAddress);
+  }
+
+  function _isWhitelisted(
+    address processorAddress
+  ) internal view returns(bool) {
+    return (processors[processorAddress] != ZERO);
   }
   
   function payableOwner() view private returns(address payable) {
     return payable(owner());
   }
-    
+
+  // allows to withdraw accidentally sent ETH or tokens
   function withdraw(
     address tokenAddress,
     uint amount
   ) external onlyOwner returns(bool) {
     if(tokenAddress == ZERO) {
-        payableOwner().transfer(amount);
+      payableOwner().transfer(amount);
     } else {
-      IERC20(tokenAddress).safeTransfer(payableOwner(), amount);
+      _safeTransfer(tokenAddress, payableOwner(), amount);
     }
     return true;
-  }
-
-  function isContract(address account) internal view returns(bool) {
-    // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
-    // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
-    // for accounts without code, i.e. `keccak256('')`
-    bytes32 codehash;
-    bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-    // solhint-disable-next-line no-inline-assembly
-    assembly { codehash := extcodehash(account) }
-    return (codehash != accountHash && codehash != 0x0);
   }
 }
