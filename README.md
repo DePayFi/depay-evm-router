@@ -6,7 +6,7 @@
 
 #### Ropsten
 
-- [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x1377bdaa5fcff2bf63dbc6bcfe6d0516ddf84a23)
+- [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x74de25e66a658613b0e8a25fe37db0bdc7ca0e04)
 - [DePayPaymentProcessorV1Uniswap01](https://ropsten.etherscan.io/address/0xf3c6a559860d5e63eb24cfcbf8bfabb9a882bcc0)
 
 ## Quick Start
@@ -24,6 +24,9 @@ The main purpose of this smart contract evolves around the `pay` function,
 which allows sender to pay a receiver while swapping tokens as part of the same transaction if required.
 
 This enables ETH to ETH, tokenA to tokenA, ETH to tokenA, tokenA to ETH and tokenA to tokenB payments.
+
+Any payment processor, decentralized exchange or liqudity pool protocol can be added to `processors`
+to improve cost-effectiveness of payment routing.
 
 ## Functions
 
@@ -57,6 +60,8 @@ DEPAY to ETH payment:
 `amountOut`: Amount of tokens payed to the receiver.
 
 `receiver`: The receiver address of the payment.
+
+### `approveProcessor` Approves a payment processor.
 
 ## Examples
 

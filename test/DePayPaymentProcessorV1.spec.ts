@@ -50,21 +50,21 @@ describe('DePayPaymentProcessorV1', () => {
     }
   }
 
-  interface deployAndAddUniswapProcessorParameters {
+  interface deployAndApproveUniswapProcessorParameters {
     contract: Contract,
     wallet: Wallet,
     WETH: Contract,
     uniswapRouter: Contract
   }
 
-  async function deployAndAddUniswapProcessor({
+  async function deployAndApproveUniswapProcessor({
     contract,
     wallet,
     WETH,
     uniswapRouter
-  }: deployAndAddUniswapProcessorParameters) {
+  }: deployAndApproveUniswapProcessorParameters) {
     const processorContract = await deployContract(wallet, DePayPaymentProcessorV1Uniswap01, [WETH.address, uniswapRouter.address])
-    await contract.connect(wallet).addProcessor(processorContract.address)
+    await contract.connect(wallet).approveProcessor(processorContract.address)
     return { processorContract }
   }
 
@@ -294,15 +294,15 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
     })
 
-    expect(await contract.isWhitelisted(processorContract.address)).to.eq(true)
-    expect(await contract.isWhitelisted(otherWallet.address)).to.eq(false)
+    expect(await contract.isApproved(processorContract.address)).to.eq(true)
+    expect(await contract.isApproved(otherWallet.address)).to.eq(false)
   })
 
   it('does NOT allow others to add payment processors', async () => {
@@ -311,7 +311,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     await expect(
-      deployAndAddUniswapProcessor({
+      deployAndApproveUniswapProcessor({
         contract,
         wallet: otherWallet,
         WETH,
@@ -322,12 +322,12 @@ describe('DePayPaymentProcessorV1', () => {
     )
   })
 
-  it('fails when trying to use a pre-processors that is not whitelisted', async () => {
+  it('fails when trying to use a pre-processors that is not approved', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -346,16 +346,16 @@ describe('DePayPaymentProcessorV1', () => {
         value: 1000
       })
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Processor not whitelisted'
+      'VM Exception while processing transaction: revert DePay: Processor not approved'
     )
   })
 
-  it('fails when trying to use a post-processors that is not whitelisted', async () => {
+  it('fails when trying to use a post-processors that is not approved', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -374,7 +374,7 @@ describe('DePayPaymentProcessorV1', () => {
         value: 1000
       })
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Processor not whitelisted'
+      'VM Exception while processing transaction: revert DePay: Processor not approved'
     )
   })
 
@@ -387,7 +387,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -440,7 +440,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -484,7 +484,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndAddUniswapProcessor({
+    const {processorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
