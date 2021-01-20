@@ -644,6 +644,9 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata preProcessors,
     address[] calldata postProcessors
   ) external payable returns(bool) {
+    uint balanceBefore = _balance(path[path.length-1]);
+    if(path[path.length-1] == ZERO) { balanceBefore -= msg.value; }
+
     if(path[0] == ZERO) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
@@ -654,9 +657,19 @@ contract DePayPaymentProcessorV1 is Ownable {
     _pay(receiver, path[path.length-1], amountOut);
     _process(postProcessors, path, amountIn, amountOut);
 
+    require(_balance(path[path.length-1]) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+
     emit Payment(msg.sender, receiver);
 
     return true;
+  }
+
+  function _balance(address token) private view returns(uint) {
+    if(token == ZERO) {
+        return address(this).balance;
+    } else {
+        return IERC20(token).balanceOf(address(this));
+    }
   }
 
   function _pay(address payable receiver, address token, uint amountOut) private {
@@ -711,7 +724,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     return (processors[processorAddress] != ZERO);
   }
   
-  function payableOwner() view private returns(address payable) {
+  function _payableOwner() view private returns(address payable) {
     return payable(owner());
   }
 
@@ -721,9 +734,9 @@ contract DePayPaymentProcessorV1 is Ownable {
     uint amount
   ) external onlyOwner returns(bool) {
     if(tokenAddress == ZERO) {
-      payableOwner().transfer(amount);
+      _payableOwner().transfer(amount);
     } else {
-      _safeTransfer(tokenAddress, payableOwner(), amount);
+      _safeTransfer(tokenAddress, _payableOwner(), amount);
     }
     return true;
   }

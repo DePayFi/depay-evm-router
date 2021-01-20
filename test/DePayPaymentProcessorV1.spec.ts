@@ -473,7 +473,7 @@ describe('DePayPaymentProcessorV1', () => {
         preProcessors: [processorContract.address],
         value: amountIn
       })
-    ).to.changeTokenBalance(token0, otherWallet, 1000)
+    ).to.changeTokenBalance(token0, otherWallet, amountOut)
   })
 
   it('swaps tokens for ETH via uniswap to performf a payment', async () => {
@@ -517,7 +517,104 @@ describe('DePayPaymentProcessorV1', () => {
         preProcessors: [processorContract.address],
         value: amountIn
       })
-    ).to.changeEtherBalance(otherWallet, 1000)
+    ).to.changeEtherBalance(otherWallet, amountOut)
+  })
+
+  it('makes sure that the eth balance in the smart contract is the same after the payment then before', async () => {
+    // to prevent people draining the contract
+
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {processorContract} = await deployAndApproveUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+    
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [token0.address, WETH.address])
+    let amountIn = amounts[0].toNumber()
+
+    await ownerWallet.sendTransaction({to: contract.address, value: 1000})
+
+    await expect(
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: [token0.address, ZERO],
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address
+      })
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
+    )
+  })
+
+  it('makes sure that the token balance in the smart contract is the same after the payment then before', async () => {
+    // to prevent people draining the contract
+
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {processorContract} = await deployAndApproveUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+    
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [WETH.address, token0.address])
+    let amountIn = amounts[0].toNumber()
+
+    await token0.connect(ownerWallet).transfer(contract.address, 5000)
+
+    await expect(
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: [ZERO, token0.address],
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address,
+        value: amountIn
+      })    
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
+    )
   })
 
   it('allows owner to withdraw ETH that remained in the contract', async () => {
