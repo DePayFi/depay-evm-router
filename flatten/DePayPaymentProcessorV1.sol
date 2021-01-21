@@ -595,7 +595,8 @@ interface IDePayPaymentProcessorV1Processor {
   function process(
     address[] calldata path,
     uint amountIn,
-    uint amountOut
+    uint amountOut,
+    uint deadline
   ) external payable returns(bool);
 }
 
@@ -655,6 +656,7 @@ library TransferHelper {
 
 
 pragma solidity >=0.7.5 <0.8.0;
+pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";
@@ -687,30 +689,44 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   function pay(
     address[] calldata path,
-    uint amountIn,
-    uint amountOut,
+    uint[2] calldata amounts,
     address payable receiver,
-    address[] calldata preProcessors,
-    address[] calldata postProcessors
+    address[][2] calldata processors,
+    uint deadline
   ) external payable returns(bool) {
-    uint balanceBefore = _balance(path[path.length-1]);
-    if(path[path.length-1] == ZERO) { balanceBefore -= msg.value; }
-
-    if(path[0] == ZERO) { 
-      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
-    } else {
-      TransferHelper.safeTransferFrom(path[0], msg.sender, address(this), amountIn);
+    uint balanceBefore = _balanceBefore(path);
+    {
+      _ensureTransferIn(path[0], amounts[0]);
+      _process(processors[0], path, amounts[0], amounts[1], deadline);
+      _pay(receiver, path[path.length-1], amounts[1]);
+      _process(processors[1], path, amounts[0], amounts[1], deadline);
     }
-
-    _process(preProcessors, path, amountIn, amountOut);
-    _pay(receiver, path[path.length-1], amountOut);
-    _process(postProcessors, path, amountIn, amountOut);
-
-    require(_balance(path[path.length-1]) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+    _ensureBalance(path[path.length-1], balanceBefore);
 
     emit Payment(msg.sender, receiver);
-
     return true;
+  }
+
+  function _balanceBefore(address[] calldata path) private returns (uint balance) {
+    balance = _balance(path[path.length-1]);
+    if(path[path.length-1] == ZERO) { balance -= msg.value; }
+  }
+
+  function _ensureTransferIn(address tokenIn, uint amountIn) private {
+    if(tokenIn == ZERO) { 
+      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+    } else {
+      TransferHelper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+    }
+  }
+
+  function _ensureBalance(address tokenOut, uint balanceBefore) private {
+    require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+  }
+
+  function _ensureBalance(address[] calldata path) private returns (uint balance) {
+    balance = _balance(path[path.length-1]);
+    if(path[path.length-1] == ZERO) { balance -= msg.value; }
   }
 
   function _balance(address token) private view returns(uint) {
@@ -738,13 +754,14 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata _processors,
     address[] calldata path,
     uint amountIn,
-    uint amountOut
+    uint amountOut,
+    uint deadline
   ) internal {
     for (uint256 i = 0; i < _processors.length; i++) {
       require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
       address processor = processors[_processors[i]];
       (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
-          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut
+          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut, deadline
       ));
       require(success, string(returnData));
     }

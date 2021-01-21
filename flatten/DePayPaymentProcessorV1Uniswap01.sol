@@ -462,7 +462,8 @@ contract DePayPaymentProcessorV1Uniswap01 {
   function process(
     address[] calldata path,
     uint amountIn,
-    uint amountOut
+    uint amountOut,
+    uint deadline
   ) external payable returns(bool) {
     
     if( 
@@ -486,7 +487,7 @@ contract DePayPaymentProcessorV1Uniswap01 {
         amountOut,
         uniPath,
         address(this),
-        MAXINT
+        deadline
       );
     } else if (path[path.length-1] == ZERO) {
       IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
@@ -494,7 +495,7 @@ contract DePayPaymentProcessorV1Uniswap01 {
         amountOut,
         uniPath,
         address(this),
-        MAXINT
+        deadline
       );
     } else {
       IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
@@ -502,7 +503,7 @@ contract DePayPaymentProcessorV1Uniswap01 {
         amountOut,
         uniPath,
         address(this),
-        MAXINT
+        deadline
       );
     }
 
