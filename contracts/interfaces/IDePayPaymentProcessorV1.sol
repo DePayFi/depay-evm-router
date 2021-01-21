@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
-pragma abicoder v2;
 
 interface IDePayPaymentProcessorV1 {
 
@@ -14,7 +13,8 @@ interface IDePayPaymentProcessorV1 {
     address[] calldata path,
     uint[2] calldata amounts,
     address payable receiver,
-    address[][2] calldata processors,
+    address[] calldata preProcessors,
+    address[] calldata postProcessors,
     uint deadline
   ) external payable returns(bool);
 

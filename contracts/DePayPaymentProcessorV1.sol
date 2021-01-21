@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
-pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -36,15 +35,16 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata path,
     uint[2] calldata amounts,
     address payable receiver,
-    address[][2] calldata processors,
+    address[] calldata preProcessors,
+    address[] calldata postProcessors,
     uint deadline
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(path);
     {
       _ensureTransferIn(path[0], amounts[0]);
-      _process(processors[0], path, amounts[0], amounts[1], deadline);
+      _process(preProcessors, path, amounts[0], amounts[1], deadline);
       _pay(receiver, path[path.length-1], amounts[1]);
-      _process(processors[1], path, amounts[0], amounts[1], deadline);
+      _process(postProcessors, path, amounts[0], amounts[1], deadline);
     }
     _ensureBalance(path[path.length-1], balanceBefore);
 

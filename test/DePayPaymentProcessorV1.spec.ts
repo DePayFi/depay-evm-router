@@ -183,7 +183,8 @@ describe('DePayPaymentProcessorV1', () => {
       path,
       [amountIn, amountOut],
       receiver,
-      [preProcessors, postProcessors],
+      preProcessors,
+      postProcessors,
       deadline,
       { value: value }
     )
