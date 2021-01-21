@@ -15,7 +15,8 @@ interface IDePayPaymentProcessorV1 {
     address[] calldata path,
     uint[2] calldata amounts,
     address payable receiver,
-    address[][2] calldata processors,
+    address[] calldata preProcessors,
+    address[] calldata postProcessors,
     uint deadline
   ) external payable returns(bool);
 
