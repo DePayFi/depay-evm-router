@@ -30,6 +30,8 @@ const MAXINT = BigNumber.from("0xfffffffffffffffffffffffffffffffffffffffffffffff
 
 chai.use(solidity)
 
+let now = () => Math.round(new Date().getTime() / 1000)
+
 describe('DePayPaymentProcessorV1', () => {
 
   const provider = new MockProvider({
@@ -161,7 +163,8 @@ describe('DePayPaymentProcessorV1', () => {
     receiver: string,
     value?: number,
     preProcessors?: string[],
-    postProcessors?: string[]
+    postProcessors?: string[],
+    deadline?: number
   }
 
   async function pay({
@@ -173,15 +176,15 @@ describe('DePayPaymentProcessorV1', () => {
     receiver,
     value = 0,
     preProcessors = [],
-    postProcessors = []
+    postProcessors = [],
+    deadline = (now() + 10000)
   }: payParameters) {
     return contract.connect(wallet).pay(
       path,
-      amountIn,
-      amountOut,
+      [amountIn, amountOut],
       receiver,
-      preProcessors,
-      postProcessors,
+      [preProcessors, postProcessors],
+      deadline,
       { value: value }
     )
   }
