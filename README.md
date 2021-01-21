@@ -4,8 +4,8 @@
 
 #### Ropsten
 
-- [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x035378ca0e7406cf84817fe81d1e72c34a80380e)
-- [DePayPaymentProcessorV1Uniswap01](https://ropsten.etherscan.io/address/0xe980585aacf256e55107052bcdfe24966bcbb5f0)
+- [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x29cdb0ee2238cde0fb7b68f04d4d79a7c7ab3cca)
+- [DePayPaymentProcessorV1Uniswap01](https://ropsten.etherscan.io/address/0xf1b8bbd33b060ca04f85681b771223c49802075f)
 
 ## Quick Start
 
@@ -71,67 +71,69 @@ DEPAY to UNI payment (processing goes through WETH):
 
 ### tokenA to tokenB payment
 
-https://ropsten.etherscan.io/tx/0xe2b1e8e6b4346f1b82b629e1983049d70a9da33f52d8f8d5ffa96b083967e7e7
+https://ropsten.etherscan.io/tx/0x60a5820629be6e73c984d23e5f0cc943ccd5981cba9210f86bd713c9a873dac3
 
-`path` needs to go trough tokenA -> WETH -> tokenB if processed by Uniswap.
+`path` needs to go through tokenA -> WETH -> tokenB if processed by Uniswap.
 
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb, 0xc778417e063141139fce010982780140aa0cd5ab, 0x1f9840a85d5af5bf1d1762f925bdaddc4201f984]
+path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xc778417e063141139fce010982780140aa0cd5ab,0x1f9840a85d5af5bf1d1762f925bdaddc4201f984]
 
 amounts: [903657000000000000,7000000000000000]
 
 receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
 
-processors: [[0x51441149c7ac09197CdF30C7970f7252DcF5b212],[]]
+preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
+
+postProcessors: []
 
 deadline: 1611537544
 ```
 
 ### tokenA to ETH payment
 
-https://ropsten.etherscan.io/tx/0x2818223405964a8a474af361febc784f4f389888fa80d1aca6ea41bf1315503c
+https://ropsten.etherscan.io/tx/0x306770faa3818baf40615ffa04e7f5275a9458b7a8181ca7d3f9a6341acd5191
 
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb, 0x0000000000000000000000000000000000000000]
+path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0x0000000000000000000000000000000000000000]
 
-amountIn: 1028452700000000000
-
-amountOut: 10000000000000000
+amounts: [1128452700000000000,9000000000000000]
 
 receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
 
-preProcessors: [0x51441149c7ac09197CdF30C7970f7252DcF5b212]
+preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
 
 postProcessors: []
+
+deadline: 1611537544
 ```
 
 ### ETH to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x5a9f41cfeaae2d9686f5f438f1a76bd4f867157b4944e392fe6eba76d09befe0
+https://ropsten.etherscan.io/tx/0x6306bb636a300800ec5a79c65c69612c1ef6227f20aad34cd36ca70b76c93c35
 
 ```
 value: 0.00988172
 
-path: [0x0000000000000000000000000000000000000000, 0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
+path: [0x0000000000000000000000000000000000000000,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
-amountIn: 9881720000000000
-
-amountOut: 1000000000000000000
+amounts: [9881720000000000,1000000000000000000]
 
 receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
 
-preProcessors: [0x51441149c7ac09197CdF30C7970f7252DcF5b212]
+preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
 
 postProcessors: []
+
+deadline: 1611537544
 ```
 
 ### tokenA to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x9ab2c71e0967b657fb976fb7b45e372ab792b5851e5991cd3c642b1bdca841cc
+https://ropsten.etherscan.io/tx/0x24713fe545b5baf68095206b39f493856a3429269aad213c7bd7b56ab9d38a30
 
 _Consider performing tokenA to tokenA transfers directly if you don't rely on any other processors or the Payment event._
 
@@ -142,9 +144,7 @@ value: 0
 
 path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
-amountIn: 10000000000000000
-
-amountOut: 10000000000000000
+amounts: [10000000000000000,10000000000000000]
 
 receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
 
@@ -155,7 +155,7 @@ postProcessors: []
 
 ### ETH to ETH payment
 
-https://ropsten.etherscan.io/tx/0x96df3afbbdb6e1ffab1662b2f09dc41429e8caf287b2933aab1e3c5b818e4390
+
 
 _Consider performing ETH to ETH transfers directly if you don't rely on any other processors or the Payment event._
 
@@ -164,9 +164,7 @@ value: 0.01
 
 path: [0x0000000000000000000000000000000000000000]
 
-amountIn: 10000000000000000
-
-amountOut: 10000000000000000
+amounts: [10000000000000000,10000000000000000]
 
 receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
 
