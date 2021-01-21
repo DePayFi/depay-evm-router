@@ -435,6 +435,63 @@ describe('DePayPaymentProcessorV1', () => {
     ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
 
+  it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+    const token1 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {processorContract} = await deployAndApproveUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+    
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    let pair2Address = await createUniswapPair({
+      token0: WETH,
+      token1: token1,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let path = [token0.address, WETH.address, token1.address]
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
+    let amountIn = amounts[0].toNumber()
+
+    await expect(
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: path,
+        amountIn: amountIn,
+        amountOut: amountOut,
+        receiver: otherWallet.address,
+        preProcessors: [processorContract.address],
+        deadline: now() - 1000
+      })
+    ).to.be.revertedWith(
+      'UniswapV2Router: EXPIRED'
+    )
+  })
+
   it('swaps ETH to token via uniswap to perform a payment', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
