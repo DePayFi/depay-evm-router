@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import './interfaces/IDePayPaymentProcessorV1Processor.sol';
+import './libraries/TransferHelper.sol';
 
 contract DePayPaymentProcessorV1 is Ownable {
   
@@ -15,9 +16,6 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
   address private ZERO = 0x0000000000000000000000000000000000000000;
-
-  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
-  bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
   // List of approved payment processors
   mapping (address => address) private processors;
@@ -47,7 +45,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     if(path[0] == ZERO) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      _transferIn(path[0], amountIn);
+      TransferHelper.safeTransferFrom(path[0], msg.sender, address(this), amountIn);
     }
 
     _process(preProcessors, path, amountIn, amountOut);
@@ -71,21 +69,10 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   function _pay(address payable receiver, address token, uint amountOut) private {
     if(token == ZERO) {
-      receiver.transfer(amountOut);
+      TransferHelper.safeTransferETH(receiver, amountOut);
     } else {
-      _safeTransfer(token, receiver, amountOut);
+      TransferHelper.safeTransfer(token, receiver, amountOut);
     }
-  }
-
-  // makes sure to transfer in the token used as means of payment
-  function _transferIn(address token, uint amount) private {
-    IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
-  }
-
-  // gas safe transfer of tokens (see: https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2Pair.sol#L44)
-  function _safeTransfer(address token, address to, uint value) private {
-    (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
-    require(success && (data.length == 0 || abi.decode(data, (bool))), 'DePay: Safe transfer failed!');
   }
 
   function approveProcessor(address processor) external onlyOwner returns(bool) {
@@ -131,9 +118,9 @@ contract DePayPaymentProcessorV1 is Ownable {
     uint amount
   ) external onlyOwner returns(bool) {
     if(tokenAddress == ZERO) {
-      _payableOwner().transfer(amount);
+      TransferHelper.safeTransferETH(_payableOwner(), amount);
     } else {
-      _safeTransfer(tokenAddress, _payableOwner(), amount);
+      TransferHelper.safeTransfer(tokenAddress, _payableOwner(), amount);
     }
     return true;
   }

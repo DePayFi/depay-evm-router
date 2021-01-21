@@ -5,6 +5,7 @@ pragma solidity >=0.7.5 <0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/IUniswapV2Router02.sol";
+import './libraries/TransferHelper.sol';
 
 contract DePayPaymentProcessorV1Uniswap01 {
   
@@ -33,7 +34,7 @@ contract DePayPaymentProcessorV1Uniswap01 {
       path[0] != ZERO &&
       IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn
     ) {
-      IERC20(path[0]).approve(UniswapV2Router02, MAXINT);
+      TransferHelper.safeApprove(path[0], UniswapV2Router02, MAXINT);
     }
 
     address[] memory uniPath = new address[](path.length);
