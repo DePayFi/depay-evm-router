@@ -26,14 +26,13 @@ contract DePayPaymentProcessorV1Uniswap01 {
 
   function process(
     address[] calldata path,
-    uint amountIn,
-    uint amountOut,
-    uint deadline
+    uint[] calldata amounts,
+    address[] calldata addresses
   ) external payable returns(bool) {
     
     if( 
       path[0] != ZERO &&
-      IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amountIn
+      IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amounts[0]
     ) {
       TransferHelper.safeApprove(path[0], UniswapV2Router02, MAXINT);
     }
@@ -48,27 +47,27 @@ contract DePayPaymentProcessorV1Uniswap01 {
     }
 
     if(path[0] == ZERO) {
-      IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amountIn}(
-        amountOut,
+      IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amounts[0]}(
+        amounts[1],
         uniPath,
         address(this),
-        deadline
+        amounts[2]
       );
     } else if (path[path.length-1] == ZERO) {
       IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
-        amountIn,
-        amountOut,
+        amounts[0],
+        amounts[1],
         uniPath,
         address(this),
-        deadline
+        amounts[2]
       );
     } else {
       IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
-        amountIn,
-        amountOut,
+        amounts[0],
+        amounts[1],
         uniPath,
         address(this),
-        deadline
+        amounts[2]
       );
     }
 

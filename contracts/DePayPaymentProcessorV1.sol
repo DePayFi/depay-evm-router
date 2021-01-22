@@ -40,9 +40,9 @@ contract DePayPaymentProcessorV1 is Ownable {
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(path[path.length-1]);
     _ensureTransferIn(path[0], amounts[0]);
-    _process(processors[0], path, amounts[0], amounts[1], amounts[2]);
+    _process(processors[0], path, amounts, addresses);
     _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
-    _process(processors[1], path, amounts[0], amounts[1], amounts[2]);
+    _process(processors[1], path, amounts, addresses);
     _ensureBalance(path[path.length-1], balanceBefore);
 
     emit Payment(msg.sender, payable(addresses[0]));
@@ -90,15 +90,14 @@ contract DePayPaymentProcessorV1 is Ownable {
   function _process(
     address[] calldata _processors,
     address[] calldata path,
-    uint amountIn,
-    uint amountOut,
-    uint deadline
+    uint[] calldata amounts,
+    address[] calldata addresses
   ) internal {
     for (uint256 i = 0; i < _processors.length; i++) {
       require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
       address processor = processors[_processors[i]];
       (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
-          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut, deadline
+          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amounts, addresses
       ));
       require(success, string(returnData));
     }

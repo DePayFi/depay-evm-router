@@ -6,8 +6,7 @@ interface IDePayPaymentProcessorV1Processor {
 
   function process(
     address[] calldata path,
-    uint amountIn,
-    uint amountOut,
-    uint deadline
+    uint[] calldata amounts,
+    address[] calldata addresses
   ) external payable returns(bool);
 }
