@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -33,28 +34,24 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   function pay(
     address[] calldata path,
-    uint[2] calldata amounts,
-    address payable receiver,
-    address[] calldata preProcessors,
-    address[] calldata postProcessors,
-    uint deadline
+    uint[] calldata amounts,
+    address[] calldata addresses,
+    address[][] calldata processors
   ) external payable returns(bool) {
-    uint balanceBefore = _balanceBefore(path);
-    {
-      _ensureTransferIn(path[0], amounts[0]);
-      _process(preProcessors, path, amounts[0], amounts[1], deadline);
-      _pay(receiver, path[path.length-1], amounts[1]);
-      _process(postProcessors, path, amounts[0], amounts[1], deadline);
-    }
+    uint balanceBefore = _balanceBefore(path[path.length-1]);
+    _ensureTransferIn(path[0], amounts[0]);
+    _process(processors[0], path, amounts[0], amounts[1], amounts[2]);
+    _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
+    _process(processors[1], path, amounts[0], amounts[1], amounts[2]);
     _ensureBalance(path[path.length-1], balanceBefore);
 
-    emit Payment(msg.sender, receiver);
+    emit Payment(msg.sender, payable(addresses[0]));
     return true;
   }
 
-  function _balanceBefore(address[] calldata path) private returns (uint balance) {
-    balance = _balance(path[path.length-1]);
-    if(path[path.length-1] == ZERO) { balance -= msg.value; }
+  function _balanceBefore(address token) private returns (uint balance) {
+    balance = _balance(token);
+    if(token == ZERO) { balance -= msg.value; }
   }
 
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
@@ -67,11 +64,6 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   function _ensureBalance(address tokenOut, uint balanceBefore) private {
     require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
-  }
-
-  function _ensureBalance(address[] calldata path) private returns (uint balance) {
-    balance = _balance(path[path.length-1]);
-    if(path[path.length-1] == ZERO) { balance -= msg.value; }
   }
 
   function _balance(address token) private view returns(uint) {

@@ -181,11 +181,9 @@ describe('DePayPaymentProcessorV1', () => {
   }: payParameters) {
     return contract.connect(wallet).pay(
       path,
-      [amountIn, amountOut],
-      receiver,
-      preProcessors,
-      postProcessors,
-      deadline,
+      [amountIn, amountOut, deadline],
+      [receiver],
+      [preProcessors, postProcessors],
       { value: value }
     )
   }
