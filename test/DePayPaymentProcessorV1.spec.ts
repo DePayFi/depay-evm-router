@@ -393,7 +393,7 @@ describe('DePayPaymentProcessorV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now()+1000 // deadline
+          now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
         processors: [processorContract.address, contract.address]
@@ -498,7 +498,7 @@ describe('DePayPaymentProcessorV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now()+1000 // deadline
+          now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
         processors: [processorContract.address, contract.address],
@@ -545,7 +545,7 @@ describe('DePayPaymentProcessorV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now()+1000 // deadline
+          now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
         processors: [processorContract.address, contract.address],
@@ -596,7 +596,7 @@ describe('DePayPaymentProcessorV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now()+1000 // deadline
+          now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
         processors: [contract.address]
@@ -648,7 +648,7 @@ describe('DePayPaymentProcessorV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now()+1000
+          now()+10000
         ],
         addresses: [otherWallet.address],
         processors: [contract.address],
