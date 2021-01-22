@@ -13,11 +13,9 @@ interface IDePayPaymentProcessorV1 {
 
   function pay(
     address[] calldata path,
-    uint[2] calldata amounts,
-    address payable receiver,
-    address[] calldata preProcessors,
-    address[] calldata postProcessors,
-    uint deadline
+    uint[] calldata amounts,
+    address[] calldata addresses,
+    address[] calldata processors
   ) external payable returns(bool);
 
   function approveProcessor(

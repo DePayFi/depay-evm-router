@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
-pragma abicoder v2;
 
 interface IDePayPaymentProcessorV1 {
 
@@ -14,7 +13,7 @@ interface IDePayPaymentProcessorV1 {
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
-    address[][] calldata processors
+    address[] calldata processors
   ) external payable returns(bool);
 
   function approveProcessor(
@@ -26,7 +25,7 @@ interface IDePayPaymentProcessorV1 {
   ) external view returns(bool);
 
   function withdraw(
-    address tokenAddress, 
+    address token,
     uint amount
   ) external returns(bool);
   

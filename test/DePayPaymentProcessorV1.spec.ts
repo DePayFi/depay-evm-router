@@ -158,32 +158,26 @@ describe('DePayPaymentProcessorV1', () => {
     contract: Contract
     wallet: Wallet,
     path: string[],
-    amountIn: number,
-    amountOut: number,
-    receiver: string,
+    amounts: number[],
+    addresses: string[],
+    processors: string[],
     value?: number,
-    preProcessors?: string[],
-    postProcessors?: string[],
-    deadline?: number
   }
 
   async function pay({
     contract,
     wallet,
     path,
-    amountIn,
-    amountOut,
-    receiver,
-    value = 0,
-    preProcessors = [],
-    postProcessors = [],
-    deadline = (now() + 10000)
+    amounts,
+    addresses,
+    processors,
+    value = 0
   }: payParameters) {
     return contract.connect(wallet).pay(
       path,
-      [amountIn, amountOut, deadline],
-      [receiver],
-      [preProcessors, postProcessors],
+      amounts,
+      addresses,
+      processors,
       { value: value }
     )
   }
@@ -226,9 +220,9 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address,
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        processors: [contract.address],
         value: 1000
       })
     ).to.changeEtherBalance(otherWallet, 1000)
@@ -241,9 +235,9 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address,
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        processors: [contract.address],
         value: 1000
       })
     ).to.emit(contract, 'Payment')
@@ -261,10 +255,9 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address,
-        postProcessors: [otherWallet.address],
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        processors: [contract.address],
         value: 999
       })
     ).to.be.revertedWith(
@@ -283,9 +276,9 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [testTokenContract.address],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        processors: [contract.address]
       })
     ).to.changeTokenBalance(testTokenContract, otherWallet, 1000)
   })
@@ -341,38 +334,9 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address,
-        preProcessors: [otherWallet.address],
-        value: 1000
-      })
-    ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Processor not approved'
-    )
-  })
-
-  it('fails when trying to use a post-processors that is not approved', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {processorContract} = await deployAndApproveUniswapProcessor({
-      contract,
-      wallet: ownerWallet,
-      WETH,
-      uniswapRouter
-    })
-
-    await expect(
-      pay({
-        contract,
-        wallet: ownerWallet,
-        path: [ZERO],
-        amountIn: 1000,
-        amountOut: 1000,
-        receiver: otherWallet.address,
-        postProcessors: [otherWallet.address],
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        processors: [otherWallet.address],
         value: 1000
       })
     ).to.be.revertedWith(
@@ -426,10 +390,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: path,
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address,
-        preProcessors: [processorContract.address]
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+1000 // deadline
+        ],
+        addresses: [otherWallet.address],
+        processors: [processorContract.address, contract.address]
       })
     ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
@@ -480,11 +447,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: path,
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address,
-        preProcessors: [processorContract.address],
-        deadline: now() - 1000
+        amounts: [
+          amountIn,
+          amountOut,
+          now() - 1000 // deadline
+        ],
+        addresses: [otherWallet.address],
+        processors: [processorContract.address, contract.address]
       })
     ).to.be.revertedWith(
       'UniswapV2Router: EXPIRED'
@@ -526,10 +495,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO, token0.address],
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address,
-        preProcessors: [processorContract.address],
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+1000 // deadline
+        ],
+        addresses: [otherWallet.address],
+        processors: [processorContract.address, contract.address],
         value: amountIn
       })
     ).to.changeTokenBalance(token0, otherWallet, amountOut)
@@ -570,10 +542,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [token0.address, ZERO],
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address,
-        preProcessors: [processorContract.address],
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+1000 // deadline
+        ],
+        addresses: [otherWallet.address],
+        processors: [processorContract.address, contract.address],
         value: amountIn
       })
     ).to.changeEtherBalance(otherWallet, amountOut)
@@ -618,9 +593,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [token0.address, ZERO],
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+1000 // deadline
+        ],
+        addresses: [otherWallet.address],
+        processors: [contract.address]
       })
     ).to.be.revertedWith(
       'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
@@ -666,9 +645,13 @@ describe('DePayPaymentProcessorV1', () => {
         contract,
         wallet: ownerWallet,
         path: [ZERO, token0.address],
-        amountIn: amountIn,
-        amountOut: amountOut,
-        receiver: otherWallet.address,
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+1000
+        ],
+        addresses: [otherWallet.address],
+        processors: [contract.address],
         value: amountIn
       })    
     ).to.be.revertedWith(

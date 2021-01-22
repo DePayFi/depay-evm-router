@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
-pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -15,11 +14,9 @@ contract DePayPaymentProcessorV1 is Ownable {
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
   address private ZERO = 0x0000000000000000000000000000000000000000;
 
-  // List of approved payment processors
-  mapping (address => address) private processors;
+  mapping (address => address) private approvedProcessors;
 
   event Payment(
     address indexed sender,
@@ -36,15 +33,12 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
-    address[][] calldata processors
+    address[] calldata processors
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(path[path.length-1]);
     _ensureTransferIn(path[0], amounts[0]);
-    _process(processors[0], path, amounts, addresses);
-    _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
-    _process(processors[1], path, amounts, addresses);
+    _process(path, amounts, addresses, processors);
     _ensureBalance(path[path.length-1], balanceBefore);
-
     emit Payment(msg.sender, payable(addresses[0]));
     return true;
   }
@@ -74,32 +68,36 @@ contract DePayPaymentProcessorV1 is Ownable {
     }
   }
 
+  function approveProcessor(address processor) external onlyOwner returns(bool) {
+    approvedProcessors[processor] = processor;
+    return true;
+  }
+
+  function _process(
+    address[] calldata path,
+    uint[] calldata amounts,
+    address[] calldata addresses,
+    address[] calldata processors
+  ) internal {
+    for (uint256 i = 0; i < processors.length; i++) {
+      if(processors[i] == address(this)) {
+        _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
+      } else {
+        require(_isApproved(processors[i]), 'DePay: Processor not approved!');
+        address processor = approvedProcessors[processors[i]];
+        (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
+            IDePayPaymentProcessorV1Processor(processor).process.selector, path, amounts, addresses
+        ));
+        require(success, string(returnData));
+      }
+    }
+  }
+
   function _pay(address payable receiver, address token, uint amountOut) private {
     if(token == ZERO) {
       TransferHelper.safeTransferETH(receiver, amountOut);
     } else {
       TransferHelper.safeTransfer(token, receiver, amountOut);
-    }
-  }
-
-  function approveProcessor(address processor) external onlyOwner returns(bool) {
-    processors[processor] = processor;
-    return true;
-  }
-
-  function _process(
-    address[] calldata _processors,
-    address[] calldata path,
-    uint[] calldata amounts,
-    address[] calldata addresses
-  ) internal {
-    for (uint256 i = 0; i < _processors.length; i++) {
-      require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
-      address processor = processors[_processors[i]];
-      (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
-          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amounts, addresses
-      ));
-      require(success, string(returnData));
     }
   }
 
@@ -112,7 +110,7 @@ contract DePayPaymentProcessorV1 is Ownable {
   function _isApproved(
     address processorAddress
   ) internal view returns(bool) {
-    return (processors[processorAddress] != ZERO);
+    return (approvedProcessors[processorAddress] != ZERO);
   }
   
   function _payableOwner() view private returns(address payable) {
@@ -121,13 +119,13 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   // allows to withdraw accidentally sent ETH or tokens
   function withdraw(
-    address tokenAddress,
+    address token,
     uint amount
   ) external onlyOwner returns(bool) {
-    if(tokenAddress == ZERO) {
+    if(token == ZERO) {
       TransferHelper.safeTransferETH(_payableOwner(), amount);
     } else {
-      TransferHelper.safeTransfer(tokenAddress, _payableOwner(), amount);
+      TransferHelper.safeTransfer(token, _payableOwner(), amount);
     }
     return true;
   }
