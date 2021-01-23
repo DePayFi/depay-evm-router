@@ -1033,9 +1033,7 @@ contract TimeLockNerdPool {
     mapping(address => UserInfo) public userInfo;
 
     // The NERD TOKEN!
-    INerdBaseTokenLGE public nerd = INerdBaseTokenLGE(
-        0x32C868F6318D6334B2250F323D914Bc2239E4EeE
-    );
+    INerdBaseTokenLGE public nerd;
     address public nerdAddress;
 
     function getNerdReleaseStart(address _user) public view returns(uint256) {
@@ -1185,18 +1183,12 @@ contract StakingPool is OwnableUpgradeSafe, TimeLockNerdPool {
         uint256 value
     );
 
-    function initialize() public initializer {
+    function initialize(address token) public initializer {
         OwnableUpgradeSafe.__Ownable_init();
-        nerd = INerdBaseTokenLGE(0x32C868F6318D6334B2250F323D914Bc2239E4EeE);
-        require(
-            INoFeeSimple(nerd.transferCheckerAddress()).noFeeList(
-                address(this)
-            ),
-            "!Staking pool should not have fee"
-        );
+        nerd = INerdBaseTokenLGE(token);
         poolInfo.lockedPeriod = NERD_LOCKED_PERIOD_DAYS.mul(NERD_RELEASE_TRUNK);
         DEV_FEE = 724;
-        devaddr = nerd.devFundAddress();
+        devaddr = msg.sender;
         tentativeDevAddress = address(0);
         contractStartBlock = block.number;
 
