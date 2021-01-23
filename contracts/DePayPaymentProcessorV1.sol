@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -33,11 +34,12 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
-    address[] calldata processors
+    address[] calldata processors,
+    string[] calldata data
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(path[path.length-1]);
     _ensureTransferIn(path[0], amounts[0]);
-    _process(path, amounts, addresses, processors);
+    _process(path, amounts, addresses, processors, data);
     _ensureBalance(path[path.length-1], balanceBefore);
     emit Payment(msg.sender, payable(addresses[0]));
     return true;
@@ -77,7 +79,8 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
-    address[] calldata processors
+    address[] calldata processors,
+    string[] calldata data
   ) internal {
     for (uint256 i = 0; i < processors.length; i++) {
       if(processors[i] == address(this)) {
@@ -86,7 +89,7 @@ contract DePayPaymentProcessorV1 is Ownable {
         require(_isApproved(processors[i]), 'DePay: Processor not approved!');
         address processor = approvedProcessors[processors[i]];
         (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
-            IDePayPaymentProcessorV1Processor(processor).process.selector, path, amounts, addresses
+            IDePayPaymentProcessorV1Processor(processor).process.selector, path, amounts, addresses, data
         ));
         require(success, string(returnData));
       }

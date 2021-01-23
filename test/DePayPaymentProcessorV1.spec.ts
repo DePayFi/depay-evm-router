@@ -20,8 +20,10 @@ import IDePayPaymentProcessorV1Processor from '../artifacts/contracts/interfaces
 import UniswapV2Factory from '../artifacts/contracts/test/UniswapV2Factory.sol/UniswapV2Factory.json'
 import UniswapV2Pair from '../artifacts/contracts/test/UniswapV2Pair.sol/UniswapV2Pair.json'
 import UniswapV2Router02 from '../artifacts/contracts/test/UniswapV2Router02.sol/UniswapV2Router02.json'
+import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
 import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
 import DePayPaymentProcessorV1Uniswap01 from '../artifacts/contracts/DePayPaymentProcessorV1Uniswap01.sol/DePayPaymentProcessorV1Uniswap01.json'
+import DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01 from '../artifacts/contracts/DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01.sol/DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01.json'
 
 const { ethers } = require("hardhat")
 
@@ -65,9 +67,23 @@ describe('DePayPaymentProcessorV1', () => {
     WETH,
     uniswapRouter
   }: deployAndApproveUniswapProcessorParameters) {
-    const processorContract = await deployContract(wallet, DePayPaymentProcessorV1Uniswap01, [WETH.address, uniswapRouter.address])
-    await contract.connect(wallet).approveProcessor(processorContract.address)
-    return { processorContract }
+    const uniswapProcessorContract = await deployContract(wallet, DePayPaymentProcessorV1Uniswap01, [WETH.address, uniswapRouter.address])
+    await contract.connect(wallet).approveProcessor(uniswapProcessorContract.address)
+    return { uniswapProcessorContract }
+  }
+
+  interface deployAndApproveContractCallProcessorParameters {
+    contract: Contract,
+    wallet: Wallet
+  }
+
+  async function deployAndApproveContractCallProcessor({
+    contract,
+    wallet
+  }: deployAndApproveContractCallProcessorParameters) {
+    const contractCallProcessorContract = await deployContract(wallet, DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01)
+    await contract.connect(wallet).approveProcessor(contractCallProcessorContract.address)
+    return { contractCallProcessorContract }
   }
 
   interface deployWETHParameters {
@@ -79,6 +95,23 @@ describe('DePayPaymentProcessorV1', () => {
   }: deployWETHParameters) {
     const WETH = await deployContract(wallet, WETH9)
     return { WETH }
+  }
+
+  interface deployStakingPoolParameters {
+    wallet: Wallet,
+    token: string
+  }
+
+  async function deployStakingPool({
+    wallet,
+    token
+  }: deployStakingPoolParameters) {
+    const stakingPoolContract = await deployContract(wallet, StakingPool)
+    await stakingPoolContract.initialize(token)
+    
+    return {
+      stakingPoolContract
+    }
   }
 
   interface deployUniswapParameters {
@@ -161,6 +194,7 @@ describe('DePayPaymentProcessorV1', () => {
     amounts: number[],
     addresses: string[],
     processors: string[],
+    data?: string[],
     value?: number,
   }
 
@@ -171,6 +205,7 @@ describe('DePayPaymentProcessorV1', () => {
     amounts,
     addresses,
     processors,
+    data = [],
     value = 0
   }: payParameters) {
     return contract.connect(wallet).pay(
@@ -178,6 +213,7 @@ describe('DePayPaymentProcessorV1', () => {
       amounts,
       addresses,
       processors,
+      data,
       { value: value }
     )
   }
@@ -289,14 +325,14 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
     })
 
-    expect(await contract.isApproved(processorContract.address)).to.eq(true)
+    expect(await contract.isApproved(uniswapProcessorContract.address)).to.eq(true)
     expect(await contract.isApproved(otherWallet.address)).to.eq(false)
   })
 
@@ -322,7 +358,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -353,7 +389,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -396,7 +432,7 @@ describe('DePayPaymentProcessorV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        processors: [processorContract.address, contract.address]
+        processors: [uniswapProcessorContract.address, contract.address]
       })
     ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
@@ -410,7 +446,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -453,7 +489,7 @@ describe('DePayPaymentProcessorV1', () => {
           now() - 1000 // deadline
         ],
         addresses: [otherWallet.address],
-        processors: [processorContract.address, contract.address]
+        processors: [uniswapProcessorContract.address, contract.address]
       })
     ).to.be.revertedWith(
       'UniswapV2Router: EXPIRED'
@@ -468,7 +504,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -501,13 +537,13 @@ describe('DePayPaymentProcessorV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        processors: [processorContract.address, contract.address],
+        processors: [uniswapProcessorContract.address, contract.address],
         value: amountIn
       })
     ).to.changeTokenBalance(token0, otherWallet, amountOut)
   })
 
-  it('swaps tokens for ETH via uniswap to performf a payment', async () => {
+  it('swaps tokens for ETH via uniswap to perform a payment', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
@@ -515,7 +551,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -548,10 +584,76 @@ describe('DePayPaymentProcessorV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        processors: [processorContract.address, contract.address],
+        processors: [uniswapProcessorContract.address, contract.address],
         value: amountIn
       })
     ).to.changeEtherBalance(otherWallet, amountOut)
+  })
+
+  it('swaps tokens to tokens via uniswap and calls another contract with the swapped tokens within the same transaction', async () => {
+    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+
+    const token0 = await deployContract(ownerWallet, TestToken)
+    const token1 = await deployContract(ownerWallet, TestToken)
+
+    const {WETH} = await deployWETH({wallet: ownerWallet})
+    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
+
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
+      contract,
+      wallet: ownerWallet,
+      WETH,
+      uniswapRouter
+    })
+
+    let pair1Address = await createUniswapPair({
+      token0: WETH,
+      token1: token0,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    let pair2Address = await createUniswapPair({
+      token0: WETH,
+      token1: token1,
+      WETH,
+      router: uniswapRouter,
+      wallet: ownerWallet,
+      uniswapFactory: uniswapFactory
+    })
+
+    await token0.connect(ownerWallet).approve(contract.address, MAXINT)
+
+    let path = [token0.address, WETH.address, token1.address]
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
+    let amountIn = amounts[0].toNumber()
+
+    const {contractCallProcessorContract} = await deployAndApproveContractCallProcessor({
+      contract,
+      wallet: ownerWallet
+    })
+
+    const {stakingPoolContract} = await deployStakingPool({
+      wallet: ownerWallet,
+      token: token1.address
+    })
+
+    await pay({
+      contract,
+      wallet: ownerWallet,
+      path: path,
+      amounts: [
+        amountIn,
+        amountOut,
+        now()+10000 // deadline
+      ],
+      addresses: [stakingPoolContract.address, ownerWallet.address],
+      data: ["deposit(uint256,address)"],
+      processors: [uniswapProcessorContract.address, contractCallProcessorContract.address]
+    })
   })
 
   it('makes sure that the eth balance in the smart contract is the same after the payment then before', async () => {
@@ -564,7 +666,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
@@ -616,7 +718,7 @@ describe('DePayPaymentProcessorV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const {processorContract} = await deployAndApproveUniswapProcessor({
+    const {uniswapProcessorContract} = await deployAndApproveUniswapProcessor({
       contract,
       wallet: ownerWallet,
       WETH,
