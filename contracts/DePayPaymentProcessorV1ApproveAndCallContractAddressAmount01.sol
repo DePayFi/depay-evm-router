@@ -6,9 +6,8 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/TransferHelper.sol';
 
-contract DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01 {
+contract DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 {
   
-  uint public immutable MAXINT = type(uint256).max;
   address public immutable ZERO = 0x0000000000000000000000000000000000000000;
 
   function process(
@@ -18,29 +17,30 @@ contract DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01 {
     string[] calldata data
   ) external payable returns(bool) {
 
-    if( 
-      path[path.length-1] != ZERO &&
-      IERC20(path[path.length-1]).allowance(address(this), addresses[0]) < amounts[1]
-    ) {
-      TransferHelper.safeApprove(path[path.length-1], addresses[0], MAXINT);
+    if(path[path.length-1] != ZERO) {
+      TransferHelper.safeApprove(
+        path[path.length-1],
+        addresses[1],
+        amounts[1]
+      );
     }
-    
-    bytes memory returnData; 
-    bool success;   
+
+    bytes memory returnData;
+    bool success;
     if(path[path.length-1] == ZERO) {
-      (success, returnData) = addresses[0].call{value: amounts[1]}(
+      (success, returnData) = addresses[1].call{value: amounts[1]}(
         abi.encodeWithSignature(
           data[0],
-          amounts[1],
-          addresses[1]
+          addresses[0],
+          amounts[1]
         )
       );
     } else {
-      (success, returnData) = addresses[0].call(
+      (success, returnData) = addresses[1].call(
         abi.encodeWithSignature(
           data[0],
-          amounts[1],
-          addresses[1]
+          addresses[0],
+          amounts[1]
         )
       );
     }

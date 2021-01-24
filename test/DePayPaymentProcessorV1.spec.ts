@@ -23,7 +23,7 @@ import UniswapV2Router02 from '../artifacts/contracts/test/UniswapV2Router02.sol
 import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
 import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
 import DePayPaymentProcessorV1Uniswap01 from '../artifacts/contracts/DePayPaymentProcessorV1Uniswap01.sol/DePayPaymentProcessorV1Uniswap01.json'
-import DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01 from '../artifacts/contracts/DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01.sol/DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01.json'
+import DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01.sol/DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01.json'
 
 const { ethers } = require("hardhat")
 
@@ -81,7 +81,7 @@ describe('DePayPaymentProcessorV1', () => {
     contract,
     wallet
   }: deployAndApproveContractCallProcessorParameters) {
-    const contractCallProcessorContract = await deployContract(wallet, DePayPaymentProcessorV1ContractCallPreApproveAmountAddress01)
+    const contractCallProcessorContract = await deployContract(wallet, DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01)
     await contract.connect(wallet).approveProcessor(contractCallProcessorContract.address)
     return { contractCallProcessorContract }
   }
@@ -641,19 +641,25 @@ describe('DePayPaymentProcessorV1', () => {
       token: token1.address
     })
 
-    await pay({
-      contract,
-      wallet: ownerWallet,
-      path: path,
-      amounts: [
-        amountIn,
-        amountOut,
-        now()+10000 // deadline
-      ],
-      addresses: [stakingPoolContract.address, ownerWallet.address],
-      data: ["deposit(uint256,address)"],
-      processors: [uniswapProcessorContract.address, contractCallProcessorContract.address]
-    })
+    await expect(
+      pay({
+        contract,
+        wallet: ownerWallet,
+        path: path,
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+10000 // deadline
+        ],
+        addresses: [ownerWallet.address, stakingPoolContract.address],
+        data: ["depositFor(address,uint256)"],
+        processors: [uniswapProcessorContract.address, contractCallProcessorContract.address]
+      })
+    ).to.emit(stakingPoolContract, 'Deposit')
+    .withArgs(
+      ownerWallet.address,
+      amountOut
+    )
   })
 
   it('makes sure that the eth balance in the smart contract is the same after the payment then before', async () => {

@@ -1234,6 +1234,7 @@ contract StakingPool is OwnableUpgradeSafe, TimeLockNerdPool {
         address _recipient,
         uint256 _amount
     ) internal returns(uint256) {
+        return 1;
         (uint256 _receiveAmount, ) = IFeeApprover(nerd.transferCheckerAddress())
             .calculateAmountsAfterFee(_sender, _recipient, _amount);
         return _receiveAmount;
@@ -1416,11 +1417,7 @@ contract StakingPool is OwnableUpgradeSafe, TimeLockNerdPool {
         // to user
         updateAndPayOutPending(_depositFor); // Update the balances of person that amount is being deposited for
 
-        pendingDeposit = computeDepositAmount(
-            msg.sender,
-            address(this),
-            _originAmount
-        );
+        pendingDeposit = _originAmount;
         uint256 _actualDepositReceive = pendingDeposit;
         if (_actualDepositReceive > 0) {
             nerd.transferFrom(
