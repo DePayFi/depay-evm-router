@@ -97,7 +97,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     uint amountOut,
     uint deadline
   ) internal {
-    for (uint256 i = 0; i < _processors.length; i++) {
+    for (uint i = 0; i < _processors.length; i++) {
       require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
       address processor = processors[_processors[i]];
       (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
