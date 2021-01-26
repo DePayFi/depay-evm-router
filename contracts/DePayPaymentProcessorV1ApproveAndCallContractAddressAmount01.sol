@@ -8,7 +8,7 @@ import './libraries/TransferHelper.sol';
 
 contract DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 {
   
-  address public immutable ZERO = 0x0000000000000000000000000000000000000000;
+  address public immutable ZERO = address(0);
 
   function process(
     address[] calldata path,
