@@ -770,7 +770,7 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   // This makes sure that the balance after the payment not less than before.
   // Prevents draining of the contract.
-  function _ensureBalance(address tokenOut, uint balanceBefore) private {
+  function _ensureBalance(address tokenOut, uint balanceBefore) private view {
     require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
   }
 
