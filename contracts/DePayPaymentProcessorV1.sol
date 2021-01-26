@@ -15,7 +15,8 @@ contract DePayPaymentProcessorV1 is Ownable {
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  address private ZERO = 0x0000000000000000000000000000000000000000;
+  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
+  address private ZERO = address(0);
 
   mapping (address => address) private approvedProcessors;
 
@@ -82,6 +83,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     address[] calldata processors,
     string[] calldata data
   ) internal {
+<<<<<<< HEAD
     for (uint256 i = 0; i < processors.length; i++) {
       if(processors[i] == address(this)) {
         _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
@@ -101,6 +103,15 @@ contract DePayPaymentProcessorV1 is Ownable {
       TransferHelper.safeTransferETH(receiver, amountOut);
     } else {
       TransferHelper.safeTransfer(token, receiver, amountOut);
+=======
+    for (uint i = 0; i < _processors.length; i++) {
+      require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
+      address processor = processors[_processors[i]];
+      (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
+          IDePayPaymentProcessorV1Processor(processor).process.selector, path, amountIn, amountOut, deadline
+      ));
+      require(success, string(returnData));
+>>>>>>> master
     }
   }
 
