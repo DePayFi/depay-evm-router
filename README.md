@@ -7,13 +7,6 @@
 - [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x29cdb0ee2238cde0fb7b68f04d4d79a7c7ab3cca)
 - [DePayPaymentProcessorV1Uniswap01](https://ropsten.etherscan.io/address/0xf1b8bbd33b060ca04f85681b771223c49802075f)
 
-## Quick Start
-
-```
-yarn install
-yarn test
-```
-
 ## Summary
 
 This smart contract enables decentralized payment processing.
@@ -173,7 +166,16 @@ preProcessors: []
 postProcessors: []
 ```
 
-## Deploy
+## Development
+
+### Quick Start
+
+```
+yarn install
+yarn test
+```
+
+### Deploy
 
 1. `yarn flatten`
 
