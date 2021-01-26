@@ -13,7 +13,6 @@ contract DePayPaymentProcessorV1Uniswap01 {
   using SafeMath for uint;
 
   uint public immutable MAXINT = type(uint256).max;
-  address public immutable ZERO = 0x0000000000000000000000000000000000000000;
   address public immutable ZERO = address(0);
   address public immutable WETH;
   address public immutable UniswapV2Router02;
