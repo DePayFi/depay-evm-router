@@ -4,8 +4,7 @@
 
 #### Ropsten
 
-- [DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0x29cdb0ee2238cde0fb7b68f04d4d79a7c7ab3cca)
-- [DePayPaymentProcessorV1Uniswap01](https://ropsten.etherscan.io/address/0xf1b8bbd33b060ca04f85681b771223c49802075f)
+[DePayPaymentProcessorV1](https://ropsten.etherscan.io/address/0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5)
 
 ## Summary
 
@@ -88,7 +87,7 @@ Sends the token of path at the last position (`path[path.length-1]`) for the amo
 
 Mainnet: 
 
-Ropsten: 
+Ropsten: [0xcd1A015321B183cB5Ea046a4C80dd6E88B89F3b5](https://ropsten.etherscan.io/address/0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5)
 
 ### DePayPaymentProcessorV1Uniswap01
 
@@ -99,7 +98,7 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Mainnet: 
 
-Ropsten: 
+Ropsten: [0x80F43d58E068e04125B9688EE46821A42CD4c53E](https://ropsten.etherscan.io/address/0x80f43d58e068e04125b9688ee46821a42cd4c53e)
 
 ### DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01
 
@@ -116,76 +115,107 @@ to the method with the signature provided in `data` at index 0 (`data[0]`).
 
 Mainnet: 
 
-Ropsten: 
+Ropsten: [0xB55209ca3F7f7A85050C9642303c43996c31b99D](https://ropsten.etherscan.io/address/0xb55209ca3f7f7a85050c9642303c43996c31b99d)
 
 
 ## Examples
 
-### tokenA to tokenB payment
+### tokenA to tokenB payment with smart contract receiver (e.g. staking pool)
 
-https://ropsten.etherscan.io/tx/0x60a5820629be6e73c984d23e5f0cc943ccd5981cba9210f86bd713c9a873dac3
+https://ropsten.etherscan.io/tx/0xd284b953e2d2828c30aabf31e7399a3329a4b1be29e5b55470bf454345f22910
 
 `path` needs to go through tokenA -> WETH -> tokenB if processed by Uniswap.
+
+Requires to approve token at first index of path to be approved on Uniswap router for the payment processor smart contract.
+
+Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
+
+```
+value: 0
+
+path: [0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB,0xc778417E063141139Fce010982780140Aa0cD5Ab,0x9c2Db0108d7C8baE8bE8928d151e0322F75e8Eea]
+
+amounts: [44412863949783468441,1000000000000000000,1711537544]
+
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950,0x0d8A34Cb6c08Ec71eA8009DF725a779B1877d4c5]
+
+processors: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xB55209ca3F7f7A85050C9642303c43996c31b99D]
+
+data: ["depositFor(address,uint256)"]
+```
+
+### tokenA to tokenB payment
+
+https://ropsten.etherscan.io/tx/0x8c990e33359d3b3166b782cd217059c4a9197b3a3b6688e4b301781fae31bd2a
+
+`path` needs to go through tokenA -> WETH -> tokenB if processed by Uniswap.
+
+Requires to approve token at first index of path to be approved on Uniswap router for the payment processor smart contract.
+
+Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
 
 ```
 value: 0
 
 path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xc778417e063141139fce010982780140aa0cd5ab,0x1f9840a85d5af5bf1d1762f925bdaddc4201f984]
 
-amounts: [903657000000000000,7000000000000000]
+amounts: [17123169254163466721,7000000000000000,1711537544]
 
-receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
+processors: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
 
-postProcessors: []
-
-deadline: 1611537544
+data: []
 ```
+
+IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
+to avoid depositing swaps into the payment processor contract itself (without performing any payment).
 
 ### tokenA to ETH payment
 
-https://ropsten.etherscan.io/tx/0x306770faa3818baf40615ffa04e7f5275a9458b7a8181ca7d3f9a6341acd5191
+https://ropsten.etherscan.io/tx/0x9db6ab92ad1f5cf3fc55ed89a6fc2f37c0b512e8983970bea31a7e75b6ae38d8
 
 ```
 value: 0
 
 path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0x0000000000000000000000000000000000000000]
 
-amounts: [1128452700000000000,9000000000000000]
+amounts: [26618972399173231429,10000000000000000,1711537544]
 
-receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
+processors: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
 
-postProcessors: []
-
-deadline: 1611537544
+data: []
 ```
+
+IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
+to avoid depositing swaps into the payment processor contract itself (without performing any payment).
 
 ### ETH to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x6306bb636a300800ec5a79c65c69612c1ef6227f20aad34cd36ca70b76c93c35
+https://ropsten.etherscan.io/tx/0xc0db866d9c641404e7671966e6ecec5bf092dd73f3b5d64b60e1032da0da8ff8
 
 ```
-value: 0.00988172
+value: 0.000341694208712148
 
 path: [0x0000000000000000000000000000000000000000,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
-amounts: [9881720000000000,1000000000000000000]
+amounts: [341694208712148,1000000000000000000,1711537544]
 
-receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-preProcessors: [0xF1B8BBd33B060cA04f85681b771223c49802075F]
+processors: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
 
-postProcessors: []
-
-deadline: 1611537544
+data: []
 ```
+
+IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
+to avoid depositing swaps into the payment processor contract itself (without performing any payment).
 
 ### tokenA to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x24713fe545b5baf68095206b39f493856a3429269aad213c7bd7b56ab9d38a30
+https://ropsten.etherscan.io/tx/0x00ed1b5b8f63e52fcda44abf07921a47912364b69de6f461e41cd4bcd2230d51
 
 _Consider performing tokenA to tokenA transfers directly if you don't rely on any other processors or the Payment event._
 
@@ -198,16 +228,19 @@ path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
 amounts: [10000000000000000,10000000000000000]
 
-receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-preProcessors: []
+processors: [0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
 
-postProcessors: []
+data: []
 ```
+
+IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
+to avoid depositing into the payment processor contract itself without performing any payment.
 
 ### ETH to ETH payment
 
-
+https://ropsten.etherscan.io/tx/0x9d16069f2dabf774108ad36e585f16f42c6568bcea81b6f872a082affd9d3d99
 
 _Consider performing ETH to ETH transfers directly if you don't rely on any other processors or the Payment event._
 
@@ -218,12 +251,15 @@ path: [0x0000000000000000000000000000000000000000]
 
 amounts: [10000000000000000,10000000000000000]
 
-receiver: 0x08B277154218CCF3380CAE48d630DA13462E3950
+addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-preProcessors: []
+processors: [0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
 
-postProcessors: []
+data: []
 ```
+
+IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
+to avoid just depositing into the payment processor contract itself without performing any payment.
 
 ## Development
 
