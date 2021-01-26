@@ -91,7 +91,7 @@ Ropsten: [0xcd1A015321B183cB5Ea046a4C80dd6E88B89F3b5](https://ropsten.etherscan.
 
 ### DePayPaymentProcessorV1Uniswap01
 
-Swap tokenA<>tokenB, ETH<>tokenA or tokenA<>ETH on Uniswap as part of the payment.
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
