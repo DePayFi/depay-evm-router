@@ -15,7 +15,7 @@ contract DePayPaymentProcessorV1 is Ownable {
   using SafeERC20 for IERC20;
 
   // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
-  address private ZERO = 0x0000000000000000000000000000000000000000;
+  address private ZERO = address(0);
 
   // List of approved payment processors
   mapping (address => address) private processors;
@@ -69,11 +69,6 @@ contract DePayPaymentProcessorV1 is Ownable {
     require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
   }
 
-  function _ensureBalance(address[] calldata path) private returns (uint balance) {
-    balance = _balance(path[path.length-1]);
-    if(path[path.length-1] == ZERO) { balance -= msg.value; }
-  }
-
   function _balance(address token) private view returns(uint) {
     if(token == ZERO) {
         return address(this).balance;
@@ -102,7 +97,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     uint amountOut,
     uint deadline
   ) internal {
-    for (uint256 i = 0; i < _processors.length; i++) {
+    for (uint i = 0; i < _processors.length; i++) {
       require(_isApproved(_processors[i]), 'DePay: Processor not approved!');
       address processor = processors[_processors[i]];
       (bool success, bytes memory returnData) = processor.delegatecall(abi.encodeWithSelector(
