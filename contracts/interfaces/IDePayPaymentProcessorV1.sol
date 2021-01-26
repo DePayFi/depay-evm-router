@@ -10,6 +10,10 @@ interface IDePayPaymentProcessorV1 {
     address payable indexed receiver
   );
 
+  event ProcessorApproved(
+    address indexed processorAddress
+  );
+
   function ZERO() external view returns(address);
 
   function approvedProcessors(address) external view returns(address);
