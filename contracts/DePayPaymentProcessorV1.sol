@@ -15,7 +15,7 @@ contract DePayPaymentProcessorV1 is Ownable {
   using SafeERC20 for IERC20;
 
   // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
-  address private ZERO = 0x0000000000000000000000000000000000000000;
+  address private ZERO = address(0);
 
   // List of approved payment processors
   mapping (address => address) private processors;
