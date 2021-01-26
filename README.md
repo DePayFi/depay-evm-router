@@ -16,10 +16,10 @@ which allows a sender to pay a receiver while swapping tokens as part of the sam
 
 This enables ETH to ETH, tokenA to tokenA, ETH to tokenA, tokenA to ETH and tokenA to tokenB payments.
 
-Any payment processor, decentralized exchange or liqudity pool protocol can be added to `processors` using `approveProcessor`
-to improve cost-effectiveness of payment routing.
+To increase functionalities and to enable more and future decentralized exchanges and protocols,
+additional processors can be added/approved by calling `approveProcessor`.
 
-## Functions
+## Functionalities
 
 ### `pay` Sender pays a receiver
 
