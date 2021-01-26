@@ -69,11 +69,6 @@ contract DePayPaymentProcessorV1 is Ownable {
     require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
   }
 
-  function _ensureBalance(address[] calldata path) private returns (uint balance) {
-    balance = _balance(path[path.length-1]);
-    if(path[path.length-1] == ZERO) { balance -= msg.value; }
-  }
-
   function _balance(address token) private view returns(uint) {
     if(token == ZERO) {
         return address(this).balance;
