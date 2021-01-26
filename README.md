@@ -261,6 +261,10 @@ data: []
 IMPORTANT: Don't forget to have the actually payment processor added at the end of `processors`
 to avoid just depositing into the payment processor contract itself without performing any payment.
 
+## Security Audits
+
+1. https://github.com/DePayFi/depay-ethereum-payment-processing/issues/3
+
 ## Development
 
 ### Quick Start
