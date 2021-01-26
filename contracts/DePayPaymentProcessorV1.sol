@@ -15,20 +15,27 @@ contract DePayPaymentProcessorV1 is Ownable {
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicating ETH transfer, because ETH does not have an address like other tokens
+  // Address ZERO indicates ETH transfers.
   address public immutable ZERO = address(0);
 
-  mapping (address => address) private approvedProcessors;
+  // List of approved processors. Use approveProcessor to add new processors.
+  mapping (address => address) public approvedProcessors;
 
+  // The payment event.
   event Payment(
     address indexed sender,
     address payable indexed receiver
   );
 
+  // Event to emit newly approved processors.
+  event ProcessorApproved(
+    address indexed processorAddress
+  );
+
   receive() external payable {
-    // accepts eth payments which are required to
-    // swap and pay from ETH to any token
-    // especially unwrapping WETH as part of token conversions
+    // Accepts ETH payments which is require in order
+    // to swap from and to ETH
+    // especially unwrapping WETH as part of token swaps.
   }
 
   function pay(
@@ -42,7 +49,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     _ensureTransferIn(path[0], amounts[0]);
     _process(path, amounts, addresses, processors, data);
     _ensureBalance(path[path.length-1], balanceBefore);
-    emit Payment(msg.sender, payable(addresses[0]));
+    emit Payment(msg.sender, payable(addresses[addresses.length-1]));
     return true;
   }
 
@@ -73,6 +80,7 @@ contract DePayPaymentProcessorV1 is Ownable {
 
   function approveProcessor(address processor) external onlyOwner returns(bool) {
     approvedProcessors[processor] = processor;
+    emit ProcessorApproved(processor);
     return true;
   }
 

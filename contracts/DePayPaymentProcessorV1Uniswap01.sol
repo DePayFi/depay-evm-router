@@ -12,8 +12,14 @@ contract DePayPaymentProcessorV1Uniswap01 {
   
   using SafeMath for uint;
 
-  uint public immutable MAXINT = type(uint256).max;
-  address public immutable ZERO = address(0);
+  // MAXINT to be used only, to increase allowance from
+  // payment processor contract towards known 
+  // decentralized exchanges, not to dyanmically called contracts!!!
+  uint private immutable MAXINT = type(uint256).max;
+  
+  // Address ZERO indicates ETH transfers.  
+  address private immutable ZERO = address(0);
+
   address public immutable WETH;
   address public immutable UniswapV2Router02;
 

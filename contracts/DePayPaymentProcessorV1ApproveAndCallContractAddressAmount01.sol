@@ -8,7 +8,8 @@ import './libraries/TransferHelper.sol';
 
 contract DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 {
   
-  address public immutable ZERO = address(0);
+  // Address ZERO indicates ETH transfers.  
+  address private immutable ZERO = address(0);
 
   function process(
     address[] calldata path,
