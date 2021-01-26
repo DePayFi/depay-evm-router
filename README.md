@@ -27,7 +27,7 @@ The main function to process payments.
 
 Arguments:
 
-`path`: The path of the token conversion.
+`path`: The path of the token conversion:
 
 ```
 ETH to ETH payment: 
@@ -46,19 +46,78 @@ DEPAY to UNI payment (processing goes through WETH):
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
 ```
 
-`amountIn`: Amount of tokens payed in from the sender.
+`amounts`: Amounts passed to proccessors:
 
-`amountOut`: Amount of tokens payed to the receiver.
+```
+e.g. [amountIn, amountOut, deadline]
+```
 
-`receiver`: The receiver address of the payment.
+`addresses`: Addresses passed to proccessors:
 
-`preProcessors`: List of preProcessors to run before the payment is peformed (e.g. swapping tokens).
+```
+e.g. [receiver]
+or [for, smartContractReceiver]
+```
 
-`postProcessors`: List of postProcessors to run after the payment is peformed (e.g. conditional checks).
+`processors`: List and order of processors to be executed for this payment:
+
+```
+e.g. [uniswapProcessor,paymentProcessor] to swap and pay
+or [uniswapProcessor,callContractProcessor] to swap and call another contract
+```
+See [Approved Processors](#approved-processors) for more details about available and approved processors.
+
+`data`: List and order of processors to be executed for this payment:
+
+```
+e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
+```
 
 ### `approveProcessor` Approves a payment processor.
 
 `processor`: Address for the processor to be approved.
+
+
+## Approved Processors
+
+### DePayPaymentProcessorV1
+
+Used to send tokens (or ETH) to a receiver.
+
+Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
+
+Mainnet: 
+
+Ropsten: 
+
+### DePayPaymentProcessorV1Uniswap01
+
+Swap tokenA<>tokenB, ETH<>tokenA or tokenA<>ETH on Uniswap as part of the payment.
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+
+Mainnet: 
+
+Ropsten: 
+
+### DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01
+
+Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
+
+Approves the amount at index 1 of `amounts` (`amounts[1]`)
+for the token at the last position of `path` (`path[path.length-1]`)
+to be used by the smart contract at index 1 of `addresses` (`addresses[1]`).
+
+Afterwards, calls the smart contract at index 1 of `addresses` (`addresses[1]`),
+passing the address at index 0 of `addresses` (`addresses[0]`)
+and passing the amount at index 1 of `amounts` (`amounts[1]`)
+to the method with the signature provided in `data` at index 0 (`data[0]`).
+
+Mainnet: 
+
+Ropsten: 
+
 
 ## Examples
 

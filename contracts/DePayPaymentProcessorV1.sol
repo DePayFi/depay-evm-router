@@ -38,11 +38,21 @@ contract DePayPaymentProcessorV1 is Ownable {
     // especially unwrapping WETH as part of token swaps.
   }
 
+  // The main function to process payments.
   function pay(
+    // The path of the token conversion.
     address[] calldata path,
+    // Amounts passed to proccessors:
+    // e.g. [amountIn, amountOut, deadline]
     uint[] calldata amounts,
+    // Addresses passed to processors:
+    // e.g. [receiver]
     address[] calldata addresses,
+    // List and order of processors to be executed for this payment:
+    // e.g. [uniswapProcessor,paymentProcessor] to swap and pay
     address[] calldata processors,
+    // Data passed to processors:
+    // e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
     string[] calldata data
   ) external payable returns(bool) {
     uint balanceBefore = _balanceBefore(path[path.length-1]);
@@ -53,11 +63,15 @@ contract DePayPaymentProcessorV1 is Ownable {
     return true;
   }
 
+  // Returns the balance for a token (or ETH) before the payment is processed.
+  // In case of ETH we need to deduct what has been payed in as part of the transaction itself.
   function _balanceBefore(address token) private returns (uint balance) {
     balance = _balance(token);
     if(token == ZERO) { balance -= msg.value; }
   }
 
+  // This makes sure that the sender has payed in the token (or ETH)
+  // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
     if(tokenIn == ZERO) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
@@ -66,24 +80,8 @@ contract DePayPaymentProcessorV1 is Ownable {
     }
   }
 
-  function _ensureBalance(address tokenOut, uint balanceBefore) private {
-    require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
-  }
-
-  function _balance(address token) private view returns(uint) {
-    if(token == ZERO) {
-        return address(this).balance;
-    } else {
-        return IERC20(token).balanceOf(address(this));
-    }
-  }
-
-  function approveProcessor(address processor) external onlyOwner returns(bool) {
-    approvedProcessors[processor] = processor;
-    emit ProcessorApproved(processor);
-    return true;
-  }
-
+  // Executes processors in the order provided.
+  // Calls itself's _pay function if the payment processor contract itself is part of processors.
   function _process(
     address[] calldata path,
     uint[] calldata amounts,
@@ -93,7 +91,7 @@ contract DePayPaymentProcessorV1 is Ownable {
   ) internal {
     for (uint i = 0; i < processors.length; i++) {
       if(processors[i] == address(this)) {
-        _pay(payable(addresses[0]), path[path.length-1], amounts[1]);
+        _pay(payable(addresses[addresses.length-1]), path[path.length-1], amounts[1]);
       } else {
         require(_isApproved(processors[i]), 'DePay: Processor not approved!');
         address processor = approvedProcessors[processors[i]];
@@ -105,6 +103,7 @@ contract DePayPaymentProcessorV1 is Ownable {
     }
   }
 
+  // Sends token (or ETH) to receiver.
   function _pay(address payable receiver, address token, uint amountOut) private {
     if(token == ZERO) {
       TransferHelper.safeTransferETH(receiver, amountOut);
@@ -113,23 +112,48 @@ contract DePayPaymentProcessorV1 is Ownable {
     }
   }
 
+  // This makes sure that the balance after the payment not less than before.
+  // Prevents draining of the contract.
+  function _ensureBalance(address tokenOut, uint balanceBefore) private {
+    require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+  }
+
+  // Returns the balance of the payment processor contract for a token (or ETH).
+  function _balance(address token) private view returns(uint) {
+    if(token == ZERO) {
+        return address(this).balance;
+    } else {
+        return IERC20(token).balanceOf(address(this));
+    }
+  }
+
+  // Approves the provided processor.
+  function approveProcessor(address processor) external onlyOwner returns(bool) {
+    approvedProcessors[processor] = processor;
+    emit ProcessorApproved(processor);
+    return true;
+  }
+
+  // Function to check if a processor address is approved.
   function isApproved(
     address processorAddress
   ) external view returns(bool){
     return _isApproved(processorAddress);
   }
 
+  // Internal function to check if a processor address is approved.
   function _isApproved(
     address processorAddress
   ) internal view returns(bool) {
     return (approvedProcessors[processorAddress] != ZERO);
   }
   
+  // Wrapping the contract owner in payable and returns payableOwner.
   function _payableOwner() view private returns(address payable) {
     return payable(owner());
   }
 
-  // allows to withdraw accidentally sent ETH or tokens
+  // Allows to withdraw accidentally sent ETH or tokens.
   function withdraw(
     address token,
     uint amount
