@@ -1,13 +1,11 @@
-// Root file: contracts/interfaces/IDePayPaymentProcessorV1Processor.sol
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
-interface IDePayPaymentProcessorV1Processor {
+interface IDePayPaymentsV1Plugin {
 
-  function process(
+  function execute(
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,

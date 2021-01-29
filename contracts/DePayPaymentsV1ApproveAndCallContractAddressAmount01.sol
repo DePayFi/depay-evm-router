@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/TransferHelper.sol';
 
-contract DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 {
+contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
   
   // Address ZERO indicates ETH transfers.  
   address private immutable ZERO = address(0);
@@ -21,7 +21,7 @@ contract DePayPaymentProcessorV1ApproveAndCallContractAddressAmount01 {
   // passing the address at index 0 of addresses (addresses[0])
   // and passing the amount at index 1 of amounts (amounts[1])
   // to the method with the signature provided in data at index 0 (data[0]).
-  function process(
+  function execute(
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
