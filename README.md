@@ -4,7 +4,7 @@
 
 #### Ropsten
 
-[DePayPaymentsV1](https://ropsten.etherscan.io/address/0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5)
+[DePayPaymentsV1](https://ropsten.etherscan.io/address/0xCEf6dc2e210d1dD29A71185B33cE7002611C010A)
 
 ## Summary
 
@@ -87,7 +87,7 @@ Sends the token of path at the last position (`path[path.length-1]`) for the amo
 
 Mainnet: 
 
-Ropsten: [0xcd1A015321B183cB5Ea046a4C80dd6E88B89F3b5](https://ropsten.etherscan.io/address/0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5)
+Ropsten: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A](https://ropsten.etherscan.io/address/0xCEf6dc2e210d1dD29A71185B33cE7002611C010A)
 
 ### DePayPaymentsV1Uniswap01
 
@@ -98,7 +98,7 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Mainnet: 
 
-Ropsten: [0x80F43d58E068e04125B9688EE46821A42CD4c53E](https://ropsten.etherscan.io/address/0x80f43d58e068e04125b9688ee46821a42cd4c53e)
+Ropsten: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC](https://ropsten.etherscan.io/address/0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC)
 
 ### DePayPaymentsV1ApproveAndCallContractAddressAmount01
 
@@ -115,14 +115,14 @@ to the method with the signature provided in `data` at index 0 (`data[0]`).
 
 Mainnet: 
 
-Ropsten: [0xB55209ca3F7f7A85050C9642303c43996c31b99D](https://ropsten.etherscan.io/address/0xb55209ca3f7f7a85050c9642303c43996c31b99d)
+Ropsten: [0xaECF51376f9C3C632648cD63b8b6d4AC9739B578](https://ropsten.etherscan.io/address/0xaECF51376f9C3C632648cD63b8b6d4AC9739B578)
 
 
 ## Examples
 
 ### tokenA to tokenB payment with smart contract receiver (e.g. staking pool)
 
-https://ropsten.etherscan.io/tx/0xd284b953e2d2828c30aabf31e7399a3329a4b1be29e5b55470bf454345f22910
+https://ropsten.etherscan.io/tx/0xaa9b657bbe2d07895476965acb8420ecf47fec8cbda2986360698540ace33b02
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -135,18 +135,18 @@ value: 0
 
 path: [0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB,0xc778417E063141139Fce010982780140Aa0cD5Ab,0x9c2Db0108d7C8baE8bE8928d151e0322F75e8Eea]
 
-amounts: [44412863949783468441,1000000000000000000,1711537544]
+amounts: [153382175492087911584,1000000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950,0x0d8A34Cb6c08Ec71eA8009DF725a779B1877d4c5]
 
-plugins: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xB55209ca3F7f7A85050C9642303c43996c31b99D]
+plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xaECF51376f9C3C632648cD63b8b6d4AC9739B578]
 
 data: ["depositFor(address,uint256)"]
 ```
 
 ### tokenA to tokenB payment
 
-https://ropsten.etherscan.io/tx/0x8c990e33359d3b3166b782cd217059c4a9197b3a3b6688e4b301781fae31bd2a
+https://ropsten.etherscan.io/tx/0xb322507f72827af2ca4af13d4b809d357cac6caeac091079fa8ff25659088594
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -163,59 +163,59 @@ amounts: [17123169254163466721,7000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
+plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the actually payment plugin added at the end of `plugins`
-to avoid depositing swaps into the payment plugin contract itself (without performing any payment).
+IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+to avoid depositing swaps into the payment contract itself (without performing a payment).
 
 ### tokenA to ETH payment
 
-https://ropsten.etherscan.io/tx/0x9db6ab92ad1f5cf3fc55ed89a6fc2f37c0b512e8983970bea31a7e75b6ae38d8
+https://ropsten.etherscan.io/tx/0x73a89ebecf70d70f4f7a9a2b87847cd584edecda870637c1bf828e3ac1855106
 
 ```
 value: 0
 
 path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0x0000000000000000000000000000000000000000]
 
-amounts: [26618972399173231429,10000000000000000,1711537544]
+amounts: [57990288869539740958,10000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
+plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the actually payment plugin added at the end of `plugins`
-to avoid depositing swaps into the payment plugin contract itself (without performing any payment).
+IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+to avoid depositing swaps into the payment contract itself (without performing a payment).
 
 ### ETH to tokenA payment
 
-https://ropsten.etherscan.io/tx/0xc0db866d9c641404e7671966e6ecec5bf092dd73f3b5d64b60e1032da0da8ff8
+https://ropsten.etherscan.io/tx/0x680abb0202c732299c9d4ce3f83fe44c9f7df399e339aaf881d1d2155759d406
 
 ```
-value: 0.000341694208712148
+value: 0.000149068600304723
 
 path: [0x0000000000000000000000000000000000000000,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
-amounts: [341694208712148,1000000000000000000,1711537544]
+amounts: [149068600304723,1000000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0x80F43d58E068e04125B9688EE46821A42CD4c53E,0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
+plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the actually payment plugin added at the end of `plugins`
-to avoid depositing swaps into the payment plugin contract itself (without performing any payment).
+IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+to avoid depositing swaps into the payment contract itself (without performing a payment).
 
 ### tokenA to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x00ed1b5b8f63e52fcda44abf07921a47912364b69de6f461e41cd4bcd2230d51
+https://ropsten.etherscan.io/tx/0xe9d3369e7c2126b8d6280f89e37c1679ce4ef97f68c220f1fb811f776f095b6f
 
 _Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the Payment event._
 
@@ -230,17 +230,17 @@ amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
+plugins: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the actually payment plugin added at the end of `plugins`
-to avoid depositing into the payment plugin contract itself without performing any payment.
+IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+to avoid depositing into the payment contract itself without performing a payment.
 
 ### ETH to ETH payment
 
-https://ropsten.etherscan.io/tx/0x9d16069f2dabf774108ad36e585f16f42c6568bcea81b6f872a082affd9d3d99
+https://ropsten.etherscan.io/tx/0x84fa9fcc783df562759d99324a8f7aaa574908618c071cdb7cb30afd07f503e5
 
 _Consider performing ETH to ETH transfers directly if you don't rely on any other plugins or the Payment event._
 
@@ -253,17 +253,19 @@ amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xcd1a015321b183cb5ea046a4c80dd6e88b89f3b5]
+plugins: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the actually payment plugin added at the end of `plugins`
-to avoid just depositing into the payment plugin contract itself without performing any payment.
+IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+to avoid just depositing into the payment contract itself without performing a payment.
 
 ## Security Audits
 
-1. https://github.com/DePayFi/depay-ethereum-payments/issues/3
+1. https://github.com/DePayFi/depay-ethereum-payments/Audit1.md
+2. https://github.com/DePayFi/depay-ethereum-payments/Audit2.md
+3. ...
 
 ## Development
 
