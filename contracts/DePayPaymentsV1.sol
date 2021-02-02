@@ -148,20 +148,15 @@ contract DePayPaymentsV1 {
     return (configuration.approvedPlugins(pluginAddress) != address(0));
   }
   
-  // Wrapping the contract owner in payable and returns payableOwner.
-  function _payableOwner() view private returns(address payable) {
-    return payable(configuration.owner());
-  }
-
   // Allows to withdraw accidentally sent ETH or tokens.
   function withdraw(
     address token,
     uint amount
   ) external onlyOwner returns(bool) {
     if(token == Helper.ETH()) {
-      Helper.safeTransferETH(_payableOwner(), amount);
+      Helper.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      Helper.safeTransfer(token, _payableOwner(), amount);
+      Helper.safeTransfer(token, payable(configuration.owner()), amount);
     }
     return true;
   }
