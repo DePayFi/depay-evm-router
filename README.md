@@ -30,16 +30,16 @@ Arguments:
 
 ```
 ETH to ETH payment: 
-['0x0000000000000000000000000000000000000000']
+['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
 DEPAY to DEPAY payment: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
 ETH to DEPAY payment: 
-['0x0000000000000000000000000000000000000000', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
+['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
 DEPAY to ETH payment: 
-['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0x0000000000000000000000000000000000000000']
+['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
 DEPAY to UNI payment (routing goes through WETH): 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
@@ -178,7 +178,7 @@ https://ropsten.etherscan.io/tx/0x73a89ebecf70d70f4f7a9a2b87847cd584edecda870637
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0x0000000000000000000000000000000000000000]
+path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
 
 amounts: [57990288869539740958,10000000000000000,1711537544]
 
@@ -199,7 +199,7 @@ https://ropsten.etherscan.io/tx/0x680abb0202c732299c9d4ce3f83fe44c9f7df399e339aa
 ```
 value: 0.000149068600304723
 
-path: [0x0000000000000000000000000000000000000000,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
+path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
 amounts: [149068600304723,1000000000000000000,1711537544]
 
@@ -247,7 +247,7 @@ _Consider performing ETH to ETH transfers directly if you don't rely on any othe
 ```
 value: 0.01
 
-path: [0x0000000000000000000000000000000000000000]
+path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
 
 amounts: [10000000000000000,10000000000000000]
 

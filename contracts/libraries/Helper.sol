@@ -1,5 +1,9 @@
-// helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
-library TransferHelper {
+// Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+library Helper {
+  function ETH() internal view returns(address) {
+    return 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  }
+
   function safeApprove(
     address token,
     address to,

@@ -27,7 +27,7 @@ import DePayPaymentsV1ApproveAndCallContractAddressAmount01 from '../artifacts/c
 
 const { ethers } = require("hardhat")
 
-const ZERO = '0x0000000000000000000000000000000000000000'
+const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 
 chai.use(solidity)
@@ -255,7 +255,7 @@ describe('DePayPaymentsV1', () => {
       await pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -270,7 +270,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -290,7 +290,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -385,7 +385,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [otherWallet.address],
@@ -546,7 +546,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO, token0.address],
+        path: [ETH, token0.address],
         amounts: [
           amountIn,
           amountOut,
@@ -593,7 +593,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [token0.address, ZERO],
+        path: [token0.address, ETH],
         amounts: [
           amountIn,
           amountOut,
@@ -788,7 +788,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [token0.address, ZERO],
+        path: [token0.address, ETH],
         amounts: [
           amountIn,
           amountOut,
@@ -840,7 +840,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO, token0.address],
+        path: [ETH, token0.address],
         amounts: [
           amountIn,
           amountOut,
@@ -860,7 +860,7 @@ describe('DePayPaymentsV1', () => {
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })
     
     await expect(
-      await contract.connect(ownerWallet).withdraw('0x0000000000000000000000000000000000000000', 1000)
+      await contract.connect(ownerWallet).withdraw(ETH, 1000)
     ).to.changeEtherBalance(ownerWallet, 1000)
   })
 
@@ -869,7 +869,7 @@ describe('DePayPaymentsV1', () => {
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })
     
     await expect(
-      contract.connect(otherWallet).withdraw('0x0000000000000000000000000000000000000000', 1000)
+      contract.connect(otherWallet).withdraw(ETH, 1000)
     ).to.be.revertedWith(
       'VM Exception while processing transaction: revert Ownable: caller is not the owner'
     )

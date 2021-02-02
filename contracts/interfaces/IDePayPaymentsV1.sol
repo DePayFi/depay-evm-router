@@ -14,8 +14,6 @@ interface IDePayPaymentsV1 {
     address indexed pluginAddress
   );
 
-  function ZERO() external view returns(address);
-
   function approvedPlugins(address) external view returns(address);
 
   function pay(

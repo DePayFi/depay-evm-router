@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/IUniswapV2Router02.sol";
-import './libraries/TransferHelper.sol';
+import './libraries/Helper.sol';
 
 contract DePayPaymentsV1Uniswap01 {
   
@@ -17,9 +17,6 @@ contract DePayPaymentsV1Uniswap01 {
   // decentralized exchanges, not to dyanmically called contracts!!!
   uint public immutable MAXINT = type(uint256).max;
   
-  // Address ZERO indicates ETH transfers.  
-  address public immutable ZERO = address(0);
-
   // Address of WETH.
   address public immutable WETH;
 
@@ -47,17 +44,17 @@ contract DePayPaymentsV1Uniswap01 {
     
     // Make sure swapping the token within the payment protocol contract is approved on the Uniswap router.
     if( 
-      path[0] != ZERO &&
+      path[0] != Helper.ETH() &&
       IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amounts[0]
     ) {
-      TransferHelper.safeApprove(path[0], UniswapV2Router02, MAXINT);
+      Helper.safeApprove(path[0], UniswapV2Router02, MAXINT);
     }
 
-    // Uniswap uses WETH within their path to indicate bridge swapping (instead of ZERO).
+    // Uniswap uses WETH within their path to indicate bridge swapping (instead of ETH).
     // This prepares the path as applicable to the Uniswap router.
     address[] memory uniPath = new address[](path.length);
     for (uint i=0; i<path.length; i++) {
-        if(path[i] == ZERO) {
+        if(path[i] == Helper.ETH()) {
             uniPath[i] = WETH;
         } else {
             uniPath[i] = path[i];
@@ -65,14 +62,14 @@ contract DePayPaymentsV1Uniswap01 {
     }
 
     // Executes ETH<>tokenA, tokenA<>ETH, or tokenA<>tokenB swaps depending on the provided path.
-    if(path[0] == ZERO) {
+    if(path[0] == Helper.ETH()) {
       IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amounts[0]}(
         amounts[1],
         uniPath,
         address(this),
         amounts[2]
       );
-    } else if (path[path.length-1] == ZERO) {
+    } else if (path[path.length-1] == Helper.ETH()) {
       IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
         amounts[0],
         amounts[1],
