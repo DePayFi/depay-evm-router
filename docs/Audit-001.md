@@ -61,7 +61,7 @@ Te given condition `path[path.length-1] == ZERO` will be satisfied to trigger `c
 
  Affected      | Severity  | Count | Lines |
 |:-------------:|:----------|------:|-------:|
-| DePayPaymentsV1.sol  | High    |   1   | [98-100](https://github.com/DePayFi/depay-ethereum-payments/blob/f9b157c73e617bb6f5e5bdf6b68ef9599a044ce8/contracts/DePayPaymentProcessorV1.sol#L98-L100)
+| DePayPaymentProcessorV1.sol  | High    |   1   | [98-100](https://github.com/DePayFi/depay-ethereum-payments/blob/f9b157c73e617bb6f5e5bdf6b68ef9599a044ce8/contracts/DePayPaymentProcessorV1.sol#L98-L100)
 
 Let's check an example:
 
@@ -86,7 +86,7 @@ contract B {
 }
 ```
 
-When we call `B.set(A.deployed.address)` the log result is `4`. Contract `A` has `uint256 a` it take the same place in smart contract `B`. The same will thing happen in [DePayPaymentsV1.sol#L98-L100](https://github.com/DePayFi/depay-ethereum-payments/blob/f9b157c73e617bb6f5e5bdf6b68ef9599a044ce8/contracts/DePayPaymentProcessorV1.sol#L98-L100). We need place holder to prevent target contract access overlay data that would be cause of uncertain result or unwanted overwrite.
+When we call `B.set(A.deployed.address)` the log result is `4`. Contract `A` has `uint256 a` it take the same place in smart contract `B`. The same will thing happen in [DePayPaymentProcessorV1.sol#L98-L100](https://github.com/DePayFi/depay-ethereum-payments/blob/f9b157c73e617bb6f5e5bdf6b68ef9599a044ce8/contracts/DePayPaymentProcessorV1.sol#L98-L100). We need place holder to prevent target contract access overlay data that would be cause of uncertain result or unwanted overwrite.
 
 E.g: It's possible to approve any plugin.
 
@@ -215,4 +215,4 @@ Receiver should emit event to help crosscheck much more easier:
 
 - Source code have better design structure
 - There are less vulnerabilities than recent audit
-- Logic issue didn't check, would need more time to simulate possible cases and corner cases
+- Logic issue didn't check, would need more time to simulate corner cases
