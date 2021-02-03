@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/Helper.sol';
 
 contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
+
+  // Address representating ETH (e.g. in payment routing paths)
+  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
   
   // Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
   //
@@ -26,7 +29,7 @@ contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
   ) external payable returns(bool) {
 
     // Approve the amount to be passed to the smart contract be called.
-    if(path[path.length-1] != Helper.ETH()) {
+    if(path[path.length-1] != ETH) {
       Helper.safeApprove(
         path[path.length-1],
         addresses[1],
@@ -37,7 +40,7 @@ contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
     // Call the smart contract which is receiver of the payment.
     bytes memory returnData;
     bool success;
-    if(path[path.length-1] == Helper.ETH()) {
+    if(path[path.length-1] == ETH) {
       // Make sure to send the ETH along with the call in case of sending ETH.
       (success, returnData) = addresses[1].call{value: amounts[1]}(
         abi.encodeWithSignature(

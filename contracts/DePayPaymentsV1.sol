@@ -15,6 +15,9 @@ contract DePayPaymentsV1 {
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
+  // Address representating ETH (e.g. in payment routing paths)
+  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
   // Instance of DePayPaymentsV1Configuration
   DePayPaymentsV1Configuration public immutable configuration;
 
@@ -74,13 +77,13 @@ contract DePayPaymentsV1 {
   // In case of ETH we need to deduct what has been payed in as part of the transaction itself.
   function _balanceBefore(address token) private returns (uint balance) {
     balance = _balance(token);
-    if(token == Helper.ETH()) { balance -= msg.value; }
+    if(token == ETH) { balance -= msg.value; }
   }
 
   // This makes sure that the sender has payed in the token (or ETH)
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
-    if(tokenIn == Helper.ETH()) { 
+    if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
       Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
@@ -112,7 +115,7 @@ contract DePayPaymentsV1 {
 
   // Sends token (or ETH) to receiver.
   function _pay(address payable receiver, address token, uint amountOut) private {
-    if(token == Helper.ETH()) {
+    if(token == ETH) {
       Helper.safeTransferETH(receiver, amountOut);
     } else {
       Helper.safeTransfer(token, receiver, amountOut);
@@ -127,7 +130,7 @@ contract DePayPaymentsV1 {
 
   // Returns the balance of the payment plugin contract for a token (or ETH).
   function _balance(address token) private view returns(uint) {
-    if(token == Helper.ETH()) {
+    if(token == ETH) {
         return address(this).balance;
     } else {
         return IERC20(token).balanceOf(address(this));
@@ -153,7 +156,7 @@ contract DePayPaymentsV1 {
     address token,
     uint amount
   ) external onlyOwner returns(bool) {
-    if(token == Helper.ETH()) {
+    if(token == ETH) {
       Helper.safeTransferETH(payable(configuration.owner()), amount);
     } else {
       Helper.safeTransfer(token, payable(configuration.owner()), amount);

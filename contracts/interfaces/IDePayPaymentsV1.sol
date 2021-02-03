@@ -10,6 +10,8 @@ interface IDePayPaymentsV1 {
     address payable indexed receiver
   );
 
+  function ETH() external view returns(address);
+
   function configuration() external view returns(address);
 
   function pay(
