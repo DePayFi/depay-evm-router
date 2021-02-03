@@ -2,6 +2,8 @@
 
 #### Mainnet
 
+[DePayPaymentsV1](https://etherscan.io/address/0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2)
+
 #### Ropsten
 
 [DePayPaymentsV1](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
@@ -85,7 +87,7 @@ Used to send tokens (or ETH) to a receiver.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
 
-Mainnet: 
+Mainnet: [0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2](https://etherscan.io/address/0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2)
 
 Ropsten: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
 
@@ -96,7 +98,7 @@ Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
-Mainnet: 
+Mainnet: [0x2AAC8B0bCC52F0bA1d971FC91dD5d60101391f7F](https://etherscan.io/address/0x2aac8b0bcc52f0ba1d971fc91dd5d60101391f7f)
 
 Ropsten: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411](https://ropsten.etherscan.io/address/0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411)
 
@@ -113,7 +115,7 @@ passing the address at index 0 of `addresses` (`addresses[0]`)
 and passing the amount at index 1 of `amounts` (`amounts[1]`)
 to the method with the signature provided in `data` at index 0 (`data[0]`).
 
-Mainnet: 
+Mainnet: [0xAAFbF4dE32b55809A685FF4c1D3aC48345c79d99](https://etherscan.io/address/0xaafbf4de32b55809a685ff4c1d3ac48345c79d99)
 
 Ropsten: [0xB85B8307A3ab932D769826Ade116dFd48602875F](https://ropsten.etherscan.io/address/0xB85B8307A3ab932D769826Ade116dFd48602875F)
 
