@@ -4,32 +4,42 @@ pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import './interfaces/IDePayPaymentsV1Plugin.sol';
-import './libraries/TransferHelper.sol';
+import './libraries/Helper.sol';
+import './DePayPaymentsV1Configuration.sol';
 
-contract DePayPaymentsV1 is Ownable {
+contract DePayPaymentsV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicates ETH transfers.
-  address public immutable ZERO = address(0);
+  // Address representating ETH (e.g. in payment routing paths)
+  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // List of approved plugins. Use approvePlugin to add new plugins.
-  mapping (address => address) public approvedPlugins;
+  // Instance of DePayPaymentsV1Configuration
+  DePayPaymentsV1Configuration public immutable configuration;
+
+  // Pass immutable instance to configuration.
+  // This protects from potential delegatecall and access overlay attacks:
+  // https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit3.md#H02
+  constructor (
+    address _configuration
+  ) public {
+    configuration = DePayPaymentsV1Configuration(_configuration);
+  }
+
+  // Proxy modifier to DePayPaymentsV1Configuration
+  modifier onlyOwner() {
+      require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
+      _;
+  }
 
   // The payment event.
   event Payment(
     address indexed sender,
     address payable indexed receiver
-  );
-
-  // Event to emit newly approved plugins.
-  event PluginApproved(
-    address indexed pluginAddress
   );
 
   receive() external payable {
@@ -67,16 +77,16 @@ contract DePayPaymentsV1 is Ownable {
   // In case of ETH we need to deduct what has been payed in as part of the transaction itself.
   function _balanceBefore(address token) private returns (uint balance) {
     balance = _balance(token);
-    if(token == ZERO) { balance -= msg.value; }
+    if(token == ETH) { balance -= msg.value; }
   }
 
   // This makes sure that the sender has payed in the token (or ETH)
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
-    if(tokenIn == ZERO) { 
+    if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      TransferHelper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+      Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
     }
   }
 
@@ -94,7 +104,7 @@ contract DePayPaymentsV1 is Ownable {
         _pay(payable(addresses[addresses.length-1]), path[path.length-1], amounts[1]);
       } else {
         require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
-        address plugin = approvedPlugins[plugins[i]];
+        address plugin = configuration.approvedPlugins(plugins[i]);
         (bool success, bytes memory returnData) = plugin.delegatecall(abi.encodeWithSelector(
             IDePayPaymentsV1Plugin(plugin).execute.selector, path, amounts, addresses, data
         ));
@@ -105,10 +115,10 @@ contract DePayPaymentsV1 is Ownable {
 
   // Sends token (or ETH) to receiver.
   function _pay(address payable receiver, address token, uint amountOut) private {
-    if(token == ZERO) {
-      TransferHelper.safeTransferETH(receiver, amountOut);
+    if(token == ETH) {
+      Helper.safeTransferETH(receiver, amountOut);
     } else {
-      TransferHelper.safeTransfer(token, receiver, amountOut);
+      Helper.safeTransfer(token, receiver, amountOut);
     }
   }
 
@@ -120,18 +130,11 @@ contract DePayPaymentsV1 is Ownable {
 
   // Returns the balance of the payment plugin contract for a token (or ETH).
   function _balance(address token) private view returns(uint) {
-    if(token == ZERO) {
+    if(token == ETH) {
         return address(this).balance;
     } else {
         return IERC20(token).balanceOf(address(this));
     }
-  }
-
-  // Approves the provided plugin.
-  function approvePlugin(address plugin) external onlyOwner returns(bool) {
-    approvedPlugins[plugin] = plugin;
-    emit PluginApproved(plugin);
-    return true;
   }
 
   // Function to check if a plugin address is approved.
@@ -145,23 +148,18 @@ contract DePayPaymentsV1 is Ownable {
   function _isApproved(
     address pluginAddress
   ) internal view returns(bool) {
-    return (approvedPlugins[pluginAddress] != ZERO);
+    return (configuration.approvedPlugins(pluginAddress) != address(0));
   }
   
-  // Wrapping the contract owner in payable and returns payableOwner.
-  function _payableOwner() view private returns(address payable) {
-    return payable(owner());
-  }
-
   // Allows to withdraw accidentally sent ETH or tokens.
   function withdraw(
     address token,
     uint amount
   ) external onlyOwner returns(bool) {
-    if(token == ZERO) {
-      TransferHelper.safeTransferETH(_payableOwner(), amount);
+    if(token == ETH) {
+      Helper.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      TransferHelper.safeTransfer(token, _payableOwner(), amount);
+      Helper.safeTransfer(token, payable(configuration.owner()), amount);
     }
     return true;
   }

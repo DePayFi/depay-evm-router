@@ -12,13 +12,9 @@ interface IDePayPaymentsV1 {
     address payable indexed receiver
   );
 
-  event PluginApproved(
-    address indexed pluginAddress
-  );
+  function ETH() external view returns(address);
 
-  function ZERO() external view returns(address);
-
-  function approvedPlugins(address) external view returns(address);
+  function configuration() external view returns(address);
 
   function pay(
     address[] calldata path,
@@ -27,10 +23,6 @@ interface IDePayPaymentsV1 {
     address[] calldata plugins,
     string[] calldata data
   ) external payable returns(bool);
-
-  function approvePlugin(
-    address plugin
-  ) external returns(bool);
 
   function isApproved(
     address pluginAddress

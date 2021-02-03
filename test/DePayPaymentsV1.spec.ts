@@ -24,10 +24,11 @@ import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool
 import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
 import DePayPaymentsV1Uniswap01 from '../artifacts/contracts/DePayPaymentsV1Uniswap01.sol/DePayPaymentsV1Uniswap01.json'
 import DePayPaymentsV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayPaymentsV1ApproveAndCallContractAddressAmount01.sol/DePayPaymentsV1ApproveAndCallContractAddressAmount01.json'
+import DePayPaymentsV1Configuration from '../artifacts/contracts/DePayPaymentsV1Configuration.sol/DePayPaymentsV1Configuration.json'
 
 const { ethers } = require("hardhat")
 
-const ZERO = '0x0000000000000000000000000000000000000000'
+const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 
 chai.use(solidity)
@@ -46,43 +47,45 @@ describe('DePayPaymentsV1', () => {
   const [ownerWallet, otherWallet] = provider.getWallets()
   
   async function fixture() {
-    const contract = await deployContract(ownerWallet, DePayPaymentsV1)
+    const configuration = await deployContract(ownerWallet, DePayPaymentsV1Configuration)
+    const contract = await deployContract(ownerWallet, DePayPaymentsV1, [configuration.address])
     return {
       contract,
+      configuration,
       ownerWallet,
       otherWallet
     }
   }
 
   interface deployAndApproveUniswapParameters {
-    contract: Contract,
+    configuration: Contract,
     wallet: Wallet,
     WETH: Contract,
     uniswapRouter: Contract
   }
 
   async function deployAndApproveUniswap({
-    contract,
+    configuration,
     wallet,
     WETH,
     uniswapRouter
   }: deployAndApproveUniswapParameters) {
     const UniswapContract = await deployContract(wallet, DePayPaymentsV1Uniswap01, [WETH.address, uniswapRouter.address])
-    await contract.connect(wallet).approvePlugin(UniswapContract.address)
+    await configuration.connect(wallet).approvePlugin(UniswapContract.address)
     return { UniswapContract }
   }
 
   interface deployAndApproveContractCallPluginParameters {
-    contract: Contract,
+    configuration: Contract,
     wallet: Wallet
   }
 
   async function deployAndApproveContractCallPlugin({
-    contract,
+    configuration,
     wallet
   }: deployAndApproveContractCallPluginParameters) {
     const contractCallPluginContract = await deployContract(wallet, DePayPaymentsV1ApproveAndCallContractAddressAmount01)
-    await contract.connect(wallet).approvePlugin(contractCallPluginContract.address)
+    await configuration.connect(wallet).approvePlugin(contractCallPluginContract.address)
     return { contractCallPluginContract }
   }
 
@@ -226,17 +229,22 @@ describe('DePayPaymentsV1', () => {
     const { contract, ownerWallet } = await loadFixture(fixture)
     const interfaceContract = await deployMockContract(ownerWallet, IDePayPaymentsV1.abi)
     let inheritedFragmentNames: string[] = ['OwnershipTransferred', 'transferOwnership', 'owner', 'renounceOwnership']
-    let contractFragmentsWithoutInheritance = contract.interface.fragments.filter((fragment: any)=> inheritedFragmentNames.indexOf(fragment.name) < 0)
+    let contractFragmentsFiltered = contract.interface.fragments.filter(
+      function(fragment){
+        return inheritedFragmentNames.indexOf(fragment.name) < 0 &&
+          fragment.type != 'constructor'
+      } 
+    )
     expect(
-      JSON.stringify(contractFragmentsWithoutInheritance)
+      JSON.stringify(contractFragmentsFiltered)
     ).to.eq(
       JSON.stringify(interfaceContract.interface.fragments)
     )
   })
 
   it('sets deployer wallet as the contract owner', async () => {
-    const {contract, ownerWallet} = await loadFixture(fixture)
-    const owner = await contract.owner()
+    const {configuration, ownerWallet} = await loadFixture(fixture)
+    const owner = await configuration.owner()
     expect(owner).to.equal(ownerWallet.address)
   })
 
@@ -255,7 +263,7 @@ describe('DePayPaymentsV1', () => {
       await pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -270,7 +278,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -290,7 +298,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [contract.address],
@@ -320,13 +328,13 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('allows the contract owner to add payment plugins', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -337,7 +345,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('emits PluginApproved when approving new plugins', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
@@ -345,21 +353,21 @@ describe('DePayPaymentsV1', () => {
     const UniswapContract = await deployContract(ownerWallet, DePayPaymentsV1Uniswap01, [WETH.address, uniswapRouter.address])
     
     await expect(
-      contract.approvePlugin(UniswapContract.address)
-    ).to.emit(contract, 'PluginApproved')
+      configuration.approvePlugin(UniswapContract.address)
+    ).to.emit(configuration, 'PluginApproved')
     .withArgs(
       UniswapContract.address
     );
   })
 
   it('does NOT allow others to add payment plugins', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     await expect(
       deployAndApproveUniswap({
-        contract,
+        configuration,
         wallet: otherWallet,
         WETH,
         uniswapRouter
@@ -369,13 +377,13 @@ describe('DePayPaymentsV1', () => {
     )
   })
 
-  it('fails when trying to use a pre-plugins that is not approved', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+  it('fails when trying to use a plugin that is not approved', async () => {
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -385,7 +393,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO],
+        path: [ETH],
         amounts: [1000, 1000],
         addresses: [otherWallet.address],
         plugins: [otherWallet.address],
@@ -397,7 +405,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('swaps tokens via uniswap to perform a payment', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
     const token1 = await deployContract(ownerWallet, TestToken)
@@ -406,7 +414,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -454,7 +462,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
     const token1 = await deployContract(ownerWallet, TestToken)
@@ -463,7 +471,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -513,7 +521,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('swaps ETH to token via uniswap to perform a payment', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
 
@@ -521,7 +529,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -546,7 +554,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO, token0.address],
+        path: [ETH, token0.address],
         amounts: [
           amountIn,
           amountOut,
@@ -560,7 +568,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('swaps tokens for ETH via uniswap to perform a payment', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
 
@@ -568,7 +576,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -593,7 +601,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [token0.address, ZERO],
+        path: [token0.address, ETH],
         amounts: [
           amountIn,
           amountOut,
@@ -607,7 +615,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('swaps tokens to tokens via uniswap and calls another contract with the swapped tokens within the same transaction', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
     const token1 = await deployContract(ownerWallet, TestToken)
@@ -616,7 +624,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -648,7 +656,7 @@ describe('DePayPaymentsV1', () => {
     let amountIn = amounts[0].toNumber()
 
     const {contractCallPluginContract} = await deployAndApproveContractCallPlugin({
-      contract,
+      configuration,
       wallet: ownerWallet
     })
 
@@ -679,7 +687,7 @@ describe('DePayPaymentsV1', () => {
   })
 
   it('emits a Payment event with the smart contract being the receiver of the payment', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
     const token1 = await deployContract(ownerWallet, TestToken)
@@ -688,7 +696,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -720,7 +728,7 @@ describe('DePayPaymentsV1', () => {
     let amountIn = amounts[0].toNumber()
 
     const {contractCallPluginContract} = await deployAndApproveContractCallPlugin({
-      contract,
+      configuration,
       wallet: ownerWallet
     })
 
@@ -753,7 +761,7 @@ describe('DePayPaymentsV1', () => {
   it('makes sure that the eth balance in the smart contract is the same after the payment then before', async () => {
     // to prevent people draining the contract
 
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
 
@@ -761,7 +769,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -788,7 +796,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [token0.address, ZERO],
+        path: [token0.address, ETH],
         amounts: [
           amountIn,
           amountOut,
@@ -805,7 +813,7 @@ describe('DePayPaymentsV1', () => {
   it('makes sure that the token balance in the smart contract is the same after the payment then before', async () => {
     // to prevent people draining the contract
 
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, configuration, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     const token0 = await deployContract(ownerWallet, TestToken)
 
@@ -813,7 +821,7 @@ describe('DePayPaymentsV1', () => {
     const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
     const {UniswapContract} = await deployAndApproveUniswap({
-      contract,
+      configuration,
       wallet: ownerWallet,
       WETH,
       uniswapRouter
@@ -840,7 +848,7 @@ describe('DePayPaymentsV1', () => {
       pay({
         contract,
         wallet: ownerWallet,
-        path: [ZERO, token0.address],
+        path: [ETH, token0.address],
         amounts: [
           amountIn,
           amountOut,
@@ -860,7 +868,7 @@ describe('DePayPaymentsV1', () => {
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })
     
     await expect(
-      await contract.connect(ownerWallet).withdraw('0x0000000000000000000000000000000000000000', 1000)
+      await contract.connect(ownerWallet).withdraw(ETH, 1000)
     ).to.changeEtherBalance(ownerWallet, 1000)
   })
 
@@ -869,7 +877,7 @@ describe('DePayPaymentsV1', () => {
     await otherWallet.sendTransaction({ to: contract.address, value: 1000, gasPrice: 0 })
     
     await expect(
-      contract.connect(otherWallet).withdraw('0x0000000000000000000000000000000000000000', 1000)
+      contract.connect(otherWallet).withdraw(ETH, 1000)
     ).to.be.revertedWith(
       'VM Exception while processing transaction: revert Ownable: caller is not the owner'
     )

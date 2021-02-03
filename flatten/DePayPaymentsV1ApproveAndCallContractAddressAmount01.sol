@@ -79,10 +79,10 @@ interface IERC20 {
 }
 
 
-// Dependency file: contracts/libraries/TransferHelper.sol
+// Dependency file: contracts/libraries/Helper.sol
 
-// helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
-library TransferHelper {
+// Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+library Helper {
   function safeApprove(
     address token,
     address to,
@@ -137,13 +137,13 @@ pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import 'contracts/libraries/TransferHelper.sol';
+// import 'contracts/libraries/Helper.sol';
 
 contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
-  
-  // Address ZERO indicates ETH transfers.  
-  address private immutable ZERO = address(0);
 
+  // Address representating ETH (e.g. in payment routing paths)
+  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  
   // Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
   //
   // Approves the amount at index 1 of amounts (amounts[1])
@@ -162,8 +162,8 @@ contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
   ) external payable returns(bool) {
 
     // Approve the amount to be passed to the smart contract be called.
-    if(path[path.length-1] != ZERO) {
-      TransferHelper.safeApprove(
+    if(path[path.length-1] != ETH) {
+      Helper.safeApprove(
         path[path.length-1],
         addresses[1],
         amounts[1]
@@ -173,7 +173,7 @@ contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
     // Call the smart contract which is receiver of the payment.
     bytes memory returnData;
     bool success;
-    if(path[path.length-1] == ZERO) {
+    if(path[path.length-1] == ETH) {
       // Make sure to send the ETH along with the call in case of sending ETH.
       (success, returnData) = addresses[1].call{value: amounts[1]}(
         abi.encodeWithSignature(

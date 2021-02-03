@@ -79,104 +79,6 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/GSN/Context.sol
-
-
-// pragma solidity >=0.6.0 <0.8.0;
-
-/*
- * @dev Provides information about the current execution context, including the
- * sender of the transaction and its data. While these are generally available
- * via msg.sender and msg.data, they should not be accessed in such a direct
- * manner, since when dealing with GSN meta-transactions the account sending and
- * paying for execution may not be the actual sender (as far as an application
- * is concerned).
- *
- * This contract is only required for intermediate, library-like contracts.
- */
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
-        return msg.sender;
-    }
-
-    function _msgData() internal view virtual returns (bytes memory) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
-        return msg.data;
-    }
-}
-
-
-// Dependency file: @openzeppelin/contracts/access/Ownable.sol
-
-
-// pragma solidity >=0.6.0 <0.8.0;
-
-// import "@openzeppelin/contracts/GSN/Context.sol";
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
-abstract contract Ownable is Context {
-    address private _owner;
-
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor () internal {
-        address msgSender = _msgSender();
-        _owner = msgSender;
-        emit OwnershipTransferred(address(0), msgSender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(_owner == _msgSender(), "Ownable: caller is not the owner");
-        _;
-    }
-
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public virtual onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
-}
-
-
 // Dependency file: @openzeppelin/contracts/math/SafeMath.sol
 
 
@@ -602,10 +504,10 @@ interface IDePayPaymentsV1Plugin {
 }
 
 
-// Dependency file: contracts/libraries/TransferHelper.sol
+// Dependency file: contracts/libraries/Helper.sol
 
-// helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
-library TransferHelper {
+// Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+library Helper {
   function safeApprove(
     address token,
     address to,
@@ -653,6 +555,133 @@ library TransferHelper {
 }
 
 
+// Dependency file: @openzeppelin/contracts/GSN/Context.sol
+
+
+// pragma solidity >=0.6.0 <0.8.0;
+
+/*
+ * @dev Provides information about the current execution context, including the
+ * sender of the transaction and its data. While these are generally available
+ * via msg.sender and msg.data, they should not be accessed in such a direct
+ * manner, since when dealing with GSN meta-transactions the account sending and
+ * paying for execution may not be the actual sender (as far as an application
+ * is concerned).
+ *
+ * This contract is only required for intermediate, library-like contracts.
+ */
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address payable) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view virtual returns (bytes memory) {
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        return msg.data;
+    }
+}
+
+
+// Dependency file: @openzeppelin/contracts/access/Ownable.sol
+
+
+// pragma solidity >=0.6.0 <0.8.0;
+
+// import "@openzeppelin/contracts/GSN/Context.sol";
+/**
+ * @dev Contract module which provides a basic access control mechanism, where
+ * there is an account (an owner) that can be granted exclusive access to
+ * specific functions.
+ *
+ * By default, the owner account will be the one that deploys the contract. This
+ * can later be changed with {transferOwnership}.
+ *
+ * This module is used through inheritance. It will make available the modifier
+ * `onlyOwner`, which can be applied to your functions to restrict their use to
+ * the owner.
+ */
+abstract contract Ownable is Context {
+    address private _owner;
+
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev Initializes the contract setting the deployer as the initial owner.
+     */
+    constructor () internal {
+        address msgSender = _msgSender();
+        _owner = msgSender;
+        emit OwnershipTransferred(address(0), msgSender);
+    }
+
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view returns (address) {
+        return _owner;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
+        _;
+    }
+
+    /**
+     * @dev Leaves the contract without owner. It will not be possible to call
+     * `onlyOwner` functions anymore. Can only be called by the current owner.
+     *
+     * NOTE: Renouncing ownership will leave the contract without an owner,
+     * thereby removing any functionality that is only available to the owner.
+     */
+    function renounceOwnership() public virtual onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
+    }
+}
+
+
+// Dependency file: contracts/DePayPaymentsV1Configuration.sol
+
+
+// pragma solidity >=0.7.5 <0.8.0;
+pragma abicoder v2;
+
+// import "@openzeppelin/contracts/access/Ownable.sol";
+
+// Prevents unwanted access to configuration in DePayPaymentsV1
+// Potentially occuring through delegatecall(ing) plugins.
+contract DePayPaymentsV1Configuration is Ownable {
+  
+  // List of approved plugins. Use approvePlugin to add new plugins.
+  mapping (address => address) public approvedPlugins;
+
+  // Approves the provided plugin.
+  function approvePlugin(address plugin) external onlyOwner returns(bool) {
+    approvedPlugins[plugin] = plugin;
+    emit PluginApproved(plugin);
+    return true;
+  }
+
+  // Event to emit newly approved plugins.
+  event PluginApproved(
+    address indexed pluginAddress
+  );
+}
+
+
 // Root file: contracts/DePayPaymentsV1.sol
 
 
@@ -660,32 +689,42 @@ pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/math/SafeMath.sol";
 // import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 // import 'contracts/interfaces/IDePayPaymentsV1Plugin.sol';
-// import 'contracts/libraries/TransferHelper.sol';
+// import 'contracts/libraries/Helper.sol';
+// import 'contracts/DePayPaymentsV1Configuration.sol';
 
-contract DePayPaymentsV1 is Ownable {
+contract DePayPaymentsV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
 
-  // Address ZERO indicates ETH transfers.
-  address public immutable ZERO = address(0);
+  // Address representating ETH (e.g. in payment routing paths)
+  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // List of approved plugins. Use approvePlugin to add new plugins.
-  mapping (address => address) public approvedPlugins;
+  // Instance of DePayPaymentsV1Configuration
+  DePayPaymentsV1Configuration public immutable configuration;
+
+  // Pass immutable instance to configuration.
+  // This protects from potential delegatecall and access overlay attacks:
+  // https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit3.md#H02
+  constructor (
+    address _configuration
+  ) public {
+    configuration = DePayPaymentsV1Configuration(_configuration);
+  }
+
+  // Proxy modifier to DePayPaymentsV1Configuration
+  modifier onlyOwner() {
+      require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
+      _;
+  }
 
   // The payment event.
   event Payment(
     address indexed sender,
     address payable indexed receiver
-  );
-
-  // Event to emit newly approved plugins.
-  event PluginApproved(
-    address indexed pluginAddress
   );
 
   receive() external payable {
@@ -723,16 +762,16 @@ contract DePayPaymentsV1 is Ownable {
   // In case of ETH we need to deduct what has been payed in as part of the transaction itself.
   function _balanceBefore(address token) private returns (uint balance) {
     balance = _balance(token);
-    if(token == ZERO) { balance -= msg.value; }
+    if(token == ETH) { balance -= msg.value; }
   }
 
   // This makes sure that the sender has payed in the token (or ETH)
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
-    if(tokenIn == ZERO) { 
+    if(tokenIn == ETH) { 
       require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
     } else {
-      TransferHelper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
+      Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
     }
   }
 
@@ -750,7 +789,7 @@ contract DePayPaymentsV1 is Ownable {
         _pay(payable(addresses[addresses.length-1]), path[path.length-1], amounts[1]);
       } else {
         require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
-        address plugin = approvedPlugins[plugins[i]];
+        address plugin = configuration.approvedPlugins(plugins[i]);
         (bool success, bytes memory returnData) = plugin.delegatecall(abi.encodeWithSelector(
             IDePayPaymentsV1Plugin(plugin).execute.selector, path, amounts, addresses, data
         ));
@@ -761,10 +800,10 @@ contract DePayPaymentsV1 is Ownable {
 
   // Sends token (or ETH) to receiver.
   function _pay(address payable receiver, address token, uint amountOut) private {
-    if(token == ZERO) {
-      TransferHelper.safeTransferETH(receiver, amountOut);
+    if(token == ETH) {
+      Helper.safeTransferETH(receiver, amountOut);
     } else {
-      TransferHelper.safeTransfer(token, receiver, amountOut);
+      Helper.safeTransfer(token, receiver, amountOut);
     }
   }
 
@@ -776,18 +815,11 @@ contract DePayPaymentsV1 is Ownable {
 
   // Returns the balance of the payment plugin contract for a token (or ETH).
   function _balance(address token) private view returns(uint) {
-    if(token == ZERO) {
+    if(token == ETH) {
         return address(this).balance;
     } else {
         return IERC20(token).balanceOf(address(this));
     }
-  }
-
-  // Approves the provided plugin.
-  function approvePlugin(address plugin) external onlyOwner returns(bool) {
-    approvedPlugins[plugin] = plugin;
-    emit PluginApproved(plugin);
-    return true;
   }
 
   // Function to check if a plugin address is approved.
@@ -801,23 +833,18 @@ contract DePayPaymentsV1 is Ownable {
   function _isApproved(
     address pluginAddress
   ) internal view returns(bool) {
-    return (approvedPlugins[pluginAddress] != ZERO);
+    return (configuration.approvedPlugins(pluginAddress) != address(0));
   }
   
-  // Wrapping the contract owner in payable and returns payableOwner.
-  function _payableOwner() view private returns(address payable) {
-    return payable(owner());
-  }
-
   // Allows to withdraw accidentally sent ETH or tokens.
   function withdraw(
     address token,
     uint amount
   ) external onlyOwner returns(bool) {
-    if(token == ZERO) {
-      TransferHelper.safeTransferETH(_payableOwner(), amount);
+    if(token == ETH) {
+      Helper.safeTransferETH(payable(configuration.owner()), amount);
     } else {
-      TransferHelper.safeTransfer(token, _payableOwner(), amount);
+      Helper.safeTransfer(token, payable(configuration.owner()), amount);
     }
     return true;
   }

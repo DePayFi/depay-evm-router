@@ -4,7 +4,7 @@
 
 #### Ropsten
 
-[DePayPaymentsV1](https://ropsten.etherscan.io/address/0xCEf6dc2e210d1dD29A71185B33cE7002611C010A)
+[DePayPaymentsV1](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
 
 ## Summary
 
@@ -30,16 +30,16 @@ Arguments:
 
 ```
 ETH to ETH payment: 
-['0x0000000000000000000000000000000000000000']
+['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
 DEPAY to DEPAY payment: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
 ETH to DEPAY payment: 
-['0x0000000000000000000000000000000000000000', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
+['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
 DEPAY to ETH payment: 
-['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0x0000000000000000000000000000000000000000']
+['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
 DEPAY to UNI payment (routing goes through WETH): 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
@@ -87,7 +87,7 @@ Sends the token of path at the last position (`path[path.length-1]`) for the amo
 
 Mainnet: 
 
-Ropsten: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A](https://ropsten.etherscan.io/address/0xCEf6dc2e210d1dD29A71185B33cE7002611C010A)
+Ropsten: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
 
 ### DePayPaymentsV1Uniswap01
 
@@ -98,7 +98,7 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Mainnet: 
 
-Ropsten: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC](https://ropsten.etherscan.io/address/0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC)
+Ropsten: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411](https://ropsten.etherscan.io/address/0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411)
 
 ### DePayPaymentsV1ApproveAndCallContractAddressAmount01
 
@@ -115,14 +115,14 @@ to the method with the signature provided in `data` at index 0 (`data[0]`).
 
 Mainnet: 
 
-Ropsten: [0xaECF51376f9C3C632648cD63b8b6d4AC9739B578](https://ropsten.etherscan.io/address/0xaECF51376f9C3C632648cD63b8b6d4AC9739B578)
+Ropsten: [0xB85B8307A3ab932D769826Ade116dFd48602875F](https://ropsten.etherscan.io/address/0xB85B8307A3ab932D769826Ade116dFd48602875F)
 
 
 ## Examples
 
 ### tokenA to tokenB payment with smart contract receiver (e.g. staking pool)
 
-https://ropsten.etherscan.io/tx/0xaa9b657bbe2d07895476965acb8420ecf47fec8cbda2986360698540ace33b02
+https://ropsten.etherscan.io/tx/0x7239410d735016e84fc1cc59542e3a6af00c78d1817e6d60ef3bddc475fc734b
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -135,18 +135,18 @@ value: 0
 
 path: [0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB,0xc778417E063141139Fce010982780140Aa0cD5Ab,0x9c2Db0108d7C8baE8bE8928d151e0322F75e8Eea]
 
-amounts: [153382175492087911584,1000000000000000000,1711537544]
+amounts: [553637000000000000000,1000000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950,0x0d8A34Cb6c08Ec71eA8009DF725a779B1877d4c5]
 
-plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xaECF51376f9C3C632648cD63b8b6d4AC9739B578]
+plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0xB85B8307A3ab932D769826Ade116dFd48602875F]
 
 data: ["depositFor(address,uint256)"]
 ```
 
 ### tokenA to tokenB payment
 
-https://ropsten.etherscan.io/tx/0xb322507f72827af2ca4af13d4b809d357cac6caeac091079fa8ff25659088594
+https://ropsten.etherscan.io/tx/0x43080d5d2761f9536a60cf0c2a72b86d39e2ced6789e7f0eb5630e94b62d2e47
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -163,7 +163,7 @@ amounts: [17123169254163466721,7000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
+plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
 
 data: []
 ```
@@ -173,18 +173,18 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### tokenA to ETH payment
 
-https://ropsten.etherscan.io/tx/0x73a89ebecf70d70f4f7a9a2b87847cd584edecda870637c1bf828e3ac1855106
+https://ropsten.etherscan.io/tx/0x207f4259c9fe838934f7c7ee3f538ddfa2fe31ecca85d78510124f09ecf22ced
 
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0x0000000000000000000000000000000000000000]
+path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
 
-amounts: [57990288869539740958,10000000000000000,1711537544]
+amounts: [1623250000000000000000,10000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
+plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
 
 data: []
 ```
@@ -194,18 +194,18 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### ETH to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x680abb0202c732299c9d4ce3f83fe44c9f7df399e339aaf881d1d2155759d406
+https://ropsten.etherscan.io/tx/0x82a868645a48e9cff17147cb3ed6dc9e1aed4cbe0a2a9a6c3e7a84f3161714b4
 
 ```
 value: 0.000149068600304723
 
-path: [0x0000000000000000000000000000000000000000,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
+path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
 
 amounts: [149068600304723,1000000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xf282bb5B1DeD20aC12204e03837E7C5b75c8cAeC,0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
+plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
 
 data: []
 ```
@@ -215,7 +215,7 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### tokenA to tokenA payment
 
-https://ropsten.etherscan.io/tx/0xe9d3369e7c2126b8d6280f89e37c1679ce4ef97f68c220f1fb811f776f095b6f
+https://ropsten.etherscan.io/tx/0xde5706eaa6422204b80e05f90cadfffae31111fa5c94bb6253ea550c29537e90
 
 _Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the Payment event._
 
@@ -230,7 +230,7 @@ amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
+plugins: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
 
 data: []
 ```
@@ -240,20 +240,20 @@ to avoid depositing into the payment contract itself without performing a paymen
 
 ### ETH to ETH payment
 
-https://ropsten.etherscan.io/tx/0x84fa9fcc783df562759d99324a8f7aaa574908618c071cdb7cb30afd07f503e5
+https://ropsten.etherscan.io/tx/0x2bd160ad92fd03f47f23d10c7d27c9e09c10721740e48e15f2d2ba032e1160c8
 
 _Consider performing ETH to ETH transfers directly if you don't rely on any other plugins or the Payment event._
 
 ```
 value: 0.01
 
-path: [0x0000000000000000000000000000000000000000]
+path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
 
 amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xCEf6dc2e210d1dD29A71185B33cE7002611C010A]
+plugins: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
 
 data: []
 ```
@@ -263,9 +263,9 @@ to avoid just depositing into the payment contract itself without performing a p
 
 ## Security Audits
 
-1. https://github.com/DePayFi/depay-ethereum-payments/Audit1.md
-2. https://github.com/DePayFi/depay-ethereum-payments/Audit2.md
-3. ...
+1. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit1.md
+2. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit2.md
+3. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit3.md
 
 ## Development
 

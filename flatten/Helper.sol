@@ -1,5 +1,7 @@
-// helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
-library TransferHelper {
+// Root file: contracts/libraries/Helper.sol
+
+// Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+library Helper {
   function safeApprove(
     address token,
     address to,
