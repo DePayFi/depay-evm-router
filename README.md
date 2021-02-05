@@ -128,7 +128,7 @@ https://ropsten.etherscan.io/tx/0x7239410d735016e84fc1cc59542e3a6af00c78d1817e6d
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
-Requires to approve token at first index of path to be approved on Uniswap router for the payment protocol smart contract.
+Requires to approve token at first index of path to be approved for the payment protocol smart contract.
 
 Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
 
@@ -148,24 +148,26 @@ data: ["depositFor(address,uint256)"]
 
 ### tokenA to tokenB payment
 
-https://ropsten.etherscan.io/tx/0x43080d5d2761f9536a60cf0c2a72b86d39e2ced6789e7f0eb5630e94b62d2e47
+Mainnet: 
+
+Ropsten: https://ropsten.etherscan.io/tx/0x43080d5d2761f9536a60cf0c2a72b86d39e2ced6789e7f0eb5630e94b62d2e47
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
-Requires to approve token at first index of path to be approved on Uniswap router for the payment protocol smart contract.
+Requires to approve token at first index of path to be approved for the payment protocol smart contract.
 
 Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
 
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xc778417e063141139fce010982780140aa0cd5ab,0x1f9840a85d5af5bf1d1762f925bdaddc4201f984]
+path: [0xdAC17F958D2ee523a2206206994597C13D831ec7,0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2,0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb]
 
-amounts: [17123169254163466721,7000000000000000,1711537544]
+amounts: [21722130874672503286,10000000000000000000,1711537544]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
+plugins: [0x2AAC8B0bCC52F0bA1d971FC91dD5d60101391f7F,0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
 
 data: []
 ```
@@ -226,13 +228,13 @@ _Needs spending approval on tokenA contract first._
 ```
 value: 0
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
+path: [0x6b175474e89094c44da98b954eedeac495271d0f]
 
 amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
+plugins: [0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
 
 data: []
 ```
@@ -255,7 +257,7 @@ amounts: [10000000000000000,10000000000000000]
 
 addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
 
-plugins: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
+plugins: [0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
 
 data: []
 ```
