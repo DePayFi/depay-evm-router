@@ -544,38 +544,8 @@ describe('DePayRouterV1', () => {
     )
   })
 
-  it('makes sure that the eth balance in the smart contract is the same after the payment then before', async () => {
-    // to prevent people draining the contract
-
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
-      WETH,
-      uniswapRouter
-    })
-
-    const {PaymentContract} = await deployAndApprovePayment({
-      configuration,
-      wallet: ownerWallet
-    })
-    
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+  it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
+    const {router, ownerWallet, otherWallet, paymentPlugin, token0, uniswapRouter, WETH} = await loadFixture(uniswapPairFixture)
 
     let amountOut = 1000
     let amounts = await uniswapRouter.getAmountsIn(amountOut, [token0.address, WETH.address])
@@ -594,45 +564,15 @@ describe('DePayRouterV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        plugins: [PaymentContract.address]
+        plugins: [paymentPlugin.address]
       })
     ).to.be.revertedWith(
       'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
     )
   })
 
-  it('makes sure that the token balance in the smart contract is the same after the payment then before', async () => {
-    // to prevent people draining the contract
-
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
-      WETH,
-      uniswapRouter
-    })
-
-    const {PaymentContract} = await deployAndApprovePayment({
-      configuration,
-      wallet: ownerWallet
-    })
-    
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+  it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
+    const {router, ownerWallet, otherWallet, paymentPlugin, token0, uniswapRouter, WETH} = await loadFixture(uniswapPairFixture)
 
     let amountOut = 1000
     let amounts = await uniswapRouter.getAmountsIn(amountOut, [WETH.address, token0.address])
@@ -651,7 +591,7 @@ describe('DePayRouterV1', () => {
           now()+10000
         ],
         addresses: [otherWallet.address],
-        plugins: [PaymentContract.address],
+        plugins: [paymentPlugin.address],
         value: amountIn
       })    
     ).to.be.revertedWith(

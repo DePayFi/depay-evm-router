@@ -180,7 +180,6 @@ export async function uniswapPairFixture() {
   }
 }
 
-
 export async function uniswapPairAndCallContractFixture() {
   const {
     configuration,
