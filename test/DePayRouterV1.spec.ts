@@ -402,40 +402,17 @@ describe('DePayRouterV1', () => {
   })
 
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-    const token1 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
+    const {
+      otherWallet,
+      ownerWallet,
+      paymentPlugin,
+      router,
+      token0,
+      token1,
+      uniswapPlugin,
+      uniswapRouter,
       WETH,
-      uniswapRouter
-    })
-    
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    let pair2Address = await createUniswapPair({
-      token0: WETH,
-      token1: token1,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+    } = await loadFixture(uniswapPairFixture)
 
     let path = [token0.address, WETH.address, token1.address]
     let amountOut = 1000
@@ -450,10 +427,10 @@ describe('DePayRouterV1', () => {
         amounts: [
           amountIn,
           amountOut,
-          now() - 1000 // deadline
+          now() - 1000 // deadline in the past
         ],
         addresses: [otherWallet.address],
-        plugins: [UniswapContract.address, router.address]
+        plugins: [uniswapPlugin.address, paymentPlugin.address]
       })
     ).to.be.revertedWith(
       'UniswapV2Router: EXPIRED'
@@ -461,35 +438,16 @@ describe('DePayRouterV1', () => {
   })
 
   it('swaps ETH to token via uniswap to perform a payment', async () => {
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
+    const {
+      otherWallet,
+      ownerWallet,
+      paymentPlugin,
+      router,
+      token0,
+      uniswapPlugin,
+      uniswapRouter,
       WETH,
-      uniswapRouter
-    })
-
-    const {PaymentContract} = await deployAndApprovePayment({
-      configuration,
-      wallet: ownerWallet
-    })
-    
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+    } = await loadFixture(uniswapPairFixture)
 
     let amountOut = 1000
     let amounts = await uniswapRouter.getAmountsIn(amountOut, [WETH.address, token0.address])
@@ -506,7 +464,7 @@ describe('DePayRouterV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        plugins: [UniswapContract.address, PaymentContract.address],
+        plugins: [uniswapPlugin.address, paymentPlugin.address],
         value: amountIn
       })
     ).to.changeTokenBalance(token0, otherWallet, amountOut)
