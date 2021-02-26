@@ -27,28 +27,28 @@ additional plugins can be added/approved by calling `approvePlugin`.
 
 ## Functionalities
 
-### `pay` Sender pays a receiver
+### `route` Route Transactions
 
-The main function to peform payments.
+The main function to route transactions.
 
 Arguments:
 
 `path`: The path of the token conversion:
 
 ```
-ETH to ETH payment: 
+ETH to ETH: 
 ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
-DEPAY to DEPAY payment: 
+DEPAY to DEPAY: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
-ETH to DEPAY payment: 
+ETH to DEPAY: 
 ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
-DEPAY to ETH payment: 
+DEPAY to ETH: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
-DEPAY to UNI payment (routing goes through WETH): 
+DEPAY to UNI (routing goes through WETH): 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
 ```
 
@@ -79,7 +79,7 @@ See [Approved Plugins](#approved-plugins) for more details about available and a
 e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
 ```
 
-### `approvePlugin` Approves a payment plugin.
+### `approvePlugin` Approves a plugin.
 
 `plugin`: Address for the plugin to be approved.
 

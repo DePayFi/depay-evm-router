@@ -190,7 +190,7 @@ describe('DePayRouterV1', () => {
     return pairAddress
   }
 
-  interface payParameters {
+  interface routeParameters {
     contract: Contract
     wallet: Wallet,
     path: string[],
@@ -201,7 +201,7 @@ describe('DePayRouterV1', () => {
     value?: number,
   }
 
-  async function pay({
+  async function route({
     contract,
     wallet,
     path,
@@ -210,8 +210,8 @@ describe('DePayRouterV1', () => {
     plugins,
     data = [],
     value = 0
-  }: payParameters) {
-    return contract.connect(wallet).pay(
+  }: routeParameters) {
+    return contract.connect(wallet).route(
       path,
       amounts,
       addresses,
@@ -260,7 +260,7 @@ describe('DePayRouterV1', () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     await expect(
-      await pay({
+      await route({
         contract,
         wallet: ownerWallet,
         path: [ETH],
@@ -275,7 +275,7 @@ describe('DePayRouterV1', () => {
   it('emits a Payment event', async () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [ETH],
@@ -295,7 +295,7 @@ describe('DePayRouterV1', () => {
     const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [ETH],
@@ -316,7 +316,7 @@ describe('DePayRouterV1', () => {
     await testTokenContract.connect(ownerWallet).approve(contract.address, 1000)
     
     await expect(() => 
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [testTokenContract.address],
@@ -390,7 +390,7 @@ describe('DePayRouterV1', () => {
     })
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [ETH],
@@ -446,7 +446,7 @@ describe('DePayRouterV1', () => {
     let amountIn = amounts[0].toNumber()
 
     await expect(() => 
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: path,
@@ -503,7 +503,7 @@ describe('DePayRouterV1', () => {
     let amountIn = amounts[0].toNumber()
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: path,
@@ -551,7 +551,7 @@ describe('DePayRouterV1', () => {
     let amountIn = amounts[0].toNumber()
 
     await expect(() => 
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [ETH, token0.address],
@@ -598,7 +598,7 @@ describe('DePayRouterV1', () => {
     let amountIn = amounts[0].toNumber()
 
     await expect(() => 
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [token0.address, ETH],
@@ -666,7 +666,7 @@ describe('DePayRouterV1', () => {
     })
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: path,
@@ -738,7 +738,7 @@ describe('DePayRouterV1', () => {
     })
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: path,
@@ -793,7 +793,7 @@ describe('DePayRouterV1', () => {
     await ownerWallet.sendTransaction({to: contract.address, value: 1000})
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [token0.address, ETH],
@@ -845,7 +845,7 @@ describe('DePayRouterV1', () => {
     await token0.connect(ownerWallet).transfer(contract.address, 5000)
 
     await expect(
-      pay({
+      route({
         contract,
         wallet: ownerWallet,
         path: [ETH, token0.address],

@@ -5,16 +5,11 @@ pragma abicoder v2;
 
 interface IDePayRouterV1 {
 
-  event Payment(
-    address indexed sender,
-    address payable indexed receiver
-  );
-
   function ETH() external view returns(address);
 
   function configuration() external view returns(address);
 
-  function pay(
+  function route(
     address[] calldata path,
     uint[] calldata amounts,
     address[] calldata addresses,
