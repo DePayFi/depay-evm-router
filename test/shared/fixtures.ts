@@ -15,10 +15,12 @@ import {
 } from './utilities'
 
 import DePayRouterV1 from '../../artifacts/contracts/DePayRouterV1.sol/DePayRouterV1.json'
+import DePayRouterV1ApproveAndCallContractAddressAmount01 from '../../artifacts/contracts/DePayRouterV1ApproveAndCallContractAddressAmount01.sol/DePayRouterV1ApproveAndCallContractAddressAmount01.json'
 import DePayRouterV1Configuration from '../../artifacts/contracts/DePayRouterV1Configuration.sol/DePayRouterV1Configuration.json'
 import DePayRouterV1Payment01 from '../../artifacts/contracts/DePayRouterV1Payment01.sol/DePayRouterV1Payment01.json'
 import DePayRouterV1PaymentEvent01 from '../../artifacts/contracts/DePayRouterV1PaymentEvent01.sol/DePayRouterV1PaymentEvent01.json'
 import DePayRouterV1Uniswap01 from '../../artifacts/contracts/DePayRouterV1Uniswap01.sol/DePayRouterV1Uniswap01.json'
+import StakingPool from '../../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
 import TestToken from '../../artifacts/contracts/test/TestToken.sol/TestToken.json'
 import UniswapV2Factory from '../../artifacts/contracts/test/UniswapV2Factory.sol/UniswapV2Factory.json'
 import UniswapV2Router02 from '../../artifacts/contracts/test/UniswapV2Router02.sol/UniswapV2Router02.json'
@@ -165,6 +167,45 @@ export async function uniswapPairFixture() {
 
   return {
     configuration,
+    otherWallet,
+    ownerWallet,
+    paymentPlugin,
+    router,
+    token0,
+    token1,
+    uniswapFactory,
+    uniswapPlugin,
+    uniswapRouter,
+    WETH,
+  }
+}
+
+
+export async function uniswapPairAndCallContractFixture() {
+  const {
+    configuration,
+    otherWallet,
+    ownerWallet,
+    paymentPlugin,
+    router,
+    token0,
+    token1,
+    uniswapFactory,
+    uniswapPlugin,
+    uniswapRouter,
+    WETH,
+  } = await uniswapPairFixture()
+
+  const contractCallPlugin = await deployContract(ownerWallet, DePayRouterV1ApproveAndCallContractAddressAmount01)
+  await configuration.connect(ownerWallet).approvePlugin(contractCallPlugin.address)
+
+  const exampleContract = await deployContract(ownerWallet, StakingPool)
+  await exampleContract.initialize(token1.address)
+
+  return {
+    configuration,
+    contractCallPlugin,
+    exampleContract,
     otherWallet,
     ownerWallet,
     paymentPlugin,

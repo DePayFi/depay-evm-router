@@ -16,12 +16,13 @@ import {
 } from 'ethereum-waffle'
 
 import {
-  routerFixture,
-  paymentFixture,
-  paymentEventFixture,
   paymentAndTestTokenFixture,
+  paymentEventFixture,
+  paymentFixture,
+  routerFixture,
   unapprovedUniswapFixture,
   uniswapFixture,
+  uniswapPairAndCallContractFixture,
   uniswapPairFixture,
 } from './shared/fixtures'
 
@@ -437,7 +438,7 @@ describe('DePayRouterV1', () => {
     )
   })
 
-  it('swaps ETH to token via uniswap to perform a payment', async () => {
+  it('swaps ETH to token via uniswap before performing a payment', async () => {
     const {
       otherWallet,
       ownerWallet,
@@ -470,36 +471,17 @@ describe('DePayRouterV1', () => {
     ).to.changeTokenBalance(token0, otherWallet, amountOut)
   })
 
-  it('swaps tokens for ETH via uniswap to perform a payment', async () => {
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
+  it('swaps tokens for ETH via uniswap before performing a payment', async () => {
+    const {
+      otherWallet,
+      ownerWallet,
+      paymentPlugin,
+      router,
+      token0,
+      uniswapPlugin,
+      uniswapRouter,
       WETH,
-      uniswapRouter
-    })
-
-    const {PaymentContract} = await deployAndApprovePayment({
-      configuration,
-      wallet: ownerWallet
-    })
-    
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+    } = await loadFixture(uniswapPairFixture)
 
     let amountOut = 1000
     let amounts = await uniswapRouter.getAmountsIn(amountOut, [token0.address, WETH.address])
@@ -516,62 +498,30 @@ describe('DePayRouterV1', () => {
           now()+10000 // deadline
         ],
         addresses: [otherWallet.address],
-        plugins: [UniswapContract.address, PaymentContract.address],
+        plugins: [uniswapPlugin.address, paymentPlugin.address],
         value: amountIn
       })
     ).to.changeEtherBalance(otherWallet, amountOut)
   })
 
-  it('swaps tokens to tokens via uniswap and calls another contract with the swapped tokens within the same transaction', async () => {
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-
-    const token0 = await deployContract(ownerWallet, TestToken)
-    const token1 = await deployContract(ownerWallet, TestToken)
-
-    const {WETH} = await deployWETH({wallet: ownerWallet})
-    const {uniswapFactory, uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
-
-    const {UniswapContract} = await deployAndApproveUniswap({
-      configuration,
-      wallet: ownerWallet,
+  it('swaps tokens to tokens via uniswap and pays the resulting tokens into a contract', async () => {
+    const {
+      contractCallPlugin,
+      exampleContract,
+      ownerWallet,
+      paymentPlugin,
+      router,
+      token0,
+      token1,
+      uniswapPlugin,
+      uniswapRouter,
       WETH,
-      uniswapRouter
-    })
-
-    let pair1Address = await createUniswapPair({
-      token0: WETH,
-      token1: token0,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    let pair2Address = await createUniswapPair({
-      token0: WETH,
-      token1: token1,
-      WETH,
-      router: uniswapRouter,
-      wallet: ownerWallet,
-      uniswapFactory: uniswapFactory
-    })
-
-    await token0.connect(ownerWallet).approve(router.address, MAXINT)
+    } = await loadFixture(uniswapPairAndCallContractFixture)
 
     let path = [token0.address, WETH.address, token1.address]
     let amountOut = 1000
     let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
     let amountIn = amounts[0].toNumber()
-
-    const {contractCallPluginContract} = await deployAndApproveContractCallPlugin({
-      configuration,
-      wallet: ownerWallet
-    })
-
-    const {stakingPoolContract} = await deployStakingPool({
-      wallet: ownerWallet,
-      token: token1.address
-    })
 
     await expect(
       route({
@@ -583,11 +533,11 @@ describe('DePayRouterV1', () => {
           amountOut,
           now()+10000 // deadline
         ],
-        addresses: [ownerWallet.address, stakingPoolContract.address],
+        addresses: [ownerWallet.address, exampleContract.address],
         data: ["depositFor(address,uint256)"],
-        plugins: [UniswapContract.address, contractCallPluginContract.address]
+        plugins: [uniswapPlugin.address, contractCallPlugin.address]
       })
-    ).to.emit(stakingPoolContract, 'Deposit')
+    ).to.emit(exampleContract, 'Deposit')
     .withArgs(
       ownerWallet.address,
       amountOut
