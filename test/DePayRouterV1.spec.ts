@@ -20,200 +20,30 @@ import {
   paymentEventFixture,
   paymentFixture,
   routerFixture,
+  testTokenFixture,
   unapprovedUniswapFixture,
   uniswapFixture,
   uniswapPairAndCallContractFixture,
   uniswapPairFixture,
 } from './shared/fixtures'
 
-import DePayRouterV1 from '../artifacts/contracts/DePayRouterV1.sol/DePayRouterV1.json'
-import DePayRouterV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayRouterV1ApproveAndCallContractAddressAmount01.sol/DePayRouterV1ApproveAndCallContractAddressAmount01.json'
-import DePayRouterV1Configuration from '../artifacts/contracts/DePayRouterV1Configuration.sol/DePayRouterV1Configuration.json'
-import DePayRouterV1Payment01 from '../artifacts/contracts/DePayRouterV1Payment01.sol/DePayRouterV1Payment01.json'
-import DePayRouterV1PaymentEvent01 from '../artifacts/contracts/DePayRouterV1PaymentEvent01.sol/DePayRouterV1PaymentEvent01.json'
-import DePayRouterV1Uniswap01 from '../artifacts/contracts/DePayRouterV1Uniswap01.sol/DePayRouterV1Uniswap01.json'
+import {
+  route,
+} from './shared/functions'
+
+import {
+  now,
+  ETH,
+  MAXINT,
+} from './shared/utils'
+
 import IDePayRouterV1 from '../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
-import IDePayRouterV1Plugin from '../artifacts/contracts/interfaces/IDePayRouterV1Plugin.sol/IDePayRouterV1Plugin.json'
-import IERC20 from '../artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
-import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
-import TestToken from '../artifacts/contracts/test/TestToken.sol/TestToken.json'
-import UniswapV2Factory from '../artifacts/contracts/test/UniswapV2Factory.sol/UniswapV2Factory.json'
-import UniswapV2Pair from '../artifacts/contracts/test/UniswapV2Pair.sol/UniswapV2Pair.json'
-import UniswapV2Router02 from '../artifacts/contracts/test/UniswapV2Router02.sol/UniswapV2Router02.json'
-import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
-import {route} from './shared/functions'
 
 const { ethers } = require("hardhat")
 
-const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-
 chai.use(solidity)
 
-let now = () => Math.round(new Date().getTime() / 1000)
-
 describe('DePayRouterV1', () => {
-
-  interface deployAndApprovePaymentParameters {
-    configuration: Contract,
-    wallet: Wallet
-  }
-
-  async function deployAndApprovePayment({
-    configuration,
-    wallet
-  }: deployAndApprovePaymentParameters) {
-    const PaymentContract = await deployContract(wallet, DePayRouterV1Payment01)
-    await configuration.connect(wallet).approvePlugin(PaymentContract.address)
-    return { PaymentContract }
-  }
-
-  interface deployAndApprovePaymentEventParameters {
-    configuration: Contract,
-    wallet: Wallet
-  }
-
-  async function deployAndApprovePaymentEvent({
-    configuration,
-    wallet
-  }: deployAndApprovePaymentEventParameters) {
-    const PaymentEventContract = await deployContract(wallet, DePayRouterV1PaymentEvent01)
-    await configuration.connect(wallet).approvePlugin(PaymentEventContract.address)
-    return { PaymentEventContract }
-  }
-
-  interface deployAndApproveUniswapParameters {
-    configuration: Contract,
-    wallet: Wallet,
-    WETH: Contract,
-    uniswapRouter: Contract
-  }
-
-  async function deployAndApproveUniswap({
-    configuration,
-    wallet,
-    WETH,
-    uniswapRouter
-  }: deployAndApproveUniswapParameters) {
-    const UniswapContract = await deployContract(wallet, DePayRouterV1Uniswap01, [WETH.address, uniswapRouter.address])
-    await configuration.connect(wallet).approvePlugin(UniswapContract.address)
-    return { UniswapContract }
-  }
-
-  interface deployAndApproveContractCallPluginParameters {
-    configuration: Contract,
-    wallet: Wallet
-  }
-
-  async function deployAndApproveContractCallPlugin({
-    configuration,
-    wallet
-  }: deployAndApproveContractCallPluginParameters) {
-    const contractCallPluginContract = await deployContract(wallet, DePayRouterV1ApproveAndCallContractAddressAmount01)
-    await configuration.connect(wallet).approvePlugin(contractCallPluginContract.address)
-    return { contractCallPluginContract }
-  }
-
-  interface deployWETHParameters {
-    wallet: Wallet,
-  }
-
-  async function deployWETH({
-    wallet
-  }: deployWETHParameters) {
-    const WETH = await deployContract(wallet, WETH9)
-    return { WETH }
-  }
-
-  interface deployStakingPoolParameters {
-    wallet: Wallet,
-    token: string
-  }
-
-  async function deployStakingPool({
-    wallet,
-    token
-  }: deployStakingPoolParameters) {
-    const stakingPoolContract = await deployContract(wallet, StakingPool)
-    await stakingPoolContract.initialize(token)
-    
-    return {
-      stakingPoolContract
-    }
-  }
-
-  interface deployUniswapParameters {
-    WETH: Contract,
-    wallet: Wallet
-  }
-
-  async function deployUniswap({
-    WETH,
-    wallet
-  }: deployUniswapParameters) {
-    const uniswapFactory = await deployContract(wallet, UniswapV2Factory, [wallet.address])
-    const uniswapRouter = await deployContract(wallet, UniswapV2Router02, [uniswapFactory.address, WETH.address])
-    
-    return {
-      uniswapFactory,
-      uniswapRouter
-    }
-  }
-
-  interface createUniswapPairParameters {
-    token0: Contract,
-    token1: Contract,
-    WETH: Contract,
-    router: Contract,
-    wallet: Wallet,
-    uniswapFactory: Contract
-  }
-
-  async function createUniswapPair({
-    token0,
-    token1,
-    WETH,
-    router,
-    wallet,
-    uniswapFactory
-  }: createUniswapPairParameters) {
-    if(token0 != WETH) {
-      await token0.connect(wallet).transfer(wallet.address, 1000000)
-      await token0.connect(wallet).approve(router.address, MAXINT)
-    }
-    
-    if(token1 == WETH) { throw 'token1 is not allowed to be WETH, use token0 instead!' }
-    await token1.connect(wallet).transfer(wallet.address, 1000000)
-    await token1.connect(wallet).approve(router.address, MAXINT)
-
-    await uniswapFactory.createPair(token0.address, token1.address)
-    const pairAddress = await uniswapFactory.getPair(token0.address, token1.address)
-    
-    if(token0 == WETH) {
-      await router.connect(wallet).addLiquidityETH(
-        token1.address,
-        1000000,
-        1000000,
-        1000000,
-        wallet.address,
-        MAXINT,
-        {value: 1000000}
-      )
-    } else {
-      await router.connect(wallet).addLiquidity(
-        token0.address,
-        token1.address,
-        1000000,
-        1000000,
-        1000000,
-        1000000,
-        wallet.address,
-        MAXINT
-      )
-    }
-
-    return pairAddress
-  }
 
   it('deploys router successfully', async () => {
     await loadFixture(routerFixture)
@@ -620,8 +450,7 @@ describe('DePayRouterV1', () => {
   })
 
   it('allows owner to withdraw tokens that remained in the contract', async () => {
-    const {router, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-    const testTokenContract = await deployContract(otherWallet, TestToken)
+    const {router, ownerWallet, otherWallet, testTokenContract} = await loadFixture(testTokenFixture)
     await testTokenContract.transfer(router.address, 1000)
 
     await expect(() => 
@@ -630,9 +459,7 @@ describe('DePayRouterV1', () => {
   })
 
   it('does not allow others to withdraw tokens that remained in the contract', async () => {
-    const {router, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-    const testTokenContract = await deployContract(otherWallet, TestToken)
-    await testTokenContract.transfer(router.address, 1000)
+    const {router, ownerWallet, otherWallet, testTokenContract} = await loadFixture(testTokenFixture)
 
     await expect(
       router.connect(otherWallet).withdraw(testTokenContract.address, 1000)

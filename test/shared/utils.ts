@@ -4,7 +4,10 @@ import {
   Wallet,
 } from 'ethers'
 
+export const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 export const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+
+export const now = () => Math.round(new Date().getTime() / 1000)
 
 interface createUniswapPairParameters {
   token0: Contract,

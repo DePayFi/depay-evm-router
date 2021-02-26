@@ -12,7 +12,7 @@ import {
 import {
   createUniswapPair,
   MAXINT,
-} from './utilities'
+} from './utils'
 
 import DePayRouterV1 from '../../artifacts/contracts/DePayRouterV1.sol/DePayRouterV1.json'
 import DePayRouterV1ApproveAndCallContractAddressAmount01 from '../../artifacts/contracts/DePayRouterV1ApproveAndCallContractAddressAmount01.sol/DePayRouterV1ApproveAndCallContractAddressAmount01.json'
@@ -56,6 +56,18 @@ export async function paymentFixture() {
     ownerWallet,
     otherWallet,
     paymentPlugin
+  }
+}
+
+export async function testTokenFixture() {
+  const {router, configuration, ownerWallet, otherWallet} = await routerFixture()
+  const testTokenContract = await deployContract(ownerWallet, TestToken)
+  return {
+    router,
+    configuration,
+    ownerWallet,
+    otherWallet,
+    testTokenContract,
   }
 }
 
