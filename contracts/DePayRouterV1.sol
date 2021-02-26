@@ -6,11 +6,11 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import './interfaces/IDePayPaymentsV1Plugin.sol';
+import './interfaces/IDePayRouterV1Plugin.sol';
 import './libraries/Helper.sol';
-import './DePayPaymentsV1Configuration.sol';
+import './DePayRouterV1Configuration.sol';
 
-contract DePayPaymentsV1 {
+contract DePayRouterV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
@@ -18,8 +18,8 @@ contract DePayPaymentsV1 {
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // Instance of DePayPaymentsV1Configuration
-  DePayPaymentsV1Configuration public immutable configuration;
+  // Instance of DePayRouterV1Configuration
+  DePayRouterV1Configuration public immutable configuration;
 
   // Pass immutable instance to configuration.
   // This protects from potential delegatecall and access overlay attacks:
@@ -27,10 +27,10 @@ contract DePayPaymentsV1 {
   constructor (
     address _configuration
   ) public {
-    configuration = DePayPaymentsV1Configuration(_configuration);
+    configuration = DePayRouterV1Configuration(_configuration);
   }
 
-  // Proxy modifier to DePayPaymentsV1Configuration
+  // Proxy modifier to DePayRouterV1Configuration
   modifier onlyOwner() {
       require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
       _;
@@ -106,7 +106,7 @@ contract DePayPaymentsV1 {
         require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
         address plugin = configuration.approvedPlugins(plugins[i]);
         (bool success, bytes memory returnData) = plugin.delegatecall(abi.encodeWithSelector(
-            IDePayPaymentsV1Plugin(plugin).execute.selector, path, amounts, addresses, data
+            IDePayRouterV1Plugin(plugin).execute.selector, path, amounts, addresses, data
         ));
         require(success, string(returnData));
       }

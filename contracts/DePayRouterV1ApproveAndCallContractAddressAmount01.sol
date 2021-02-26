@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/Helper.sol';
 
-contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
+contract DePayRouterV1ApproveAndCallContractAddressAmount01 {
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;

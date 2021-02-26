@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/IUniswapV2Router02.sol";
 import './libraries/Helper.sol';
 
-contract DePayPaymentsV1Uniswap01 {
+contract DePayRouterV1Uniswap01 {
   
   using SafeMath for uint;
 

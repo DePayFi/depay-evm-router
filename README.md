@@ -1,12 +1,17 @@
+# DePay's Ethereum Router
+
+Plugin based ethereum smart contract enabling various peer-to-peer transactions like:
+Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
+
 ## Deployments
 
 #### Mainnet
 
-[DePayPaymentsV1](https://etherscan.io/address/0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2)
+[DePayRouterV1](XXX)
 
 #### Ropsten
 
-[DePayPaymentsV1](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
+[DePayRouterV1](XXX)
 
 ## Summary
 
@@ -78,31 +83,30 @@ e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
 
 `plugin`: Address for the plugin to be approved.
 
-
 ## Approved Plugins
 
-### DePayPaymentsV1
+### DePayRouterV1Payment01
 
-Used to send tokens (or ETH) to a receiver.
+Used to send a payment (ETH or any transferable token) to a receiver.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
 
-Mainnet: [0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2](https://etherscan.io/address/0xa5ec11d6a58b5cc03d1f28debb5077d41287acd2)
+Mainnet: [XXX](XXX)
 
-Ropsten: [0x39Ff997cf48B5DFd9A7C981c23Fae71320669694](https://ropsten.etherscan.io/address/0x39Ff997cf48B5DFd9A7C981c23Fae71320669694)
+Ropsten: [XXX](XXX)
 
-### DePayPaymentsV1Uniswap01
+### DePayRouterV1Uniswap01
 
 Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
-Mainnet: [0x2AAC8B0bCC52F0bA1d971FC91dD5d60101391f7F](https://etherscan.io/address/0x2aac8b0bcc52f0ba1d971fc91dd5d60101391f7f)
+Mainnet: [XXX](XXX)
 
-Ropsten: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411](https://ropsten.etherscan.io/address/0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411)
+Ropsten: [XXX](XXX)
 
-### DePayPaymentsV1ApproveAndCallContractAddressAmount01
+### DePayRouterV1ApproveAndCallContractAddressAmount01
 
 Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
 
@@ -115,16 +119,18 @@ passing the address at index 0 of `addresses` (`addresses[0]`)
 and passing the amount at index 1 of `amounts` (`amounts[1]`)
 to the method with the signature provided in `data` at index 0 (`data[0]`).
 
-Mainnet: [0xAAFbF4dE32b55809A685FF4c1D3aC48345c79d99](https://etherscan.io/address/0xaafbf4de32b55809a685ff4c1d3ac48345c79d99)
+Mainnet: [XXX](XXX)
 
-Ropsten: [0xB85B8307A3ab932D769826Ade116dFd48602875F](https://ropsten.etherscan.io/address/0xB85B8307A3ab932D769826Ade116dFd48602875F)
+Ropsten: [XXX](XXX)
 
 
 ## Examples
 
 ### tokenA to tokenB payment with smart contract receiver (e.g. staking pool)
 
-https://ropsten.etherscan.io/tx/0x7239410d735016e84fc1cc59542e3a6af00c78d1817e6d60ef3bddc475fc734b
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -148,9 +154,9 @@ data: ["depositFor(address,uint256)"]
 
 ### tokenA to tokenB payment
 
-Mainnet: 
+Mainnet: [XXX](XXX)
 
-Ropsten: https://ropsten.etherscan.io/tx/0x43080d5d2761f9536a60cf0c2a72b86d39e2ced6789e7f0eb5630e94b62d2e47
+Ropsten: [XXX](XXX)
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -177,7 +183,9 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### tokenA to ETH payment
 
-https://ropsten.etherscan.io/tx/0x207f4259c9fe838934f7c7ee3f538ddfa2fe31ecca85d78510124f09ecf22ced
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
 
 ```
 value: 0
@@ -198,7 +206,9 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### ETH to tokenA payment
 
-https://ropsten.etherscan.io/tx/0x82a868645a48e9cff17147cb3ed6dc9e1aed4cbe0a2a9a6c3e7a84f3161714b4
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
 
 ```
 value: 0.000149068600304723
@@ -219,7 +229,9 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### tokenA to tokenA payment
 
-https://ropsten.etherscan.io/tx/0xde5706eaa6422204b80e05f90cadfffae31111fa5c94bb6253ea550c29537e90
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
 
 _Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the Payment event._
 
@@ -244,7 +256,9 @@ to avoid depositing into the payment contract itself without performing a paymen
 
 ### ETH to ETH payment
 
-https://ropsten.etherscan.io/tx/0x2bd160ad92fd03f47f23d10c7d27c9e09c10721740e48e15f2d2ba032e1160c8
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
 
 _Consider performing ETH to ETH transfers directly if you don't rely on any other plugins or the Payment event._
 

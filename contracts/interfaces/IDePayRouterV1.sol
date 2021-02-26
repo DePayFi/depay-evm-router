@@ -3,7 +3,7 @@
 pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
-interface IDePayPaymentsV1 {
+interface IDePayRouterV1 {
 
   event Payment(
     address indexed sender,

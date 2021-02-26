@@ -14,17 +14,17 @@ import {
 } from 'ethereum-waffle'
 import IERC20 from '../artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json'
 import TestToken from '../artifacts/contracts/test/TestToken.sol/TestToken.json'
-import DePayPaymentsV1 from '../artifacts/contracts/DePayPaymentsV1.sol/DePayPaymentsV1.json'
-import IDePayPaymentsV1 from '../artifacts/contracts/interfaces/IDePayPaymentsV1.sol/IDePayPaymentsV1.json'
-import IDePayPaymentsV1Plugin from '../artifacts/contracts/interfaces/IDePayPaymentsV1Plugin.sol/IDePayPaymentsV1Plugin.json'
+import DePayRouterV1 from '../artifacts/contracts/DePayRouterV1.sol/DePayRouterV1.json'
+import IDePayRouterV1 from '../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
+import IDePayRouterV1Plugin from '../artifacts/contracts/interfaces/IDePayRouterV1Plugin.sol/IDePayRouterV1Plugin.json'
 import UniswapV2Factory from '../artifacts/contracts/test/UniswapV2Factory.sol/UniswapV2Factory.json'
 import UniswapV2Pair from '../artifacts/contracts/test/UniswapV2Pair.sol/UniswapV2Pair.json'
 import UniswapV2Router02 from '../artifacts/contracts/test/UniswapV2Router02.sol/UniswapV2Router02.json'
 import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
 import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
-import DePayPaymentsV1Uniswap01 from '../artifacts/contracts/DePayPaymentsV1Uniswap01.sol/DePayPaymentsV1Uniswap01.json'
-import DePayPaymentsV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayPaymentsV1ApproveAndCallContractAddressAmount01.sol/DePayPaymentsV1ApproveAndCallContractAddressAmount01.json'
-import DePayPaymentsV1Configuration from '../artifacts/contracts/DePayPaymentsV1Configuration.sol/DePayPaymentsV1Configuration.json'
+import DePayRouterV1Uniswap01 from '../artifacts/contracts/DePayRouterV1Uniswap01.sol/DePayRouterV1Uniswap01.json'
+import DePayRouterV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayRouterV1ApproveAndCallContractAddressAmount01.sol/DePayRouterV1ApproveAndCallContractAddressAmount01.json'
+import DePayRouterV1Configuration from '../artifacts/contracts/DePayRouterV1Configuration.sol/DePayRouterV1Configuration.json'
 
 const { ethers } = require("hardhat")
 
@@ -35,7 +35,7 @@ chai.use(solidity)
 
 let now = () => Math.round(new Date().getTime() / 1000)
 
-describe('DePayPaymentsV1', () => {
+describe('DePayRouterV1', () => {
 
   const provider = new MockProvider({
     ganacheOptions: {
@@ -47,8 +47,8 @@ describe('DePayPaymentsV1', () => {
   const [ownerWallet, otherWallet] = provider.getWallets()
   
   async function fixture() {
-    const configuration = await deployContract(ownerWallet, DePayPaymentsV1Configuration)
-    const contract = await deployContract(ownerWallet, DePayPaymentsV1, [configuration.address])
+    const configuration = await deployContract(ownerWallet, DePayRouterV1Configuration)
+    const contract = await deployContract(ownerWallet, DePayRouterV1, [configuration.address])
     return {
       contract,
       configuration,
@@ -70,7 +70,7 @@ describe('DePayPaymentsV1', () => {
     WETH,
     uniswapRouter
   }: deployAndApproveUniswapParameters) {
-    const UniswapContract = await deployContract(wallet, DePayPaymentsV1Uniswap01, [WETH.address, uniswapRouter.address])
+    const UniswapContract = await deployContract(wallet, DePayRouterV1Uniswap01, [WETH.address, uniswapRouter.address])
     await configuration.connect(wallet).approvePlugin(UniswapContract.address)
     return { UniswapContract }
   }
@@ -84,7 +84,7 @@ describe('DePayPaymentsV1', () => {
     configuration,
     wallet
   }: deployAndApproveContractCallPluginParameters) {
-    const contractCallPluginContract = await deployContract(wallet, DePayPaymentsV1ApproveAndCallContractAddressAmount01)
+    const contractCallPluginContract = await deployContract(wallet, DePayRouterV1ApproveAndCallContractAddressAmount01)
     await configuration.connect(wallet).approvePlugin(contractCallPluginContract.address)
     return { contractCallPluginContract }
   }
@@ -225,9 +225,9 @@ describe('DePayPaymentsV1', () => {
     await loadFixture(fixture)
   })
 
-  it('makes sure DePayPaymentsV1 has the same interface as IDePayPaymentsV1', async () => {
+  it('makes sure DePayRouterV1 has the same interface as IDePayRouterV1', async () => {
     const { contract, ownerWallet } = await loadFixture(fixture)
-    const interfaceContract = await deployMockContract(ownerWallet, IDePayPaymentsV1.abi)
+    const interfaceContract = await deployMockContract(ownerWallet, IDePayRouterV1.abi)
     let inheritedFragmentNames: string[] = ['OwnershipTransferred', 'transferOwnership', 'owner', 'renounceOwnership']
     let contractFragmentsFiltered = contract.interface.fragments.filter(
       function(fragment){
@@ -350,7 +350,7 @@ describe('DePayPaymentsV1', () => {
     const {WETH} = await deployWETH({wallet: ownerWallet})
     const {uniswapRouter} = await deployUniswap({WETH, wallet: ownerWallet})
 
-    const UniswapContract = await deployContract(ownerWallet, DePayPaymentsV1Uniswap01, [WETH.address, uniswapRouter.address])
+    const UniswapContract = await deployContract(ownerWallet, DePayRouterV1Uniswap01, [WETH.address, uniswapRouter.address])
     
     await expect(
       configuration.approvePlugin(UniswapContract.address)
