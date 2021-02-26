@@ -95,6 +95,16 @@ Mainnet: [XXX](XXX)
 
 Ropsten: [XXX](XXX)
 
+### DePayRouterV1PaymentEvent01
+
+Used to log a payment event on-chain if requested. If not required/requested, not using it does safe gas.
+
+Emits a `Payment` event on the `DePayRouterV1PaymentEvent01` contract using `addresses[0]` as the `sender` of the event and `addresses[addresses.length-1]` as the `receiver` of the `Payment`.
+
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
+
 ### DePayRouterV1Uniswap01
 
 Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.

@@ -11,4 +11,6 @@ interface IDePayRouterV1Plugin {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool);
+
+  function delegate() external returns(bool);
 }

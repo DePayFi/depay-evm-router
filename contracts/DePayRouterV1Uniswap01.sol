@@ -26,6 +26,9 @@ contract DePayRouterV1Uniswap01 {
   // Address of Uniswap router.
   address public immutable UniswapV2Router02;
 
+  // Indicates that this plugin requires delegate call
+  bool public immutable delegate = true;
+
   // Pass WETH and the UniswapRouter when deploying this contract.
   constructor (
     address _WETH,

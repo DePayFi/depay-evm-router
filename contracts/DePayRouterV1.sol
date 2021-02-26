@@ -32,8 +32,8 @@ contract DePayRouterV1 {
 
   // Proxy modifier to DePayRouterV1Configuration
   modifier onlyOwner() {
-      require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
-      _;
+    require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
+    _;
   }
 
   receive() external payable {
@@ -93,11 +93,20 @@ contract DePayRouterV1 {
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
       require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
-      address plugin = configuration.approvedPlugins(plugins[i]);
-      (bool success, bytes memory returnData) = plugin.delegatecall(abi.encodeWithSelector(
-          IDePayRouterV1Plugin(plugin).execute.selector, path, amounts, addresses, data
-      ));
-      require(success, string(returnData));
+      
+      IDePayRouterV1Plugin plugin = IDePayRouterV1Plugin(configuration.approvedPlugins(plugins[i]));
+
+      if(plugin.delegate()) {
+        (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
+            plugin.execute.selector, path, amounts, addresses, data
+        ));
+        require(success, string(returnData));
+      } else {
+        (bool success, bytes memory returnData) = address(plugin).call(abi.encodeWithSelector(
+            plugin.execute.selector, path, amounts, addresses, data
+        ));
+        require(success, string(returnData));
+      }
     }
   }
 

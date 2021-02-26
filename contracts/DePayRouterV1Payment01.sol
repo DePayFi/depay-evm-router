@@ -11,6 +11,9 @@ contract DePayRouterV1Payment01 {
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
+  // Indicates that this plugin requires delegate call
+  bool public immutable delegate = true;
+
   // The payment event.
   event Payment(
     address indexed sender,

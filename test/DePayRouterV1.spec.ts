@@ -22,6 +22,8 @@ import UniswapV2Pair from '../artifacts/contracts/test/UniswapV2Pair.sol/Uniswap
 import UniswapV2Router02 from '../artifacts/contracts/test/UniswapV2Router02.sol/UniswapV2Router02.json'
 import StakingPool from '../artifacts/contracts/test/StakingPool.sol/StakingPool.json'
 import WETH9 from '../artifacts/contracts/test/WETH9.sol/WETH9.json'
+import DePayRouterV1Payment01 from '../artifacts/contracts/DePayRouterV1Payment01.sol/DePayRouterV1Payment01.json'
+import DePayRouterV1PaymentEvent01 from '../artifacts/contracts/DePayRouterV1PaymentEvent01.sol/DePayRouterV1PaymentEvent01.json'
 import DePayRouterV1Uniswap01 from '../artifacts/contracts/DePayRouterV1Uniswap01.sol/DePayRouterV1Uniswap01.json'
 import DePayRouterV1ApproveAndCallContractAddressAmount01 from '../artifacts/contracts/DePayRouterV1ApproveAndCallContractAddressAmount01.sol/DePayRouterV1ApproveAndCallContractAddressAmount01.json'
 import DePayRouterV1Configuration from '../artifacts/contracts/DePayRouterV1Configuration.sol/DePayRouterV1Configuration.json'
@@ -55,6 +57,34 @@ describe('DePayRouterV1', () => {
       ownerWallet,
       otherWallet
     }
+  }
+
+  interface deployAndApprovePaymentParameters {
+    configuration: Contract,
+    wallet: Wallet
+  }
+
+  async function deployAndApprovePayment({
+    configuration,
+    wallet
+  }: deployAndApprovePaymentParameters) {
+    const PaymentContract = await deployContract(wallet, DePayRouterV1Payment01)
+    await configuration.connect(wallet).approvePlugin(PaymentContract.address)
+    return { PaymentContract }
+  }
+
+  interface deployAndApprovePaymentEventParameters {
+    configuration: Contract,
+    wallet: Wallet
+  }
+
+  async function deployAndApprovePaymentEvent({
+    configuration,
+    wallet
+  }: deployAndApprovePaymentEventParameters) {
+    const PaymentEventContract = await deployContract(wallet, DePayRouterV1PaymentEvent01)
+    await configuration.connect(wallet).approvePlugin(PaymentEventContract.address)
+    return { PaymentEventContract }
   }
 
   interface deployAndApproveUniswapParameters {
@@ -257,7 +287,11 @@ describe('DePayRouterV1', () => {
   })
 
   it('allows to perform simple ETH payments without conversion', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+    const {contract, ownerWallet, otherWallet, configuration} = await loadFixture(fixture)
+    const {PaymentContract} = await deployAndApprovePayment({
+      configuration,
+      wallet: ownerWallet
+    })
 
     await expect(
       await route({
@@ -265,26 +299,35 @@ describe('DePayRouterV1', () => {
         wallet: ownerWallet,
         path: [ETH],
         amounts: [1000, 1000],
-        addresses: [otherWallet.address],
-        plugins: [contract.address],
+        addresses: [ownerWallet.address, otherWallet.address],
+        plugins: [PaymentContract.address],
         value: 1000
       })
     ).to.changeEtherBalance(otherWallet, 1000)
   })
 
-  it('emits a Payment event', async () => {
-    const {contract, ownerWallet, otherWallet} = await loadFixture(fixture)
+  it('emits a Payment event when performing payments if requested', async () => {
+    const {contract, ownerWallet, otherWallet, configuration} = await loadFixture(fixture)
+    const {PaymentContract} = await deployAndApprovePayment({
+      configuration,
+      wallet: ownerWallet
+    })
+    const {PaymentEventContract} = await deployAndApprovePaymentEvent({
+      configuration,
+      wallet: ownerWallet
+    })
+
     await expect(
       route({
         contract,
         wallet: ownerWallet,
         path: [ETH],
         amounts: [1000, 1000],
-        addresses: [otherWallet.address],
-        plugins: [contract.address],
+        addresses: [ownerWallet.address, otherWallet.address],
+        plugins: [PaymentContract.address, PaymentEventContract.address],
         value: 1000
       })
-    ).to.emit(contract, 'Payment')
+    ).to.emit(PaymentEventContract, 'Payment')
     .withArgs(
       ownerWallet.address,
       otherWallet.address
