@@ -91,6 +91,8 @@ Used to send a payment (ETH or any transferable token) to a receiver.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
 
+Can be used to perform token sales from decentralized exchanges to the sender by setting `addresses` to `[<sender address>]`.
+
 Mainnet: [XXX](XXX)
 
 Ropsten: [XXX](XXX)
@@ -100,6 +102,16 @@ Ropsten: [XXX](XXX)
 Used to log a payment event on-chain if requested. If not required/requested, not using it does safe gas.
 
 Emits a `Payment` event on the `DePayRouterV1PaymentEvent01` contract using `addresses[0]` as the `sender` of the event and `addresses[addresses.length-1]` as the `receiver` of the `Payment`.
+
+Mainnet: [XXX](XXX)
+
+Ropsten: [XXX](XXX)
+
+### DePayRouterV1SaleEvent01
+
+Used to log a sale event on-chain if requested. If not required/requested, not using it does safe gas.
+
+Emits a `Sale` event on the `DePayRouterV1SaleEvent01` contract using `addresses[0]` as the `buyer`.
 
 Mainnet: [XXX](XXX)
 

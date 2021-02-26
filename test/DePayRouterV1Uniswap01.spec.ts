@@ -54,6 +54,40 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap01', () => {
     ).to.changeTokenBalance(token1, otherWallet, 1000)
   })
 
+  it('swaps tokens via uniswap and sends them back to purchaser as token sale', async () => {
+    const {
+      otherWallet,
+      ownerWallet,
+      paymentPlugin,
+      router,
+      token0,
+      token1,
+      uniswapPlugin,
+      uniswapRouter,
+      WETH,
+    } = await loadFixture(uniswapPairFixture)
+
+    let path = [token0.address, WETH.address, token1.address]
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
+    let amountIn = amounts[0].toNumber()
+
+    await expect(() => 
+      route({
+        router,
+        wallet: ownerWallet,
+        path: path,
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+10000 // deadline
+        ],
+        addresses: [ownerWallet.address],
+        plugins: [uniswapPlugin.address, paymentPlugin.address]
+      })
+    ).to.changeTokenBalance(token1, ownerWallet, 1000)
+  })
+
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
     const {
       otherWallet,

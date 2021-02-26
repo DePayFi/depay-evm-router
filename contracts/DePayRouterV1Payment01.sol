@@ -14,7 +14,6 @@ contract DePayRouterV1Payment01 {
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
 
-  // The payment event.
   event Payment(
     address indexed sender,
     address payable indexed receiver
@@ -32,7 +31,5 @@ contract DePayRouterV1Payment01 {
     } else {
       Helper.safeTransfer(path[path.length-1], payable(addresses[addresses.length-1]), amounts[1]);
     }
-
-    emit Payment(msg.sender, payable(addresses[addresses.length-1]));
   }
 }
