@@ -4,10 +4,23 @@ import {
   Wallet,
 } from 'ethers'
 
+import { 
+  MockProvider,
+} from 'ethereum-waffle'
+
 export const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 export const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 
 export const now = () => Math.round(new Date().getTime() / 1000)
+
+const provider = new MockProvider({
+  ganacheOptions: {
+    mnemonic: 'pay pay pay pay pay pay pay pay pay pay pay pay',
+    allowUnlimitedContractSize: true // as UniswapV2Router02 is just too big
+  }
+})
+
+export const [ownerWallet, otherWallet] = provider.getWallets()
 
 interface createUniswapPairParameters {
   token0: Contract,

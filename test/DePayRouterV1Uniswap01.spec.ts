@@ -2,29 +2,19 @@ import chai, { expect } from 'chai'
 
 import { 
   solidity,
-  deployMockContract,
   loadFixture,
 } from 'ethereum-waffle'
 
-import {
-  uniswapFixture,
-  uniswapPairAndCallContractFixture,
-  uniswapPairFixture,
-} from './shared/fixtures'
+import { uniswapPairFixture } from './fixtures/uniswap'
 
 import {
   route,
-} from './shared/functions'
+} from './functions'
 
 import {
   now,
-  ETH,
-  MAXINT,
-} from './shared/utils'
-
-import IDePayRouterV1 from '../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
-
-const { ethers } = require("hardhat")
+  ETH
+} from './utils'
 
 chai.use(solidity)
 
@@ -166,43 +156,58 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap01', () => {
     ).to.changeEtherBalance(otherWallet, amountOut)
   })
 
-  it('swaps tokens to tokens via uniswap and pays the resulting tokens into a contract', async () => {
-    const {
-      contractCallPlugin,
-      exampleContract,
-      ownerWallet,
-      paymentPlugin,
-      router,
-      token0,
-      token1,
-      uniswapPlugin,
-      uniswapRouter,
-      WETH,
-    } = await loadFixture(uniswapPairAndCallContractFixture)
+  it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
+    const {router, ownerWallet, otherWallet, paymentPlugin, token0, uniswapRouter, WETH} = await loadFixture(uniswapPairFixture)
 
-    let path = [token0.address, WETH.address, token1.address]
     let amountOut = 1000
-    let amounts = await uniswapRouter.getAmountsIn(amountOut, path)
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [token0.address, WETH.address])
     let amountIn = amounts[0].toNumber()
+
+    await ownerWallet.sendTransaction({to: router.address, value: 1000})
 
     await expect(
       route({
         router,
         wallet: ownerWallet,
-        path: path,
+        path: [token0.address, ETH],
         amounts: [
           amountIn,
           amountOut,
           now()+10000 // deadline
         ],
-        addresses: [ownerWallet.address, exampleContract.address],
-        data: ["depositFor(address,uint256)"],
-        plugins: [uniswapPlugin.address, contractCallPlugin.address]
+        addresses: [otherWallet.address],
+        plugins: [paymentPlugin.address]
       })
-    ).to.emit(exampleContract, 'Deposit')
-    .withArgs(
-      ownerWallet.address,
-      amountOut
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
+    )
+  })
+
+  it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
+    const {router, ownerWallet, otherWallet, paymentPlugin, token0, uniswapRouter, WETH} = await loadFixture(uniswapPairFixture)
+
+    let amountOut = 1000
+    let amounts = await uniswapRouter.getAmountsIn(amountOut, [WETH.address, token0.address])
+    let amountIn = amounts[0].toNumber()
+
+    await token0.connect(ownerWallet).transfer(router.address, 5000)
+
+    await expect(
+      route({
+        router,
+        wallet: ownerWallet,
+        path: [ETH, token0.address],
+        amounts: [
+          amountIn,
+          amountOut,
+          now()+10000
+        ],
+        addresses: [otherWallet.address],
+        plugins: [paymentPlugin.address],
+        value: amountIn
+      })    
+    ).to.be.revertedWith(
+      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
     )
   })
 })
