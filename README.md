@@ -11,7 +11,7 @@ Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
 
 #### Ropsten
 
-[DePayRouterV1](XXX)
+[DePayRouterV1](https://ropsten.etherscan.io/address/0x82154ea9c2dc4c06d6719ce08728f5cfc9422b1d)
 
 ## Summary
 
@@ -68,8 +68,8 @@ or [for, smartContractReceiver]
 `plugins`: List of plugins to be executed in the given order for this payment:
 
 ```
-e.g. [uniswap,payment] to swap and pay
-or [uniswap,contractCall] to swap and call another contract
+e.g. [DePayRouterV1Uniswap01,DePayRouterV1Payment01] to swap and pay
+or [DePayRouterV1Uniswap01,DePayRouterV1ApproveAndCallContractAddressAmount01] to swap and call another contract
 ```
 See [Approved Plugins](#approved-plugins) for more details about available and approved plugins.
 
@@ -95,7 +95,7 @@ Can be used to perform token sales from decentralized exchanges to the sender by
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: [0x7C9cfd8905E8351303b0bE5D8378b3D453532c44](https://ropsten.etherscan.io/address/0x7c9cfd8905e8351303b0be5d8378b3d453532c44)
 
 ### DePayRouterV1PaymentEvent01
 
@@ -105,7 +105,7 @@ Emits a `Payment` event on the `DePayRouterV1PaymentEvent01` contract using `add
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: [0x076f1f13efA6b194f636E265856D0381704fC394](https://ropsten.etherscan.io/address/0x076f1f13efa6b194f636e265856d0381704fc394)
 
 ### DePayRouterV1SaleEvent01
 
@@ -115,7 +115,7 @@ Emits a `Sale` event on the `DePayRouterV1SaleEvent01` contract using `addresses
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: [0x78AC73A852BB11eD09Cb14CAe8c355A4C0fAC476](https://ropsten.etherscan.io/address/0x78ac73a852bb11ed09cb14cae8c355a4c0fac476)
 
 ### DePayRouterV1Uniswap01
 
@@ -126,7 +126,7 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: [0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268](https://ropsten.etherscan.io/address/0xc1f6146f45b6ec65fa9e8c8e278bb01879b32268)
 
 ### DePayRouterV1ApproveAndCallContractAddressAmount01
 
@@ -143,7 +143,7 @@ to the method with the signature provided in `data` at index 0 (`data[0]`).
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
 
 ## Examples
@@ -152,7 +152,7 @@ Ropsten: [XXX](XXX)
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0x6040567eef6538ec092fc7cc06eb00af00674b0287b21d3d192ad0f3daa711cb
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -163,22 +163,24 @@ Get amounts through the Uniswap router by passing the same `path` and the desire
 ```
 value: 0
 
-path: [0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB,0xc778417E063141139Fce010982780140Aa0cD5Ab,0x9c2Db0108d7C8baE8bE8928d151e0322F75e8Eea]
+path: ["0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB","0xc778417E063141139Fce010982780140Aa0cD5Ab","0x9c2Db0108d7C8baE8bE8928d151e0322F75e8Eea"]
 
-amounts: [553637000000000000000,1000000000000000000,1711537544]
+amounts: ["8551337980759167135310","1000000000000000000","1711537544"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950,0x0d8A34Cb6c08Ec71eA8009DF725a779B1877d4c5]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950","0x0d8A34Cb6c08Ec71eA8009DF725a779B1877d4c5"]
 
-plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0xB85B8307A3ab932D769826Ade116dFd48602875F]
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x60cc73eb2b2B983554C9f66B26115174eD2C6335"]
 
 data: ["depositFor(address,uint256)"]
 ```
+
+`Gas usage: approx. 304,000`
 
 ### tokenA to tokenB payment
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0x03b34fa7b08ad05cb9a74759bf7de0d45197f4b41f0b81509b9fba1cb684d039
 
 `path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
 
@@ -189,117 +191,199 @@ Get amounts through the Uniswap router by passing the same `path` and the desire
 ```
 value: 0
 
-path: [0xdAC17F958D2ee523a2206206994597C13D831ec7,0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2,0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb]
+path: ["0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB","0xc778417e063141139fce010982780140aa0cd5ab","0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"]
 
-amounts: [21722130874672503286,10000000000000000000,1711537544]
+amounts: ["10187046138967433440396","10000000000000000","1711537544"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
-plugins: [0x2AAC8B0bCC52F0bA1d971FC91dD5d60101391f7F,0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+`Gas usage: approx. 253,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
 
 ### tokenA to ETH payment
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0xe8536f159ef4302ca5cea76c4bdf1fb7d0bf555f183d1655953a6939e4ee84d2
 
 ```
-value: 0
+value: "0"
 
-path: [0xab4c122a024feb8eb3a87fbc7044ad69e51645cb,0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
+path: ["0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB","0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]
 
-amounts: [1623250000000000000000,10000000000000000,1711537544]
+amounts: ["1735972857185674397500","10000000000000000","1711537544"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
-plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+`Gas usage: approx. 213,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
 
 ### ETH to tokenA payment
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0x5aa12899c7bfb6f48806a1ad859e2f0e6535f3d49fa6cf73d41b9fffa677ca85
 
 ```
-value: 0.000149068600304723
+value: "5997801900122"
 
-path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE,0xab4c122a024feb8eb3a87fbc7044ad69e51645cb]
+path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE","0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB"]
 
-amounts: [149068600304723,1000000000000000000,1711537544]
+amounts: ["5997801900122","1000000000000000000","1711537544"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
-plugins: [0xc083313A3a77Ce99Bc03e072b5Bbb18FD0Fe0411,0x39Ff997cf48B5DFd9A7C981c23Fae71320669694]
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+`Gas usage: approx. 172,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
+
+### Sale (sell tokens from open decentralized exchanges)
+
+Mainnet: [XXX](XXX)
+
+Ropsten: https://ropsten.etherscan.io/tx/0x4cb1ebfdb6d13a6a2b1a19be5cf93a8a704ba30c53408dbb79b8d67543235df4
+
+```
+value: "5998045319783"
+
+path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE","0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB"]
+
+amounts: ["5998045319783","1000000000000000000","1711537544"]
+
+addresses: ["0x317D875cA3B9f8d14f960486C0d1D1913be74e90"]
+
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
+
+data: []
+```
+
+`Gas usage: approx. 172,000`
+
+IMPORTANT: Make sure to set the address of the purchaser (sender == receiver) and to use the actual payment plugin to send the swap back to the purchaser.
+
+### Log sale event
+
+Mainnet: [XXX](XXX)
+
+Ropsten: https://ropsten.etherscan.io/tx/0x679e3cbe6f0a8934d4413beff5bffcbd6b23ba0e240038ff98001965368d4cc0
+
+```
+value: "5998045319783"
+
+path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE","0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB"]
+
+amounts: ["5998045319783","1000000000000000000","1711537544"]
+
+addresses: ["0x317D875cA3B9f8d14f960486C0d1D1913be74e90"]
+
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44","0x78AC73A852BB11eD09Cb14CAe8c355A4C0fAC476"]
+
+data: []
+```
+
+`Gas usage: approx. 187,000`
+
+IMPORTANT: The sale log event will be emited on the sale event plugin itself and will be part of the transaction.
 
 ### tokenA to tokenA payment
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0x473d4683d9a52034b120a6309db08745790a136017d2adfe36f1153037d19250
 
-_Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the Payment event._
+_Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the payment event._
 
-_Needs spending approval on tokenA contract first._
+_Needs spending approval on path[0] token contract for the router (spender) first._
 
 ```
-value: 0
+value: "0"
 
-path: [0x6b175474e89094c44da98b954eedeac495271d0f]
+path: ["0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB"]
 
-amounts: [10000000000000000,10000000000000000]
+amounts: ["10000000000000000","10000000000000000"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
-plugins: [0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
+plugins: ["0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+`Gas usage: approx. 80,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing into the payment contract itself without performing a payment.
 
 ### ETH to ETH payment
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [XXX](XXX)
+Ropsten: https://ropsten.etherscan.io/tx/0xd2d271463298d98130117e9ec3f29dd702ce1aab9fe2574452c5a1adc32826fa
 
-_Consider performing ETH to ETH transfers directly if you don't rely on any other plugins or the Payment event._
+_Consider performing ETH to ETH transfers directly and not via the DePayRouter, if you don't rely on any other plugin, in order to save gas._
 
 ```
-value: 0.01
+value: "10000000000000000"
 
-path: [0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
+path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]
 
-amounts: [10000000000000000,10000000000000000]
+amounts: ["10000000000000000","10000000000000000"]
 
-addresses: [0x08B277154218CCF3380CAE48d630DA13462E3950]
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
-plugins: [0xa5eC11D6A58B5cC03d1F28DEbB5077d41287ACD2]
+plugins: ["0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
 
 data: []
 ```
 
-IMPORTANT: Don't forget to have the payment protocol address added at the end of `plugins`
+`Gas usage: approx. 48,400`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid just depositing into the payment contract itself without performing a payment.
+
+### Log payment event
+
+Mainnet: [XXX](XXX)
+
+Ropsten: https://ropsten.etherscan.io/tx/0x9ada66ede69fbff9f61ac9d6c3f24c2f6de6dd7d53c0a982e8ea7070a1e92c31
+
+```
+value: "10000000000000000"
+
+path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]
+
+amounts: ["10000000000000000","10000000000000000"]
+
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
+
+plugins: ["0x7C9cfd8905E8351303b0bE5D8378b3D453532c44","0x076f1f13efA6b194f636E265856D0381704fC394"]
+
+data: []
+```
+
+`Gas usage: approx. 63,800`
+
+IMPORTANT: The payment log event will be emited on the payment event plugin itself and will be part of the transaction.
 
 ## Security Audits
 
