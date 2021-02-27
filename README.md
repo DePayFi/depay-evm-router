@@ -7,11 +7,11 @@ Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
 
 #### Mainnet
 
-[DePayRouterV1](XXX)
+[DePayRouterV1 0xae60ac8e69414c2dc362d0e6a03af643d1d85b92](https://etherscan.io/address/0xae60ac8e69414c2dc362d0e6a03af643d1d85b92)
 
 #### Ropsten
 
-[DePayRouterV1](https://ropsten.etherscan.io/address/0x82154ea9c2dc4c06d6719ce08728f5cfc9422b1d)
+[DePayRouterV1 0x82154ea9c2dc4c06d6719ce08728f5cfc9422b1d](https://ropsten.etherscan.io/address/0x82154ea9c2dc4c06d6719ce08728f5cfc9422b1d)
 
 ## Summary
 
@@ -93,7 +93,7 @@ Sends the token of path at the last position (`path[path.length-1]`) for the amo
 
 Can be used to perform token sales from decentralized exchanges to the sender by setting `addresses` to `[<sender address>]`.
 
-Mainnet: [XXX](XXX)
+Mainnet: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/address/0x99f3f4685a7178f26eb4f4ca8b75a1724f1577b9)
 
 Ropsten: [0x7C9cfd8905E8351303b0bE5D8378b3D453532c44](https://ropsten.etherscan.io/address/0x7c9cfd8905e8351303b0be5d8378b3d453532c44)
 
@@ -103,7 +103,7 @@ Used to log a payment event on-chain if requested. If not required/requested, no
 
 Emits a `Payment` event on the `DePayRouterV1PaymentEvent01` contract using `addresses[0]` as the `sender` of the event and `addresses[addresses.length-1]` as the `receiver` of the `Payment`.
 
-Mainnet: [XXX](XXX)
+Mainnet: [0xDDe66e253aCb96E03E8CAcEc0Afb9308f496c732](https://etherscan.io/address/0xdde66e253acb96e03e8cacec0afb9308f496c732)
 
 Ropsten: [0x076f1f13efA6b194f636E265856D0381704fC394](https://ropsten.etherscan.io/address/0x076f1f13efa6b194f636e265856d0381704fc394)
 
@@ -113,7 +113,7 @@ Used to log a sale event on-chain if requested. If not required/requested, not u
 
 Emits a `Sale` event on the `DePayRouterV1SaleEvent01` contract using `addresses[0]` as the `buyer`.
 
-Mainnet: [XXX](XXX)
+Mainnet: [0xA47D5E0e6684D3ad73F3b94d9DAf18a2f5F97688](https://etherscan.io/address/0xa47d5e0e6684d3ad73f3b94d9daf18a2f5f97688)
 
 Ropsten: [0x78AC73A852BB11eD09Cb14CAe8c355A4C0fAC476](https://ropsten.etherscan.io/address/0x78ac73a852bb11ed09cb14cae8c355a4c0fac476)
 
@@ -124,7 +124,7 @@ Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
-Mainnet: [XXX](XXX)
+Mainnet: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
 
 Ropsten: [0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268](https://ropsten.etherscan.io/address/0xc1f6146f45b6ec65fa9e8c8e278bb01879b32268)
 
@@ -141,7 +141,7 @@ passing the address at index 0 of `addresses` (`addresses[0]`)
 and passing the amount at index 1 of `amounts` (`amounts[1]`)
 to the method with the signature provided in `data` at index 0 (`data[0]`).
 
-Mainnet: [XXX](XXX)
+Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/address/0x6f44ff404e57ec15223d58057bd28519b927ddab)
 
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
