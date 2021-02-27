@@ -6,11 +6,11 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import './interfaces/IDePayPaymentsV1Plugin.sol';
+import './interfaces/IDePayRouterV1Plugin.sol';
 import './libraries/Helper.sol';
-import './DePayPaymentsV1Configuration.sol';
+import './DePayRouterV1Configuration.sol';
 
-contract DePayPaymentsV1 {
+contract DePayRouterV1 {
   
   using SafeMath for uint;
   using SafeERC20 for IERC20;
@@ -18,8 +18,8 @@ contract DePayPaymentsV1 {
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // Instance of DePayPaymentsV1Configuration
-  DePayPaymentsV1Configuration public immutable configuration;
+  // Instance of DePayRouterV1Configuration
+  DePayRouterV1Configuration public immutable configuration;
 
   // Pass immutable instance to configuration.
   // This protects from potential delegatecall and access overlay attacks:
@@ -27,20 +27,14 @@ contract DePayPaymentsV1 {
   constructor (
     address _configuration
   ) public {
-    configuration = DePayPaymentsV1Configuration(_configuration);
+    configuration = DePayRouterV1Configuration(_configuration);
   }
 
-  // Proxy modifier to DePayPaymentsV1Configuration
+  // Proxy modifier to DePayRouterV1Configuration
   modifier onlyOwner() {
-      require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
-      _;
+    require(configuration.owner() == msg.sender, "Ownable: caller is not the owner");
+    _;
   }
-
-  // The payment event.
-  event Payment(
-    address indexed sender,
-    address payable indexed receiver
-  );
 
   receive() external payable {
     // Accepts ETH payments which is require in order
@@ -48,8 +42,8 @@ contract DePayPaymentsV1 {
     // especially unwrapping WETH as part of token swaps.
   }
 
-  // The main function to execute payments.
-  function pay(
+  // The main function to route transactions.
+  function route(
     // The path of the token conversion.
     address[] calldata path,
     // Amounts passed to proccessors:
@@ -69,7 +63,6 @@ contract DePayPaymentsV1 {
     _ensureTransferIn(path[0], amounts[0]);
     _execute(path, amounts, addresses, plugins, data);
     _ensureBalance(path[path.length-1], balanceBefore);
-    emit Payment(msg.sender, payable(addresses[addresses.length-1]));
     return true;
   }
 
@@ -90,8 +83,7 @@ contract DePayPaymentsV1 {
     }
   }
 
-  // Executes plugins in the order provided.
-  // Calls itself's _pay function if the payment plugin contract itself is part of plugins.
+  // Executes plugins in the given order.
   function _execute(
     address[] calldata path,
     uint[] calldata amounts,
@@ -100,25 +92,21 @@ contract DePayPaymentsV1 {
     string[] calldata data
   ) internal {
     for (uint i = 0; i < plugins.length; i++) {
-      if(plugins[i] == address(this)) {
-        _pay(payable(addresses[addresses.length-1]), path[path.length-1], amounts[1]);
+      require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
+      
+      IDePayRouterV1Plugin plugin = IDePayRouterV1Plugin(configuration.approvedPlugins(plugins[i]));
+
+      if(plugin.delegate()) {
+        (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
+            plugin.execute.selector, path, amounts, addresses, data
+        ));
+        require(success, string(returnData));
       } else {
-        require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
-        address plugin = configuration.approvedPlugins(plugins[i]);
-        (bool success, bytes memory returnData) = plugin.delegatecall(abi.encodeWithSelector(
-            IDePayPaymentsV1Plugin(plugin).execute.selector, path, amounts, addresses, data
+        (bool success, bytes memory returnData) = address(plugin).call(abi.encodeWithSelector(
+            plugin.execute.selector, path, amounts, addresses, data
         ));
         require(success, string(returnData));
       }
-    }
-  }
-
-  // Sends token (or ETH) to receiver.
-  function _pay(address payable receiver, address token, uint amountOut) private {
-    if(token == ETH) {
-      Helper.safeTransferETH(receiver, amountOut);
-    } else {
-      Helper.safeTransfer(token, receiver, amountOut);
     }
   }
 

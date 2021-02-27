@@ -6,10 +6,13 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/Helper.sol';
 
-contract DePayPaymentsV1ApproveAndCallContractAddressAmount01 {
+contract DePayRouterV1ApproveAndCallContractAddressAmount01 {
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
+  // Indicates that this plugin requires delegate call
+  bool public immutable delegate = true;
   
   // Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
   //

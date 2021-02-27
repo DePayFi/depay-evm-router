@@ -5,9 +5,9 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// Prevents unwanted access to configuration in DePayPaymentsV1
+// Prevents unwanted access to configuration in DePayRouterV1
 // Potentially occuring through delegatecall(ing) plugins.
-contract DePayPaymentsV1Configuration is Ownable {
+contract DePayRouterV1Configuration is Ownable {
   
   // List of approved plugins. Use approvePlugin to add new plugins.
   mapping (address => address) public approvedPlugins;
@@ -19,8 +19,20 @@ contract DePayPaymentsV1Configuration is Ownable {
     return true;
   }
 
-  // Event to emit newly approved plugins.
+  // Event to emit newly approved plugin.
   event PluginApproved(
+    address indexed pluginAddress
+  );
+
+  // Disapproves the provided plugin.
+  function disapprovePlugin(address plugin) external onlyOwner returns(bool) {
+    approvedPlugins[plugin] = address(0);
+    emit PluginDisapproved(plugin);
+    return true;
+  }
+
+  // Event to emit disapproved plugin.
+  event PluginDisapproved(
     address indexed pluginAddress
   );
 }

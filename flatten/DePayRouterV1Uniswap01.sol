@@ -394,7 +394,7 @@ library Helper {
     (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x095ea7b3, to, value));
     require(
       success && (data.length == 0 || abi.decode(data, (bool))),
-      'TransferHelper::safeApprove: approve failed'
+      'Helper::safeApprove: approve failed'
     );
   }
 
@@ -407,7 +407,7 @@ library Helper {
     (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0xa9059cbb, to, value));
     require(
       success && (data.length == 0 || abi.decode(data, (bool))),
-      'TransferHelper::safeTransfer: transfer failed'
+      'Helper::safeTransfer: transfer failed'
     );
   }
 
@@ -421,18 +421,18 @@ library Helper {
     (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x23b872dd, from, to, value));
     require(
       success && (data.length == 0 || abi.decode(data, (bool))),
-      'TransferHelper::transferFrom: transferFrom failed'
+      'Helper::transferFrom: transferFrom failed'
     );
   }
 
   function safeTransferETH(address to, uint256 value) internal {
     (bool success, ) = to.call{value: value}(new bytes(0));
-    require(success, 'TransferHelper::safeTransferETH: ETH transfer failed');
+    require(success, 'Helper::safeTransferETH: ETH transfer failed');
   }
 }
 
 
-// Root file: contracts/DePayPaymentsV1Uniswap01.sol
+// Root file: contracts/DePayRouterV1Uniswap01.sol
 
 
 pragma solidity >=0.7.5 <0.8.0;
@@ -443,7 +443,7 @@ pragma abicoder v2;
 // import "contracts/interfaces/IUniswapV2Router02.sol";
 // import 'contracts/libraries/Helper.sol';
 
-contract DePayPaymentsV1Uniswap01 {
+contract DePayRouterV1Uniswap01 {
   
   using SafeMath for uint;
 
@@ -460,6 +460,9 @@ contract DePayPaymentsV1Uniswap01 {
 
   // Address of Uniswap router.
   address public immutable UniswapV2Router02;
+
+  // Indicates that this plugin requires delegate call
+  bool public immutable delegate = true;
 
   // Pass WETH and the UniswapRouter when deploying this contract.
   constructor (

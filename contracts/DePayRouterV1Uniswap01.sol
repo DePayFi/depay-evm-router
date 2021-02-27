@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/IUniswapV2Router02.sol";
 import './libraries/Helper.sol';
 
-contract DePayPaymentsV1Uniswap01 {
+contract DePayRouterV1Uniswap01 {
   
   using SafeMath for uint;
 
@@ -25,6 +25,9 @@ contract DePayPaymentsV1Uniswap01 {
 
   // Address of Uniswap router.
   address public immutable UniswapV2Router02;
+
+  // Indicates that this plugin requires delegate call
+  bool public immutable delegate = true;
 
   // Pass WETH and the UniswapRouter when deploying this contract.
   constructor (
