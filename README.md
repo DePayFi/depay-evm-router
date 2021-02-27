@@ -17,10 +17,10 @@ Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
 
 This set of smart contracts enables decentralized payments.
 
-The main purpose of this smart contract evolves around the `pay` function,
-which allows a sender to pay a receiver while swapping tokens as part of the same transaction if required.
+The main purpose of this smart contract evolves around the `route` function,
+which allows a sender to route crypto assets while converting tokens as part of the same transaction if required.
 
-This enables ETH to ETH, tokenA to tokenA, ETH to tokenA, tokenA to ETH and tokenA to tokenB payments.
+This allows for ETH to ETH, tokenA to tokenA, ETH to tokenA, tokenA to ETH and tokenA to tokenB conversions as part of e.g. payments.
 
 To increase functionalities and to enable more and future decentralized exchanges and protocols,
 additional plugins can be added/approved by calling `approvePlugin`.
