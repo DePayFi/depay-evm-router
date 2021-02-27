@@ -53,34 +53,6 @@ describe('DePayRouterV1 + DePayRouterV1Payment01', () => {
     ).to.changeTokenBalance(testTokenContract, otherWallet, 1000)
   })
 
-  it('allows the contract owner to add plugins', async () => {
-    const {router, otherWallet, paymentPlugin} = await loadFixture(paymentFixture)
-
-    expect(await router.isApproved(paymentPlugin.address)).to.eq(true)
-    expect(await router.isApproved(otherWallet.address)).to.eq(false)
-  })
-
-  it('emits PluginApproved when approving new plugins', async () => {
-    const {configuration, paymentPlugin} = await loadFixture(paymentFixture)
-
-    await expect(
-      configuration.approvePlugin(paymentPlugin.address)
-    ).to.emit(configuration, 'PluginApproved')
-    .withArgs(
-      paymentPlugin.address
-    );
-  })
-
-  it('does NOT allow others to add plugins', async () => {
-    const {configuration, otherWallet, paymentPlugin} = await loadFixture(paymentFixture)
-
-    await expect(
-      configuration.connect(otherWallet).approvePlugin(paymentPlugin.address)
-    ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
-    )
-  })
-
   it('allows for direct token transfers without performing any conversion', async () => {
     const {router, ownerWallet, otherWallet, paymentPlugin, testTokenContract} = await loadFixture(paymentAndTestTokenFixture)    
     

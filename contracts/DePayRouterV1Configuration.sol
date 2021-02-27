@@ -19,8 +19,20 @@ contract DePayRouterV1Configuration is Ownable {
     return true;
   }
 
-  // Event to emit newly approved plugins.
+  // Event to emit newly approved plugin.
   event PluginApproved(
+    address indexed pluginAddress
+  );
+
+  // Disapproves the provided plugin.
+  function disapprovePlugin(address plugin) external onlyOwner returns(bool) {
+    approvedPlugins[plugin] = address(0);
+    emit PluginDisapproved(plugin);
+    return true;
+  }
+
+  // Event to emit disapproved plugin.
+  event PluginDisapproved(
     address indexed pluginAddress
   );
 }
