@@ -25,7 +25,7 @@ contract DePayRouterV1CurveFiSwap01 {
   // https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb
   address public immutable SETH;
 
-  // Address of Uniswap router.
+  // Address of CurveFiSwap
   address public immutable CurveFiSwap;
 
   // Indicates that this plugin requires delegate call
@@ -60,7 +60,7 @@ contract DePayRouterV1CurveFiSwap01 {
   ) external payable returns(bool) {
     // If there are an record in addresses we will use it as receiver address, otherwise
     address receiver = addresses.length == 1 ? addresses[0] : address(this);
-    // Make sure swapping the token within the payment protocol contract is approved on the Uniswap router.
+    // Make sure swapping the token within the payment protocol contract is approved on the CurveFiSwap.
     if( 
       // from != ETH address
       path[1] != ETH &&
