@@ -6,6 +6,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["./test"],
+  "include": ["./test", "./typechain"],
   "files": ["./hardhat.config.ts"]
 }

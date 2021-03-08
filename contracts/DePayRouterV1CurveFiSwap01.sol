@@ -66,6 +66,7 @@ contract DePayRouterV1CurveFiSwap01 {
       path[1] != ETH &&
       IERC20(path[1]).allowance(address(this), CurveFiSwap) < amounts[0]
     ) {
+      // Allow CurveFi transfer token
       Helper.safeApprove(path[1], CurveFiSwap, MAXINT);
     }
 
