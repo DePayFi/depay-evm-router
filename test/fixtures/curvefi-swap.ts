@@ -6,7 +6,7 @@ import { MAXINT } from '../utils'
 
 import { routerFixture } from './router'
 
-import CurveFiRegistryMock from '../../artifacts/contracts/test/CurveFiRegistryMock.sol/CurveFiPoolMock.json'
+import CurveFiRegistryMock from '../../artifacts/contracts/test/CurveFiRegistryMock.sol/CurveFiRegistryMock.json'
 import CurveFiPoolMock from '../../artifacts/contracts/test/CurveFiPoolMock.sol/CurveFiPoolMock.json'
 
 import CurveFiSwap from '../../artifacts/contracts/curve-fi/Swaps.vy/Swaps.json'

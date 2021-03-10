@@ -11,6 +11,10 @@ import { now, ETH } from './utils'
 chai.use(solidity)
 
 describe('CurveFiSwap01', () => {
+
+  it('deploys CurveFi fixture succefully', async()=>{
+    await loadFixture(curveFiSystemFixture)
+  })
   
   it('CurveFi: Admin address of AddressProvider should be ownerWallet', async()=>{
     const { curveFiAddressProvider, ownerWallet  } = await loadFixture(
