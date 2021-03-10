@@ -4,6 +4,11 @@ import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
 
 const config: HardhatUserConfig = {
+  defaultNetwork: 'hardhat',
+  networks: {
+    hardhat: {
+    }
+  },
   solidity: {
     compilers: [
       { version: '0.7.5', settings: {} }, // for DePay
@@ -16,7 +21,7 @@ const config: HardhatUserConfig = {
     ]
   },
   vyper: {
-    version: "0.2.8"
+    version: '0.2.8'
   }
 }
 

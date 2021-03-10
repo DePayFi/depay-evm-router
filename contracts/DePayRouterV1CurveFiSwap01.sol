@@ -40,7 +40,7 @@ contract DePayRouterV1CurveFiSwap01 {
   // Swap tokenA<>tokenB, ETH<>sETH or sETH<>ETH on CureFi.
   //
   // path -> [pool, from, to]
-  // amounts -> [amount, execpted]
+  // amounts -> [amount, expected]
   // addresses -> [receiver]
   //
   //  function exchange(

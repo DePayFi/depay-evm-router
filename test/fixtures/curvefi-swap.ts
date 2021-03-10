@@ -6,27 +6,63 @@ import { MAXINT } from '../utils'
 
 import { routerFixture } from './router'
 
+import CurveFiRegistryMock from '../../artifacts/contracts/test/CurveFiRegistryMock.sol/CurveFiPoolMock.json'
+import CurveFiPoolMock from '../../artifacts/contracts/test/CurveFiPoolMock.sol/CurveFiPoolMock.json'
 
 import CurveFiSwap from '../../artifacts/contracts/curve-fi/Swaps.vy/Swaps.json'
+import CurveFiAddressProvider from '../../artifacts/contracts/curve-fi/AddressProvider.vy/AddressProvider.json'
 
-import DePayRouterV1Uniswap01 from '../../artifacts/contracts/DePayRouterV1Uniswap01.sol/DePayRouterV1Uniswap01.json'
 import TestToken from '../../artifacts/contracts/test/TestToken.sol/TestToken.json'
 import DePayRouterV1CurveFiSwap01 from '../../artifacts/contracts/DePayRouterV1CurveFiSwap01.sol/DePayRouterV1CurveFiSwap01.json'
 import WETH9 from '../../artifacts/contracts/test/WETH9.sol/WETH9.json'
 
+export async function curveFiSystemFixture() {
+  const { configuration, ownerWallet } = await routerFixture()
+  const curveFiAddressProvider = await deployContract(ownerWallet, CurveFiAddressProvider, [ownerWallet.address])
+  
+  const curveFiRegistryMock = await deployContract(ownerWallet, CurveFiRegistryMock)
+
+  //add_new_id(_address: address, _description: String[64])
+  await curveFiAddressProvider.connect(ownerWallet).add_new_id(curveFiRegistryMock.address, "CurveFi Registry")
+
+  return {
+    configuration,
+    ownerWallet,
+    curveFiAddressProvider
+  }
+}
+
 export async function unapprovedCureFiFixture() {
   const { router, configuration, ownerWallet, otherWallet } = await routerFixture()
+
   // Use WETH as faking of SETH
   const SETH = await deployContract(ownerWallet, WETH9)
-  const cureFiSwap = await deployContract(ownerWallet, CurveFiSwap)
-  const uniswapPlugin = await deployContract(ownerWallet, DePayRouterV1Uniswap01, [SETH.address, cureFiSwap.address])
+
+  const curveFiAddressProvider = await deployContract(ownerWallet, CurveFiAddressProvider, [ownerWallet.address])
+
+  const curveFiRegistryMock = await deployContract(ownerWallet, CurveFiRegistryMock)
+
+  await curveFiAddressProvider.set_address(0, curveFiRegistryMock.address)
+
+  const curveFiSwap = await deployContract(ownerWallet, CurveFiSwap, [
+    curveFiAddressProvider,
+    '0x0000000000000000000000000000000000000000'
+  ])
+
+  const curveFiPlugin = await deployContract(ownerWallet, DePayRouterV1CurveFiSwap01, [
+    SETH.address,
+    curveFiSwap.address
+  ])
+
   return {
     configuration,
     otherWallet,
     ownerWallet,
     router,
-    uniswapPlugin,
-    cureFiSwap,
+    curveFiPlugin,
+    curveFiAddressProvider,
+    curveFiRegistryMock,
+    curveFiSwap,
     SETH
   }
 }
@@ -37,31 +73,42 @@ export async function cureFiFixture() {
     otherWallet,
     ownerWallet,
     router,
-    uniswapPlugin,
-    cureFiSwap,
+    curveFiPlugin,
+    curveFiAddressProvider,
+    curveFiRegistryMock,
+    curveFiSwap,
     SETH
   } = await unapprovedCureFiFixture()
-  await configuration.connect(ownerWallet).approvePlugin(uniswapPlugin.address)
+  await configuration.connect(ownerWallet).approvePlugin(curveFiPlugin.address)
   return {
     configuration,
     otherWallet,
     ownerWallet,
     router,
-    uniswapPlugin,
-    cureFiSwap,
+    curveFiAddressProvider,
+    curveFiRegistryMock,
+    curveFiPlugin,
+    curveFiSwap,
     SETH
   }
 }
 
 export async function cureFiSwapFixture() {
-  const { configuration, otherWallet, ownerWallet, router, uniswapPlugin, cureFiSwap, SETH } = await cureFiFixture()
-
-
-
-
-  const curveFiPlugin = await deployContract(ownerWallet, DePayRouterV1CurveFiSwap01)
+  const {
+    configuration,
+    otherWallet,
+    ownerWallet,
+    router,
+    curveFiPlugin,
+    curveFiSwap,
+    SETH,
+    curveFiAddressProvider,
+    curveFiRegistryMock
+  } = await cureFiFixture()
 
   await configuration.connect(ownerWallet).approvePlugin(curveFiPlugin.address)
+
+  const curveFiPoolMock = await deployContract(ownerWallet, CurveFiPoolMock)
 
   const fromToken = await deployContract(ownerWallet, TestToken)
 
@@ -69,15 +116,24 @@ export async function cureFiSwapFixture() {
 
   await fromToken.connect(ownerWallet).approve(router.address, MAXINT)
 
+  await toToken.connect(ownerWallet).transfer(router.address, '1000000000000000000000000000')
+
+  await curveFiPoolMock.set_coin(0, fromToken.address)
+
+  await curveFiPoolMock.set_coin(1, toToken.address)
+
   return {
     configuration,
     otherWallet,
     ownerWallet,
     router,
-    uniswapPlugin,
-    cureFiSwap,
+    curveFiPlugin,
+    curveFiSwap,
     SETH,
     toToken,
-    fromToken
+    fromToken,
+    curveFiPoolMock,
+    curveFiAddressProvider,
+    curveFiRegistryMock
   }
 }
