@@ -400,6 +400,17 @@ yarn install
 yarn test
 ```
 
+### Testing
+
+```
+yarn test
+```
+
+or to run single tests:
+```
+yarn test -g 'deploys router successfully'
+```
+
 ### Deploy
 
 1. `yarn flatten`
