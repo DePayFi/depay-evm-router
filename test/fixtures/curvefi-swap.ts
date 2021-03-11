@@ -19,11 +19,11 @@ import WETH9 from '../../artifacts/contracts/test/WETH9.sol/WETH9.json'
 export async function curveFiSystemFixture() {
   const { configuration, ownerWallet } = await routerFixture()
   const curveFiAddressProvider = await deployContract(ownerWallet, CurveFiAddressProvider, [ownerWallet.address])
-  
+
   const curveFiRegistryMock = await deployContract(ownerWallet, CurveFiRegistryMock)
 
   //add_new_id(_address: address, _description: String[64])
-  await curveFiAddressProvider.connect(ownerWallet).add_new_id(curveFiRegistryMock.address, "CurveFi Registry")
+  await curveFiAddressProvider.connect(ownerWallet).add_new_id(curveFiRegistryMock.address, 'CurveFi Registry')
 
   return {
     configuration,
@@ -42,10 +42,11 @@ export async function unapprovedCureFiFixture() {
 
   const curveFiRegistryMock = await deployContract(ownerWallet, CurveFiRegistryMock)
 
-  await curveFiAddressProvider.set_address(0, curveFiRegistryMock.address)
+  await curveFiAddressProvider.connect(ownerWallet).add_new_id(curveFiRegistryMock.address, 'CurveFi Registry')
+  await curveFiAddressProvider.connect(ownerWallet).set_address(0, curveFiRegistryMock.address);
 
   const curveFiSwap = await deployContract(ownerWallet, CurveFiSwap, [
-    curveFiAddressProvider,
+    curveFiAddressProvider.address,
     '0x0000000000000000000000000000000000000000'
   ])
 
@@ -116,7 +117,9 @@ export async function cureFiSwapFixture() {
 
   await fromToken.connect(ownerWallet).approve(router.address, MAXINT)
 
-  await toToken.connect(ownerWallet).transfer(router.address, '1000000000000000000000000000')
+  await toToken.connect(ownerWallet).transfer(router.address, '1000000')
+
+  await toToken.connect(ownerWallet).transfer(curveFiPoolMock.address, '1000000')
 
   await curveFiPoolMock.set_coin(0, fromToken.address)
 

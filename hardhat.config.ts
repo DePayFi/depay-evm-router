@@ -6,8 +6,7 @@ import 'hardhat-typechain'
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: {
-    }
+    hardhat: {}
   },
   solidity: {
     compilers: [

@@ -39,7 +39,7 @@ contract DePayRouterV1CurveFiSwap01 {
 
   // Swap tokenA<>tokenB, ETH<>sETH or sETH<>ETH on CureFi.
   //
-  // path -> [pool, from, to]
+  // path -> [from, pool, to]
   // amounts -> [amount, expected]
   // addresses -> [receiver]
   //
@@ -63,18 +63,18 @@ contract DePayRouterV1CurveFiSwap01 {
     // Make sure swapping the token within the payment protocol contract is approved on the CurveFiSwap.
     if( 
       // from != ETH address
-      path[1] != ETH &&
-      IERC20(path[1]).allowance(address(this), CurveFiSwap) < amounts[0]
+      path[0] != ETH &&
+      IERC20(path[0]).allowance(address(this), CurveFiSwap) < amounts[0]
     ) {
       // Allow CurveFi transfer token
-      Helper.safeApprove(path[1], CurveFiSwap, MAXINT);
+      Helper.safeApprove(path[0], CurveFiSwap, MAXINT);
     }
 
     // From token is ETH, 
-    if(path[1] == ETH) {
+    if(path[0] == ETH) {
       ICurveFiSwap(CurveFiSwap).exchange{value: amounts[0]}(
-        path[0],      // pool
-        path[1],      // from token
+        path[1],      // pool
+        path[0],      // from token
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
@@ -82,8 +82,8 @@ contract DePayRouterV1CurveFiSwap01 {
       );
     } else {
       ICurveFiSwap(CurveFiSwap).exchange(
-        path[0],      // pool
-        path[1],      // from token
+        path[1],      // pool
+        path[0],      // from token
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
