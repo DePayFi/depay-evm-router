@@ -145,6 +145,32 @@ Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addre
 
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
+## Unapproved Plugins
+
+### DePayRouterV1CurveFiSwap01
+
+This plugin allowed you to use CureFi to swap/exchange tokens.
+
+This plugin will forward call to: `CureFiSwaps` contract, this contract will work with `CureFiPools` and swap your tokens. Each pool is only able to support some kind of tokens, you might need registry contracts to lookup these information.
+
+There are parameters to perform swap following CurveFi description:
+- `fromToken`: Token to be swapped
+- `toToken`: Token to be received
+- `pool`: CurFiPool address, we don't use onchain computation to lookup for best rate since the gas cost isn't efficient
+- `amount`: Amount that's going to swap
+- `expected`: Expected amount of `toToken` after the swap
+
+Here is how do we forge router's params:
+- `path`: `[fromToken, pool, toToken]` pool address need to be calculated off-chain for better rate
+- `amounts`: `[amount, expected]` if calculated receiving amount less than `expected` transaction will be reversed.
+- `address`: `[receiver]` receiver address is optional, in case there are no `receiver` token will return to `DeFiPayRouter`
+- `data`: Optional
+
+**note**: CureFi is only use [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)
+
+Ropsten: [XXX](XXX)
+
+Mainnet: [XXX](XXX)
 
 ## Examples
 
