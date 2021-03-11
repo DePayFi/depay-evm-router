@@ -32,7 +32,7 @@ contract DePayRouterV1CurveFiSwap01 {
   bool public immutable delegate = true;
 
   // Pass SETH and the _CurveFiSwap when deploying this contract.
-  constructor ( address _SETH, address _CurveFiSwap) public {
+  constructor ( address _SETH, address _CurveFiSwap) {
     SETH = _SETH;
     CurveFiSwap = _CurveFiSwap;
   }
