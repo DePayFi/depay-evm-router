@@ -2,11 +2,35 @@ import { HardhatUserConfig } from 'hardhat/types'
 import '@nomiclabs/hardhat-vyper'
 import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
+import './tasks/deploy-curve-fi'
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+var { DEFI_MNEMONIC, DEFI_ROPSTEN_URL } = process.env
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: {}
+    ropsten: {
+      url: (DEFI_ROPSTEN_URL || '').trim(),
+      accounts: {
+        mnemonic: (DEFI_MNEMONIC || '').trim(),
+        path: "m/44'/60'/0'/0"
+      },
+      chainId: 3
+    },
+    //Do forking to test deployment, just like dry-run in truffle
+    hardhat: {
+      accounts: {
+        mnemonic: (DEFI_MNEMONIC || '').trim(),
+        path: "m/44'/60'/0'/0"
+      },
+      forking: {
+        url: (DEFI_ROPSTEN_URL || '').trim(),
+        enabled: true
+      }
+    }
   },
   solidity: {
     compilers: [

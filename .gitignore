@@ -4,3 +4,4 @@ artifacts/
 yarn-error.log
 cache/
 typechain/
+.env

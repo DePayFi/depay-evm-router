@@ -59,5 +59,8 @@
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  }
 }
