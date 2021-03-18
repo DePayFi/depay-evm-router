@@ -20,7 +20,7 @@ const tokenAddresses = {
   }
 }
 
-task('deploy:curvefi', "Prints an account's balance").setAction(async (_args: any, hre: HardhatRuntimeEnvironment) => {
+task('curvefi:deploy', "Deploy CurveFi on given network").setAction(async (_args: any, hre: HardhatRuntimeEnvironment) => {
   const db = new JsonDb()
   const [owner] = await hre.ethers.getSigners()
 
@@ -71,10 +71,6 @@ task('deploy:curvefi', "Prints an account's balance").setAction(async (_args: an
   )
 
   const curveFiPlugin = <DePayRouterV1CurveFiSwap01>(
-    await deployIfNotExist(
-      'DePayRouterV1CurveFiSwap01',
-      tokenAddresses.ropsten.SETH,
-      instanceSwap3Pool.address
-    )
+    await deployIfNotExist('DePayRouterV1CurveFiSwap01', tokenAddresses.ropsten.SETH, instanceSwap3Pool.address)
   )
 })
