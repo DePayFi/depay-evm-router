@@ -41,7 +41,7 @@ contract DePayRouterV1CurveFiSwap01 {
   //
   // path -> [from, pool, to]
   // amounts -> [amount, expected]
-  // addresses -> [receiver]
+  // addresses -> []
   //
   //  function exchange(
   //      address _pool,      # Pool address, could able to get from 
@@ -58,8 +58,6 @@ contract DePayRouterV1CurveFiSwap01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool) {
-    // If there are an record in addresses we will use it as receiver address, otherwise
-    address receiver = addresses.length == 1 ? addresses[0] : address(this);
     // Make sure swapping the token within the payment protocol contract is approved on the CurveFiSwap.
     if( 
       // from != ETH address
@@ -78,7 +76,7 @@ contract DePayRouterV1CurveFiSwap01 {
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
-        receiver      // receiver
+        msg.sender    // receiver
       );
     } else {
       ICurveFiSwap(CurveFiSwap).exchange(
@@ -87,7 +85,7 @@ contract DePayRouterV1CurveFiSwap01 {
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
-        receiver      // receiver
+        msg.sender    // receiver
       );
     }
 

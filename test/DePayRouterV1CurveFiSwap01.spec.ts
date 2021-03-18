@@ -16,7 +16,7 @@ import { now, ETH } from './utils'
 
 chai.use(solidity)
 
-describe('CurveFiSwap01', () => {
+describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
   it('AddressProvider and Registry should be deploy correctly', async () => {
     await loadFixture(unapprovedCureFiFixture)
   })
