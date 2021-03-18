@@ -189,8 +189,8 @@ Deploy DePayRouterV1CurveFiSwap01 at 0xcF6b131099a775660E38440e9cf304F3F65F62F4
 To clone CurveFi:
 
 - Removing `deployed.json` file if existed
-- Run this command `npx hardhat --network ropsten curvefi:deploy`
-- You able to test on forking ropsten with `npx hardhat --network ropsten curvefi:test`
+- Run this command `npx hardhat --config hardhat.config.tasks.ts --network ropsten curvefi:deploy`
+- You able to test on forking ropsten with `npx hardhat --config hardhat.config.tasks.ts --network hardhat curvefi:deploy`
 
 ## Examples
 
