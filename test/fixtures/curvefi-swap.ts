@@ -12,6 +12,7 @@ import CurveFiPoolMock from '../../artifacts/contracts/test/CurveFiPoolMock.sol/
 import CurveFiSwap from '../../artifacts/contracts/curve-fi/Swaps.vy/Swaps.json'
 import CurveFiAddressProvider from '../../artifacts/contracts/curve-fi/AddressProvider.vy/AddressProvider.json'
 
+import DePayRouterV1Payment01 from '../../artifacts/contracts/DePayRouterV1Payment01.sol/DePayRouterV1Payment01.json'
 import TestToken from '../../artifacts/contracts/test/TestToken.sol/TestToken.json'
 import DePayRouterV1CurveFiSwap01 from '../../artifacts/contracts/DePayRouterV1CurveFiSwap01.sol/DePayRouterV1CurveFiSwap01.json'
 import WETH9 from '../../artifacts/contracts/test/WETH9.sol/WETH9.json'
@@ -125,6 +126,9 @@ export async function cureFiSwapFixture() {
 
   await curveFiPoolMock.set_coin(1, toToken.address)
 
+  const paymentPlugin = await deployContract(ownerWallet, DePayRouterV1Payment01)
+  await configuration.connect(ownerWallet).approvePlugin(paymentPlugin.address)
+
   return {
     configuration,
     otherWallet,
@@ -136,6 +140,7 @@ export async function cureFiSwapFixture() {
     toToken,
     fromToken,
     curveFiPoolMock,
+    paymentPlugin,
     curveFiAddressProvider,
     curveFiRegistryMock
   }

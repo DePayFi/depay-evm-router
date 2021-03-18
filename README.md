@@ -163,7 +163,7 @@ These parameters are required in order to swap on CurveFi:
 Here is how we forge router params:
 - `path`: `[fromToken, pool, toToken]` pool address needs to be calculated off-chain for better rate
 - `amounts`: `[amount, expected]` if calculated receiving amount less than `expected` transaction will be reversed.
-- `address`: `[receiver]` receiver address is optional, in case there are no `receiver` token will return to `DeFiPayRouter`
+- `address`: Optional
 - `data`: Optional
 
 **note**: CurveFi only works with [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)

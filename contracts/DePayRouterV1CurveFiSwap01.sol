@@ -76,7 +76,7 @@ contract DePayRouterV1CurveFiSwap01 {
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
-        msg.sender    // receiver
+        address(this) // receiver
       );
     } else {
       ICurveFiSwap(CurveFiSwap).exchange(
@@ -85,7 +85,7 @@ contract DePayRouterV1CurveFiSwap01 {
         path[2],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
-        msg.sender    // receiver
+        address(this) // receiver
       );
     }
 

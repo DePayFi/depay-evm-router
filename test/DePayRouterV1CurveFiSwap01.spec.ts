@@ -12,7 +12,7 @@ import {
 
 import { route as routerFunc } from './functions'
 
-import { now, ETH } from './utils'
+import { now, ETH, otherWallet } from './utils'
 
 chai.use(solidity)
 
@@ -47,7 +47,6 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
     const { curveFiPoolMock, fromToken, toToken, ownerWallet, router, curveFiPlugin } = await loadFixture(
       cureFiSwapFixture
     )
-
     await expect(() =>
       routerFunc({
         router,
@@ -58,6 +57,23 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
         plugins: [curveFiPlugin.address]
       })
     ).to.changeTokenBalance(toToken, router, 1000)
+  })
+
+  it('Swap token via CurveFiSwap01 plugin before perform payment', async () => {
+    const { curveFiPoolMock, fromToken, toToken, ownerWallet, router, curveFiPlugin, paymentPlugin } = await loadFixture(
+      cureFiSwapFixture
+    )
+
+    await expect(() =>
+      routerFunc({
+        router,
+        wallet: ownerWallet,
+        path: [fromToken.address, curveFiPoolMock.address, toToken.address],
+        amounts: [1000, 1000],
+        addresses: [otherWallet.address],
+        plugins: [curveFiPlugin.address, paymentPlugin.address]
+      })
+    ).to.changeTokenBalance(toToken, otherWallet, 1000)
   })
 
 })
