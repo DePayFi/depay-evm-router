@@ -224,7 +224,7 @@ data: ["depositFor(address,uint256)"]
 
 ### tokenA to tokenB payment
 
-Mainnet: [XXX](XXX)
+Mainnet: https://etherscan.io/tx/0x02fcdb7908cfc8274dfc3fb096fac14ec22f8a459b7962921ba1b26b920cb9d3
 
 Ropsten: https://ropsten.etherscan.io/tx/0x03b34fa7b08ad05cb9a74759bf7de0d45197f4b41f0b81509b9fba1cb684d039
 
@@ -255,7 +255,7 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### tokenA to ETH payment
 
-Mainnet: [XXX](XXX)
+Mainnet: https://etherscan.io/tx/0x4ae0acb287d3a4cc59edacb8206161cc5abf3c188db286e6a751387d7761e409
 
 Ropsten: https://ropsten.etherscan.io/tx/0xe8536f159ef4302ca5cea76c4bdf1fb7d0bf555f183d1655953a6939e4ee84d2
 
@@ -303,9 +303,9 @@ data: []
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
 
-### Sale (sell tokens from open decentralized exchanges)
+### Sale (sell tokens from decentralized exchanges)
 
-Mainnet: [XXX](XXX)
+Mainnet: https://etherscan.io/tx/0xff01f0193410c696070034fd95fa1e662082bef16eade6832dff855d0910e891
 
 Ropsten: https://ropsten.etherscan.io/tx/0x4cb1ebfdb6d13a6a2b1a19be5cf93a8a704ba30c53408dbb79b8d67543235df4
 
@@ -323,7 +323,7 @@ plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE
 data: []
 ```
 
-`Gas usage: approx. 172,000`
+`Gas usage: approx. 187,000`
 
 IMPORTANT: Make sure to set the address of the purchaser (sender == receiver) and to use the actual payment plugin to send the swap back to the purchaser.
 
@@ -353,7 +353,7 @@ IMPORTANT: The sale log event will be emited on the sale event plugin itself and
 
 ### tokenA to tokenA payment
 
-Mainnet: [XXX](XXX)
+Mainnet: https://etherscan.io/tx/0x9577d0153edcf5e314b990e248657ca18d6a75c5cae3187617144a3adf2c2ac6
 
 Ropsten: https://ropsten.etherscan.io/tx/0x473d4683d9a52034b120a6309db08745790a136017d2adfe36f1153037d19250
 
@@ -382,7 +382,7 @@ to avoid depositing into the payment contract itself without performing a paymen
 
 ### ETH to ETH payment
 
-Mainnet: [XXX](XXX)
+Mainnet: https://etherscan.io/tx/0xecf207f7b2b7ccfdf0e8e8a09d99b9154737ec86f9c60aabd20c715cbf324931
 
 Ropsten: https://ropsten.etherscan.io/tx/0xd2d271463298d98130117e9ec3f29dd702ce1aab9fe2574452c5a1adc32826fa
 
