@@ -57,7 +57,7 @@ describe('DePayRouterV1', () => {
         value: 1000
       })
     ).to.be.revertedWith(
-      'DePay: Plugin not approved'
+      'DePay: Plugin not approved!'
     )
   })
 
