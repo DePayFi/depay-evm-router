@@ -114,7 +114,7 @@ describe('DePayRouterV1', () => {
     await expect(
       router.connect(otherWallet).withdraw(testTokenContract.address, 1000)
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
+      'Ownable: caller is not the owner'
     )
   })
 })
