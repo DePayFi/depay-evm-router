@@ -145,6 +145,52 @@ Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addre
 
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
+## Unapproved Plugins
+
+### DePayRouterV1CurveFiSwap01
+
+This plugin allows you to use CurveFi to swap/exchange tokens.
+
+This plugin will forward the call to: `CurveFiSwaps` contract, this contract will work with `CurveFiPools` and swap your tokens. Each pool is only able to support some kind of tokens, you might need registry contracts to lookup these information.
+
+These parameters are required in order to swap on CurveFi:
+- `fromToken`: Token to be swapped
+- `toToken`: Token to be received
+- `pool`: CurFiPool address, we don't use onchain computation to lookup for best rate since the gas cost isn't efficient
+- `amount`: Amount that's going to swap
+- `expected`: Expected amount of `toToken` after the swap
+
+Here is how we forge router params:
+- `path`: `[fromToken, pool, toToken]` pool address needs to be calculated off-chain for better rate
+- `amounts`: `[amount, expected]` if calculated receiving amount less than `expected` transaction will be reversed.
+- `address`: Optional
+- `data`: Optional
+
+**note**: CurveFi only works with [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)
+
+Ropsten: [0xcF6b131099a775660E38440e9cf304F3F65F62F4](https://ropsten.etherscan.io/address/0xcF6b131099a775660E38440e9cf304F3F65F62F4)
+
+Mainnet: [XXX](XXX)
+
+**CurveFi Cloned on Ropsten:**
+
+```
+Deploy AddressProvider at 0x9E47c6D2Ac217198afb4e2bf5F3E299aa5C480f0
+Deploy CurveCalc at 0xB2236AC5C114eaD69B2FEaf014d1e17dd6Fa8e4d
+Deploy GaugeControllerMock at 0x0e870BC3D1A61b22E9ad8b168ceDB4Dc78D6699a
+Deploy PoolInfo at 0x3419A5EB59237a5305057354B3808465e66DacfE
+Deploy Registry at 0x64cb2d84567D1F9983559c7cF7890fe23beaEC8C
+Deploy Swaps at 0x02b7c40945bbdeb969716f61429DEcdC57097585
+Deploy ERC20CRV at 0x056Ca9A88b34eF751D0f628eC36A861781a7b55a
+Deploy StableSwap3Pool at 0xD53bED884448A85D27d23D8308E057973A2F2b9e
+Deploy DePayRouterV1CurveFiSwap01 at 0xcF6b131099a775660E38440e9cf304F3F65F62F4
+```
+
+To clone CurveFi:
+
+- Removing `deployed.json` file if existed
+- Run this command `npx hardhat --config hardhat.config.tasks.ts --network ropsten curvefi:deploy`
+- You able to test on forking ropsten with `npx hardhat --config hardhat.config.tasks.ts --network hardhat curvefi:deploy`
 
 ## Examples
 
