@@ -57,7 +57,7 @@ describe('DePayRouterV1', () => {
         value: 1000
       })
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Plugin not approved'
+      'DePay: Plugin not approved!'
     )
   })
 
@@ -67,25 +67,7 @@ describe('DePayRouterV1', () => {
     await expect(
       configuration.connect(otherWallet).approvePlugin(paymentPlugin.address)
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
-    )
-  })
-
-  it('fails when trying to use a plugin that is not approved', async () => {
-    const {router, configuration, ownerWallet, otherWallet} = await loadFixture(paymentFixture)
-    
-    await expect(
-      route({
-        router,
-        wallet: ownerWallet,
-        path: [ETH],
-        amounts: [1000, 1000],
-        addresses: [otherWallet.address],
-        plugins: [otherWallet.address],
-        value: 1000
-      })
-    ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Plugin not approved'
+      'Ownable: caller is not the owner'
     )
   })
 

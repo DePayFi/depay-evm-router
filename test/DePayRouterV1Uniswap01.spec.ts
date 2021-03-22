@@ -120,7 +120,8 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap01', () => {
         plugins: [uniswapPlugin.address, paymentPlugin.address]
       })
     ).to.be.revertedWith(
-      'UniswapV2Router: EXPIRED'
+      // looks so weird because how the error is forwarded (through delegate call)
+      "\b�y�\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18UniswapV2Router: EXPIRED\x00\x00\x00\x00\x00\x00\x00\x00"
     )
   })
 
@@ -213,7 +214,7 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap01', () => {
         plugins: [paymentPlugin.address]
       })
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
+      'DePay: Insufficient balance after payment!'
     )
   })
 
@@ -241,7 +242,7 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap01', () => {
         value: amountIn
       })    
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Insufficient balance after payment!'
+      'DePay: Insufficient balance after payment!'
     )
   })
 })

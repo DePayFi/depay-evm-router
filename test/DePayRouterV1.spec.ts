@@ -75,25 +75,7 @@ describe('DePayRouterV1', () => {
         value: 999
       })
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Insufficient ETH amount payed in!'
-    )
-  })
-
-  it('fails if the sent ETH value is to low to forward eth to the receiver', async () => {
-    const {router, ownerWallet, otherWallet} = await loadFixture(routerFixture)
-    
-    await expect(
-      route({
-        router,
-        wallet: ownerWallet,
-        path: [ETH],
-        amounts: [1000, 1000],
-        addresses: [otherWallet.address],
-        plugins: [router.address],
-        value: 999
-      })
-    ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert DePay: Insufficient ETH amount payed in!'
+      'DePay: Insufficient ETH amount payed in!'
     )
   })
 
@@ -113,7 +95,7 @@ describe('DePayRouterV1', () => {
     await expect(
       router.connect(otherWallet).withdraw(ETH, 1000)
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
+      'Ownable: caller is not the owner'
     )
   })
 
@@ -132,7 +114,7 @@ describe('DePayRouterV1', () => {
     await expect(
       router.connect(otherWallet).withdraw(testTokenContract.address, 1000)
     ).to.be.revertedWith(
-      'VM Exception while processing transaction: revert Ownable: caller is not the owner'
+      'Ownable: caller is not the owner'
     )
   })
 })
