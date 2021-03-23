@@ -4,6 +4,14 @@ import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
 
 const config: HardhatUserConfig = {
+  defaultNetwork: 'hardhat',
+  networks: {
+    hardhat: {
+      blockGasLimit: 12500000,
+      gas: 6500000,
+      gasPrice: 2000000000
+    }
+  },
   solidity: {
     compilers: [
       { version: '0.7.5', settings: {} }, // for DePay

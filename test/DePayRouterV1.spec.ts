@@ -34,7 +34,7 @@ describe('DePayRouterV1', () => {
     const interfaceContract = await deployMockContract(ownerWallet, IDePayRouterV1.abi)
     let inheritedFragmentNames: string[] = ['OwnershipTransferred', 'transferOwnership', 'owner', 'renounceOwnership']
     let contractFragmentsFiltered = router.interface.fragments.filter(
-      function(fragment){
+      function(fragment:any){
         return inheritedFragmentNames.indexOf(fragment.name) < 0 &&
           fragment.type != 'constructor'
       } 

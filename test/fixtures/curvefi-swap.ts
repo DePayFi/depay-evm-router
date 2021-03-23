@@ -1,6 +1,9 @@
 import { BigNumber, Contract, Wallet } from 'ethers'
 
-import { deployContract, MockProvider } from 'ethereum-waffle'
+//@ts-ignore
+import { waffle } from 'hardhat'
+
+const { deployContract } = waffle
 
 import { MAXINT } from '../utils'
 
