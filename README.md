@@ -143,9 +143,9 @@ These parameters are required in order to swap on CurveFi:
 - `expected`: Expected amount of `toToken` after the swap
 
 Here is how we forge router params:
-- `path`: `[fromToken, pool, toToken]` pool address needs to be calculated off-chain for better rate
+- `path`: `[fromToken, toToken]` fromToken and toToken address
 - `amounts`: `[amount, expected]` if calculated receiving amount less than `expected` transaction will be reversed.
-- `address`: Optional
+- `address`: `[pool]` pool address of the CurveFi pool needs to be calculated off-chain for better rate
 - `data`: Optional
 
 **note**: CurveFi only works with [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)

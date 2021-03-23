@@ -51,9 +51,9 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
       routerFunc({
         router,
         wallet: ownerWallet,
-        path: [fromToken.address, curveFiPoolMock.address, toToken.address],
+        path: [fromToken.address, toToken.address],
         amounts: [1000, 1000],
-        addresses: [],
+        addresses: [curveFiPoolMock.address],
         plugins: [curveFiPlugin.address]
       })
     ).to.changeTokenBalance(toToken, router, 1000)
@@ -68,9 +68,9 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
       routerFunc({
         router,
         wallet: ownerWallet,
-        path: [fromToken.address, curveFiPoolMock.address, toToken.address],
+        path: [fromToken.address, toToken.address],
         amounts: [1000, 1000],
-        addresses: [otherWallet.address],
+        addresses: [curveFiPoolMock.address, otherWallet.address],
         plugins: [curveFiPlugin.address, paymentPlugin.address]
       })
     ).to.changeTokenBalance(toToken, otherWallet, 1000)
