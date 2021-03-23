@@ -128,30 +128,12 @@ Mainnet: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/addre
 
 Ropsten: [0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268](https://ropsten.etherscan.io/address/0xc1f6146f45b6ec65fa9e8c8e278bb01879b32268)
 
-### DePayRouterV1ApproveAndCallContractAddressAmount01
-
-Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
-
-Approves the amount at index 1 of `amounts` (`amounts[1]`)
-for the token at the last position of `path` (`path[path.length-1]`)
-to be used by the smart contract at index 1 of `addresses` (`addresses[1]`).
-
-Afterwards, calls the smart contract at index 1 of `addresses` (`addresses[1]`),
-passing the address at index 0 of `addresses` (`addresses[0]`)
-and passing the amount at index 1 of `amounts` (`amounts[1]`)
-to the method with the signature provided in `data` at index 0 (`data[0]`).
-
-Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/address/0x6f44ff404e57ec15223d58057bd28519b927ddab)
-
-Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
-
-## Unapproved Plugins
-
 ### DePayRouterV1CurveFiSwap01
 
 This plugin allows you to use CurveFi to swap/exchange tokens.
 
-This plugin will forward the call to: `CurveFiSwaps` contract, this contract will work with `CurveFiPools` and swap your tokens. Each pool is only able to support some kind of tokens, you might need registry contracts to lookup these information.
+This plugin will forward the call to: `CurveFiSwaps` contract, this contract will work with `CurveFiPools` and swap your tokens.
+Each pool is only able to support some kind of tokens, you might need registry contracts to lookup these information.
 
 These parameters are required in order to swap on CurveFi:
 - `fromToken`: Token to be swapped
@@ -168,29 +150,26 @@ Here is how we forge router params:
 
 **note**: CurveFi only works with [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)
 
-Ropsten: [0xcF6b131099a775660E38440e9cf304F3F65F62F4](https://ropsten.etherscan.io/address/0xcF6b131099a775660E38440e9cf304F3F65F62F4)
-
 Mainnet: [XXX](XXX)
 
-**CurveFi Cloned on Ropsten:**
+Ropsten: [0xcF6b131099a775660E38440e9cf304F3F65F62F4](https://ropsten.etherscan.io/address/0xcF6b131099a775660E38440e9cf304F3F65F62F4)
 
-```
-Deploy AddressProvider at 0x9E47c6D2Ac217198afb4e2bf5F3E299aa5C480f0
-Deploy CurveCalc at 0xB2236AC5C114eaD69B2FEaf014d1e17dd6Fa8e4d
-Deploy GaugeControllerMock at 0x0e870BC3D1A61b22E9ad8b168ceDB4Dc78D6699a
-Deploy PoolInfo at 0x3419A5EB59237a5305057354B3808465e66DacfE
-Deploy Registry at 0x64cb2d84567D1F9983559c7cF7890fe23beaEC8C
-Deploy Swaps at 0x02b7c40945bbdeb969716f61429DEcdC57097585
-Deploy ERC20CRV at 0x056Ca9A88b34eF751D0f628eC36A861781a7b55a
-Deploy StableSwap3Pool at 0xD53bED884448A85D27d23D8308E057973A2F2b9e
-Deploy DePayRouterV1CurveFiSwap01 at 0xcF6b131099a775660E38440e9cf304F3F65F62F4
-```
+### DePayRouterV1ApproveAndCallContractAddressAmount01
 
-To clone CurveFi:
+Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
 
-- Removing `deployed.json` file if existed
-- Run this command `npx hardhat --config hardhat.config.tasks.ts --network ropsten curvefi:deploy`
-- You able to test on forking ropsten with `npx hardhat --config hardhat.config.tasks.ts --network hardhat curvefi:deploy`
+Approves the amount at index 1 of `amounts` (`amounts[1]`)
+for the token at the last position of `path` (`path[path.length-1]`)
+to be used by the smart contract at index 1 of `addresses` (`addresses[1]`).
+
+Afterwards, calls the smart contract at index 1 of `addresses` (`addresses[1]`),
+passing the address at index 0 of `addresses` (`addresses[0]`)
+and passing the amount at index 1 of `amounts` (`amounts[1]`)
+to the method with the signature provided in `data` at index 0 (`data[0]`).
+
+Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/address/0x6f44ff404e57ec15223d58057bd28519b927ddab)
+
+Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
 ## Examples
 
@@ -462,3 +441,23 @@ yarn test -g 'deploys router successfully'
 1. `yarn flatten`
 
 2. Deploy flatten contract via https://remix.ethereum.org/
+
+### CurveFi clone on Ropsten
+
+```
+Deploy AddressProvider at 0x9E47c6D2Ac217198afb4e2bf5F3E299aa5C480f0
+Deploy CurveCalc at 0xB2236AC5C114eaD69B2FEaf014d1e17dd6Fa8e4d
+Deploy GaugeControllerMock at 0x0e870BC3D1A61b22E9ad8b168ceDB4Dc78D6699a
+Deploy PoolInfo at 0x3419A5EB59237a5305057354B3808465e66DacfE
+Deploy Registry at 0x64cb2d84567D1F9983559c7cF7890fe23beaEC8C
+Deploy Swaps at 0x02b7c40945bbdeb969716f61429DEcdC57097585
+Deploy ERC20CRV at 0x056Ca9A88b34eF751D0f628eC36A861781a7b55a
+Deploy StableSwap3Pool at 0xD53bED884448A85D27d23D8308E057973A2F2b9e
+Deploy DePayRouterV1CurveFiSwap01 at 0xcF6b131099a775660E38440e9cf304F3F65F62F4
+```
+
+#### How to clone CurveFi to Ropsten
+
+- Removing `deployed.json` file if existed
+- Run this command `npx hardhat --config hardhat.config.tasks.ts --network ropsten curvefi:deploy`
+- You able to test on forking ropsten with `npx hardhat --config hardhat.config.tasks.ts --network hardhat curvefi:deploy`

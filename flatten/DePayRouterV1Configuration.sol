@@ -1,4 +1,4 @@
-// Dependency file: @openzeppelin/contracts/GSN/Context.sol
+// Dependency file: @openzeppelin/contracts/utils/Context.sol
 
 // SPDX-License-Identifier: MIT
 
@@ -31,7 +31,7 @@ abstract contract Context {
 
 // pragma solidity >=0.6.0 <0.8.0;
 
-// import "@openzeppelin/contracts/GSN/Context.sol";
+// import "@openzeppelin/contracts/utils/Context.sol";
 /**
  * @dev Contract module which provides a basic access control mechanism, where
  * there is an account (an owner) that can be granted exclusive access to
@@ -61,7 +61,7 @@ abstract contract Ownable is Context {
     /**
      * @dev Returns the address of the current owner.
      */
-    function owner() public view returns (address) {
+    function owner() public view virtual returns (address) {
         return _owner;
     }
 
@@ -69,7 +69,7 @@ abstract contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(_owner == _msgSender(), "Ownable: caller is not the owner");
+        require(owner() == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
 
