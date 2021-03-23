@@ -39,9 +39,9 @@ contract DePayRouterV1CurveFiSwap01 {
 
   // Swap tokenA<>tokenB, ETH<>sETH or sETH<>ETH on CureFi.
   //
-  // path -> [from, pool, to]
+  // path -> [from, to]
   // amounts -> [amount, expected]
-  // addresses -> []
+  // addresses -> [pool]
   //
   //  function exchange(
   //      address _pool,      # Pool address, could able to get from 
@@ -71,18 +71,18 @@ contract DePayRouterV1CurveFiSwap01 {
     // From token is ETH, 
     if(path[0] == ETH) {
       ICurveFiSwap(CurveFiSwap).exchange{value: amounts[0]}(
-        path[1],      // pool
+        addresses[0], // pool
         path[0],      // from token
-        path[2],      // to token
+        path[1],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
         address(this) // receiver
       );
     } else {
       ICurveFiSwap(CurveFiSwap).exchange(
-        path[1],      // pool
+        addresses[0], // pool
         path[0],      // from token
-        path[2],      // to token
+        path[1],      // to token
         amounts[0],   // amount
         amounts[1],   // expected
         address(this) // receiver
