@@ -71,6 +71,6 @@ task('curvefi:deploy', "Deploy CurveFi on given network").setAction(async (_args
   )
 
   const curveFiPlugin = <DePayRouterV1CurveFiSwap01>(
-    await deployIfNotExist('DePayRouterV1CurveFiSwap01', tokenAddresses.ropsten.SETH, instanceSwap3Pool.address)
+    await deployIfNotExist('DePayRouterV1CurveFiSwap01', tokenAddresses.ropsten.SETH, instanceSwaps.address)
   )
 })
