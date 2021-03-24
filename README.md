@@ -152,7 +152,7 @@ Here is how we forge router params:
 
 Mainnet: [XXX](XXX)
 
-Ropsten: [0xcd99f254abfa9c78e3aae1b687c9d3cb7805a7ed](https://ropsten.etherscan.io/address/0xcd99f254abfa9c78e3aae1b687c9d3cb7805a7ed)
+Ropsten: [0xc641578e56cdca28344cf2e4e7718ac0a46cb006](https://ropsten.etherscan.io/address/0xc641578e56cdca28344cf2e4e7718ac0a46cb006)
 
 ### DePayRouterV1ApproveAndCallContractAddressAmount01
 
@@ -173,7 +173,7 @@ Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.
 
 ## Examples
 
-### tokenA to tokenB payment with smart contract receiver (e.g. staking pool)
+### tokenA to tokenB payment, swapped via Uniswap, with smart contract receiver (e.g. staking pool)
 
 Mainnet: [XXX](XXX)
 
@@ -201,7 +201,7 @@ data: ["depositFor(address,uint256)"]
 
 `Gas usage: approx. 304,000`
 
-### tokenA to tokenB payment
+### tokenA to tokenB payment, swapped via Uniswap
 
 Mainnet: https://etherscan.io/tx/0x02fcdb7908cfc8274dfc3fb096fac14ec22f8a459b7962921ba1b26b920cb9d3
 
@@ -232,7 +232,7 @@ data: []
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
 
-### tokenA to ETH payment
+### tokenA to ETH payment, swapped via Uniswap
 
 Mainnet: https://etherscan.io/tx/0x4ae0acb287d3a4cc59edacb8206161cc5abf3c188db286e6a751387d7761e409
 
@@ -257,7 +257,7 @@ data: []
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid depositing swaps into the payment contract itself (without performing a payment).
 
-### ETH to tokenA payment
+### ETH to tokenA payment, swapped via Uniswap
 
 Mainnet: [XXX](XXX)
 
