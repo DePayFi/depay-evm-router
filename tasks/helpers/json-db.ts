@@ -6,11 +6,15 @@ export class JsonDb {
 
   private cache: any
 
-  constructor(dbFilename: string = path.join(process.cwd(), 'deployed.json')) {
+  constructor(cache: boolean = true, dbFilename: string = path.join(process.cwd(), 'deployed.json')) {
     this.fileName = dbFilename
-    if (fs.existsSync(dbFilename)) {
-      this.cache = JSON.parse(fs.readFileSync(dbFilename).toString())
-      this.cache = typeof this.cache !== 'object' ? {} : this.cache
+    if (cache === true) {
+      if (fs.existsSync(dbFilename)) {
+        this.cache = JSON.parse(fs.readFileSync(dbFilename).toString())
+        this.cache = typeof this.cache !== 'object' ? {} : this.cache
+      } else {
+        this.cache = {}
+      }
     } else {
       this.cache = {}
     }

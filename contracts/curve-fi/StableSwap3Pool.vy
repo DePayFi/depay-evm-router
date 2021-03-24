@@ -78,8 +78,8 @@ N_COINS: constant(int128) = 3  # <- change
 FEE_DENOMINATOR: constant(uint256) = 10 ** 10
 LENDING_PRECISION: constant(uint256) = 10 ** 18
 PRECISION: constant(uint256) = 10 ** 18  # The precision to convert to
-PRECISION_MUL: constant(uint256[N_COINS]) = [1, 1000000000000, 1000000000000]
-RATES: constant(uint256[N_COINS]) = [1000000000000000000, 1000000000000000000000000000000, 1000000000000000000000000000000]
+PRECISION_MUL: constant(uint256[N_COINS]) = [1, 1, 1]
+RATES: constant(uint256[N_COINS]) = [1000000000000000000, 1000000000000000000, 1000000000000000000]
 FEE_INDEX: constant(int128) = 2  # Which coin may potentially have fees (USDT)
 
 MAX_ADMIN_FEE: constant(uint256) = 10 * 10 ** 9
@@ -133,7 +133,7 @@ def __init__(
     @param _admin_fee Admin fee
     """
     for i in range(N_COINS):
-        assert _coins[i] != ZERO_ADDRESS
+        assert _coins[i] != ZERO_ADDRESS, "Zero address found"
     self.coins = _coins
     self.initial_A = _A
     self.future_A = _A
@@ -268,7 +268,7 @@ def calc_token_amount(amounts: uint256[N_COINS], deposit: bool) -> uint256:
 @external
 @nonreentrant('lock')
 def add_liquidity(amounts: uint256[N_COINS], min_mint_amount: uint256):
-    assert not self.is_killed  # dev: is killed
+    assert not self.is_killed,  "# dev: is killed"
 
     fees: uint256[N_COINS] = empty(uint256[N_COINS])
     _fee: uint256 = self.fee * N_COINS / (4 * (N_COINS - 1))
@@ -286,7 +286,7 @@ def add_liquidity(amounts: uint256[N_COINS], min_mint_amount: uint256):
     for i in range(N_COINS):
         in_amount: uint256 = amounts[i]
         if token_supply == 0:
-            assert in_amount > 0  # dev: initial deposit requires all coins
+            assert in_amount > 0,  "# dev: initial deposit requires all coins"
         in_coin: address = self.coins[i]
 
         # Take coins from the sender
@@ -298,7 +298,7 @@ def add_liquidity(amounts: uint256[N_COINS], min_mint_amount: uint256):
             _response: Bytes[32] = raw_call(
                 in_coin,
                 concat(
-                    method_id("transferFrom(address,address,uint256)"),
+                   method_id("transferFrom(address,address,uint256)"),
                     convert(msg.sender, bytes32),
                     convert(self, bytes32),
                     convert(amounts[i], bytes32),
@@ -306,7 +306,7 @@ def add_liquidity(amounts: uint256[N_COINS], min_mint_amount: uint256):
                 max_outsize=32,
             )  # dev: failed transfer
             if len(_response) > 0:
-                assert convert(_response, bool)  # dev: failed transfer
+                assert convert(_response, bool),  "# dev: failed transfer"
 
             if i == FEE_INDEX:
                 in_amount = ERC20(in_coin).balanceOf(self) - in_amount
@@ -315,7 +315,7 @@ def add_liquidity(amounts: uint256[N_COINS], min_mint_amount: uint256):
 
     # Invariant after change
     D1: uint256 = self.get_D_mem(new_balances, amp)
-    assert D1 > D0
+    assert D1 > D0, "D1 < D0 don't know why?"
 
     # We need to recalculate the invariant accounting for fees
     # to calculate fair user's share
@@ -429,7 +429,7 @@ def get_dy_underlying(i: int128, j: int128, dx: uint256) -> uint256:
 @external
 @nonreentrant('lock')
 def exchange(i: int128, j: int128, dx: uint256, min_dy: uint256):
-    assert not self.is_killed  # dev: is killed
+    assert not self.is_killed,  "# dev: is killed"
     rates: uint256[N_COINS] = RATES
 
     old_balances: uint256[N_COINS] = self.balances
@@ -454,7 +454,7 @@ def exchange(i: int128, j: int128, dx: uint256, min_dy: uint256):
         max_outsize=32,
     )  # dev: failed transfer
     if len(_response) > 0:
-        assert convert(_response, bool)  # dev: failed transfer
+        assert convert(_response, bool),  "# dev: failed transfer"
 
     if i == FEE_INDEX:
         dx_w_fee = ERC20(input_coin).balanceOf(self) - dx_w_fee
@@ -488,7 +488,7 @@ def exchange(i: int128, j: int128, dx: uint256, min_dy: uint256):
         max_outsize=32,
     )  # dev: failed transfer
     if len(_response) > 0:
-        assert convert(_response, bool)  # dev: failed transfer
+        assert convert(_response, bool),  "# dev: failed transfer"
 
     log TokenExchange(msg.sender, i, dx, j, dy)
 

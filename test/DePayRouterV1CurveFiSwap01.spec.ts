@@ -1,6 +1,8 @@
 import chai, { expect } from 'chai'
 
-import { solidity, loadFixture } from 'ethereum-waffle'
+import { waffle } from 'hardhat'
+const { solidity, loadFixture } = waffle
+
 import { BigNumber } from 'ethers'
 
 import {
@@ -31,12 +33,21 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
     expect(curveFiRegistryMock.address).to.equal(await curveFiAddressProvider.get_registry())
   })
 
+  it('Should able to add liquidity to pool', async () => {
+    const { curveFiPool, ownerWallet } = await loadFixture(cureFiSwapFixture)
+    await curveFiPool
+      .connect(ownerWallet)
+      .add_liquidity(['100000000000000000000', '100000000000000000000', '100000000000000000000'], 0, {
+        gasLimit: 4000000
+      })
+  })
+
   it('Index of tokens is should be correct in the registry', async () => {
-    const { curveFiRegistryMock, fromToken, toToken, curveFiPoolMock } = await loadFixture(cureFiSwapFixture)
+    const { curveFiRegistryMock, tokenA, tokenB, curveFiPool } = await loadFixture(cureFiSwapFixture)
     const [fromIndex, toIndex, isUnderlying] = await curveFiRegistryMock.get_coin_indices(
-      curveFiPoolMock.address,
-      fromToken.address,
-      toToken.address
+      curveFiPool.address,
+      tokenA.address,
+      tokenB.address
     )
     expect(fromIndex.toNumber()).to.equal(0)
     expect(toIndex.toNumber()).to.equal(1)
@@ -44,23 +55,21 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
   })
 
   it('Swap token via CurveFiSwap01 plugin', async () => {
-    const { curveFiPoolMock, fromToken, toToken, ownerWallet, router, curveFiPlugin } = await loadFixture(
-      cureFiSwapFixture
-    )
+    const { tokenA, tokenB, curveFiPool, ownerWallet, router, curveFiPlugin } = await loadFixture(cureFiSwapFixture)
     await expect(() =>
       routerFunc({
         router,
         wallet: ownerWallet,
-        path: [fromToken.address, toToken.address],
-        amounts: [1000, 1000],
-        addresses: [curveFiPoolMock.address],
+        path: [tokenA.address, tokenB.address],
+        amounts: [1000000, 1000],
+        addresses: [curveFiPool.address],
         plugins: [curveFiPlugin.address]
       })
-    ).to.changeTokenBalance(toToken, router, 1000)
+    ).to.changeTokenBalance(tokenB, router, 999600)
   })
 
   it('Swap token via CurveFiSwap01 plugin before perform payment', async () => {
-    const { curveFiPoolMock, fromToken, toToken, ownerWallet, router, curveFiPlugin, paymentPlugin } = await loadFixture(
+    const { tokenA, tokenB, curveFiPool, ownerWallet, router, curveFiPlugin, paymentPlugin } = await loadFixture(
       cureFiSwapFixture
     )
 
@@ -68,12 +77,11 @@ describe('DePayRouterV1 + DePayRouterV1CurveFiSwap01', () => {
       routerFunc({
         router,
         wallet: ownerWallet,
-        path: [fromToken.address, toToken.address],
-        amounts: [1000, 1000],
-        addresses: [curveFiPoolMock.address, otherWallet.address],
+        path: [tokenA.address, tokenB.address],
+        amounts: [1000000, 999600],
+        addresses: [curveFiPool.address, otherWallet.address],
         plugins: [curveFiPlugin.address, paymentPlugin.address]
       })
-    ).to.changeTokenBalance(toToken, otherWallet, 1000)
+    ).to.changeTokenBalance(tokenB, otherWallet, 999600)
   })
-
 })
