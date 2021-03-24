@@ -112,7 +112,7 @@ def _exchange(
     _receiver: address,
 ) -> uint256:
 
-    assert not self.is_killed
+    assert not self.is_killed, "Swaps: Was killed"
 
     initial_balance: uint256 = 0
     eth_amount: uint256 = 0
@@ -144,7 +144,7 @@ def _exchange(
             max_outsize=32,
         )
         if len(response) != 0:
-            assert convert(response, bool)
+            assert convert(response, bool), "Swaps: Can not transfer form"
 
     # approve input token
     if not self.is_approved[_from][_pool]:
@@ -158,7 +158,7 @@ def _exchange(
             max_outsize=32,
         )
         if len(response) != 0:
-            assert convert(response, bool)
+            assert convert(response, bool), "Swaps: Can not approve token"
         self.is_approved[_from][_pool] = True
 
     # perform coin exchange
@@ -183,7 +183,7 @@ def _exchange(
             max_outsize=32,
         )
         if len(response) != 0:
-            assert convert(response, bool)
+            assert convert(response, bool), "Swaps: Can not do transfer"
 
     log TokenExchange(_sender, _receiver, _pool, _from, _to, _amount, received_amount)
 

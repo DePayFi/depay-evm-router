@@ -1,6 +1,7 @@
-import { 
-  deployContract,
-} from 'ethereum-waffle'
+//@ts-ignore
+import { waffle } from 'hardhat'
+
+const { deployContract } = waffle
 
 import { uniswapPairFixture } from './uniswap'
 

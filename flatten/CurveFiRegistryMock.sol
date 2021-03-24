@@ -5,11 +5,16 @@
 pragma solidity >=0.7.5 <0.8.0;
 pragma abicoder v2;
 
-interface CurveFiPoolMock {
-    function get_index(address input) external view returns (int128);
-}
-
 contract CurveFiRegistryMock {
+    mapping (address => int128) private coins;
+
+    int128 private  total = 0;
+
+    function addToken(address tokenAddress) external {
+        coins[tokenAddress] = total;
+        total += 1;
+    }
+
     function get_coin_indices(
         address _pool,
         address _from,
@@ -24,6 +29,6 @@ contract CurveFiRegistryMock {
             bool
         )
     {
-        return (CurveFiPoolMock(_pool).get_index(_from), CurveFiPoolMock(_pool).get_index(_to), false);
+        return (coins[_from], coins[_to], false);
     }
 }
