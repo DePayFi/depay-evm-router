@@ -13,6 +13,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     ropsten: {
+      blockGasLimit: 8000000,
       url: (DEFI_ROPSTEN_URL || '').trim(),
       accounts: {
         mnemonic: (DEFI_MNEMONIC || '').trim(),
@@ -22,6 +23,7 @@ const config: HardhatUserConfig = {
     },
     //Do forking to test deployment, just like dry-run in truffle
     hardhat: {
+      blockGasLimit: 8000000,
       accounts: {
         mnemonic: (DEFI_MNEMONIC || '').trim(),
         path: "m/44'/60'/0'/0"

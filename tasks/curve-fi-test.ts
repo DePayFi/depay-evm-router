@@ -18,9 +18,12 @@ const addresses = {
   ropsten: {
     owner: '0x317D875cA3B9f8d14f960486C0d1D1913be74e90',
     configuration: '0x7974d891822709cf8B1fCB2891AfA9d1BD836D19',
-    depayRouterv1: '0x82154Ea9C2DC4C06D6719cE08728F5cFC9422B1D'
+    depayRouterv1: '0x82154Ea9C2DC4C06D6719cE08728F5cFC9422B1D',
+    sETH: '0x8Ae2A0BFb3315b63Ee8e88aC7D3F6B5a68F01Cf5'
   }
 }
+
+const override = { gasLimit: 4000000 }
 
 task('curvefi:test', 'Deploy CurveFi on given network').setAction(
   async (_args: any, hre: HardhatRuntimeEnvironment) => {
@@ -62,9 +65,14 @@ task('curvefi:test', 'Deploy CurveFi on given network').setAction(
     const instanceRegistry = <Registry>(
       await deployIfNotExist('Registry', instanceAddressProvider.address, instanceGaugeControllerMock.address)
     )
-    // Add registry to address provider
-    await instanceAddressProvider.connect(owner).add_new_id(instanceRegistry.address, 'CurveFi Registry')
-    await instanceAddressProvider.connect(owner).set_address(0, instanceRegistry.address)
+
+    // await instanceAddressProvider.get_registry() cause of out of gas? i don't know
+    if ((await instanceAddressProvider.get_registry()) === '0x0000000000000000000000000000000000000000') {
+      console.log('>> Add registry to address provider')
+      await instanceAddressProvider.connect(owner).add_new_id(instanceRegistry.address, 'CurveFi Registry', override)
+      await instanceAddressProvider.connect(owner).set_address(0, instanceRegistry.address, override)
+    }
+
     const instanceSwaps = <Swaps>(
       await deployIfNotExist('Swaps', instanceAddressProvider.address, instanceCalculator.address)
     )
@@ -74,7 +82,6 @@ task('curvefi:test', 'Deploy CurveFi on given network').setAction(
     const tokenA = await deployIfNotExist('tokenA')
     const tokenB = await deployIfNotExist('tokenB')
     const tokenC = await deployIfNotExist('tokenC')
-    const tokenSETH = await deployIfNotExist('WETH9')
 
     /*
     def __init__(
@@ -97,51 +104,56 @@ task('curvefi:test', 'Deploy CurveFi on given network').setAction(
       )
     )
 
-    /*
-    @external
-    def add_pool_without_underlying(
-      _pool: address,
-      _n_coins: uint256,
-      _lp_token: address,
-      _rate_method_id: bytes32,
-      _decimals: uint256,
-      _use_rates: uint256,
-      _has_initial_A: bool,
-      _is_v1: bool,
-    )*/
-    await instanceRegistry
-      .connect(owner)
-      .add_pool_without_underlying(
-        instanceSwap3Pool.address,
-        3,
-        instanceLpToken.address,
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
-        0,
-        0,
-        false,
-        false
-      )
-
-    if ((await instanceLpToken.minter()).toLowerCase() === owner.address.toLowerCase()) {
-      console.log('>> Transfer minter role to pool:', instanceSwap3Pool.address)
-      // Set minter for pool token
-      await instanceLpToken.connect(owner).set_minter(instanceSwap3Pool.address)
+    if (
+      (await instanceRegistry.get_lp_token(instanceSwap3Pool.address)) === '0x0000000000000000000000000000000000000000'
+    ) {
+      console.log('>> We need to add pool to registry')
+      /*
+        @external
+        def add_pool_without_underlying(
+          _pool: address,
+          _n_coins: uint256,
+          _lp_token: address,
+          _rate_method_id: bytes32,
+          _decimals: uint256,
+          _use_rates: uint256,
+          _has_initial_A: bool,
+          _is_v1: bool,
+        )*/
+      await instanceRegistry
+        .connect(owner)
+        .add_pool_without_underlying(
+          instanceSwap3Pool.address,
+          3,
+          instanceLpToken.address,
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+          0,
+          0,
+          false,
+          false,
+          override
+        )
     }
 
-    if ((await tokenA.balanceOf(instanceSwap3Pool.address)).eq(0)) {
+    // Static call cause of out of gas on Ropsten
+    if ((await instanceLpToken.minter()).toLowerCase() === owner.address.toLowerCase()) {
+      console.log('>> Transfer minter role to pool:', instanceSwap3Pool.address)
+      //Set minter for pool token
+      await instanceLpToken.connect(owner).set_minter(instanceSwap3Pool.address, override)
+    }
+
+    if ((await tokenA.balanceOf(instanceSwap3Pool.address)).lte(0)) {
       console.log('>> Add liquidity of [tokenA, tokenB, tokenC] to pool')
-      await tokenA.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000')
-      await tokenB.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000')
-      await tokenC.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000')
+      await tokenA.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000', override)
+      await tokenB.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000', override)
+      await tokenC.connect(owner).approve(instanceSwap3Pool.address, '100000000000000000000', override)
       await instanceSwap3Pool
         .connect(owner)
-        .add_liquidity(['10000000000000000000', '10000000000000000000', '10000000000000000000'], 0, {
-          gasLimit: 4000000
-        })
+        .add_liquidity(['10000000000000000000', '10000000000000000000', '10000000000000000000'], 0, override)
     }
 
     const curveFiPlugin = <DePayRouterV1CurveFiSwap01>(
-      await deployIfNotExist('DePayRouterV1CurveFiSwap01', tokenSETH.address, instanceSwaps.address)
+      await deployIfNotExist('DePayRouterV1CurveFiSwap01', addresses.ropsten.sETH, instanceSwaps.address)
     )
 
     const depayRouterV1Factory = await hre.ethers.getContractFactory('DePayRouterV1')
@@ -163,18 +175,25 @@ task('curvefi:test', 'Deploy CurveFi on given network').setAction(
 
       await depayRouterConfiguration
         .connect(await hre.ethers.provider.getSigner(addresses.ropsten.owner))
-        .approvePlugin(curveFiPlugin.address)
+        .approvePlugin(curveFiPlugin.address, override)
     }
 
     if (await depayRouterV1.isApproved(curveFiPlugin.address)) {
-      if ((await tokenA.allowance(owner.address, curveFiPlugin.address)).lte(1000)) {
+      if ((await tokenA.allowance(owner.address, depayRouterV1.address)).lte(1000)) {
         console.log('>> Allowing DepayRouterV1 to move fund')
-        await tokenA.connect(owner).approve(depayRouterV1.address, '100000000000000000000')
+        await tokenA.connect(owner).approve(depayRouterV1.address, '100000000000000000000', override)
       }
 
       await depayRouterV1
         .connect(owner)
-        .route([tokenA.address, tokenB.address], [1000, 100], [instanceSwap3Pool.address], [curveFiPlugin.address], [])
+        .route(
+          [tokenA.address, tokenB.address],
+          [1000, 100],
+          [instanceSwap3Pool.address],
+          [curveFiPlugin.address],
+          [],
+          override
+        )
       console.log('>> Completed swap!!')
     } else {
       console.log("Plugin wasn't approved")

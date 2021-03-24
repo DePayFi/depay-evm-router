@@ -6,9 +6,12 @@ export class JsonDb {
 
   private cache: any
 
-  constructor(cache: boolean = true, dbFilename: string = path.join(process.cwd(), 'deployed.json')) {
+  private persist: any;
+
+  constructor(persist: boolean = true, dbFilename: string = path.join(process.cwd(), 'deployed.json')) {
     this.fileName = dbFilename
-    if (cache === true) {
+    this.persist = persist;
+    if (persist) {
       if (fs.existsSync(dbFilename)) {
         this.cache = JSON.parse(fs.readFileSync(dbFilename).toString())
         this.cache = typeof this.cache !== 'object' ? {} : this.cache
@@ -29,7 +32,10 @@ export class JsonDb {
       this.cache = {}
     }
     this.cache[key] = value
-    fs.writeFileSync(this.fileName, JSON.stringify(this.cache))
+    if(this.persist){
+      fs.writeFileSync(this.fileName, JSON.stringify(this.cache))
+    }
+    
   }
 
   public get<T = any>(key: string): T {
