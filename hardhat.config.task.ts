@@ -3,6 +3,7 @@ import '@nomiclabs/hardhat-vyper'
 import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
 import './tasks/curve-fi-test'
+import './tasks/sushi-test'
 
 import dotenv from 'dotenv'
 dotenv.config()
