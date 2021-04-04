@@ -473,8 +473,7 @@ tokenC: 0x7ED6850b72cBBdad4F570dB581f708A02B9740ee,
 StableSwap3Pool: 0x9307C24184863b34a340b2B9cbFc995A350cdc7f,
 ```
 
-#### How to clone CurveFi to Ropsten
+#### How to run test task on forked Ropsten at local
 
-- Removing `deployed.json` file if existed
-- Run this command `npx hardhat --config hardhat.config.tasks.ts --network ropsten curvefi:deploy`
-- You able to test on forking ropsten with `npx hardhat --config hardhat.config.tasks.ts --network hardhat curvefi:deploy`
+- CurveFi: `npx hardhat --config hardhat.config.tasks.ts curvefi:test`
+- SushiSwap: `npx hardhat --config hardhat.config.task.ts sushi:test`
