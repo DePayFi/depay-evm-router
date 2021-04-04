@@ -171,6 +171,21 @@ Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addre
 
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
+## Unapproved Plugins
+
+### DePayRouterV1SushiSwap01
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on SuhiSwap (based on Uniswap) as part of the payment.
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+
+Mainnet: [XXX](XXX)
+
+Ropsten: [0x7C4E8ac008d8C78BcDEC1c0cFb98bC4FeAB457A6](https://ropsten.etherscan.io/address/0x7c4e8ac008d8c78bcdec1c0cfb98bc4feab457a6#code)
+
+`Gas Cost: 760,000 Gas`
+
 ## Examples
 
 ### tokenA to tokenB payment, swapped via Uniswap, with smart contract receiver (e.g. staking pool)
