@@ -8,16 +8,16 @@ import './tasks/sushi-test'
 import dotenv from 'dotenv'
 dotenv.config()
 
-var { DEFI_MNEMONIC, DEFI_ROPSTEN_URL } = process.env
+var { DEPAY_MNEMONIC, DEPAY_ROPSTEN_URL } = process.env
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     ropsten: {
       blockGasLimit: 8000000,
-      url: (DEFI_ROPSTEN_URL || '').trim(),
+      url: (DEPAY_ROPSTEN_URL || '').trim(),
       accounts: {
-        mnemonic: (DEFI_MNEMONIC || '').trim(),
+        mnemonic: (DEPAY_MNEMONIC || '').trim(),
         path: "m/44'/60'/0'/0"
       },
       chainId: 3
@@ -26,11 +26,11 @@ const config: HardhatUserConfig = {
     hardhat: {
       blockGasLimit: 8000000,
       accounts: {
-        mnemonic: (DEFI_MNEMONIC || '').trim(),
+        mnemonic: (DEPAY_MNEMONIC || '').trim(),
         path: "m/44'/60'/0'/0"
       },
       forking: {
-        url: (DEFI_ROPSTEN_URL || '').trim(),
+        url: (DEPAY_ROPSTEN_URL || '').trim(),
         enabled: true
       }
     }
