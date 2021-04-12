@@ -18,6 +18,20 @@ We need `.env` file contain following this content
 - **DEPAY_MNEMONIC**: 12 words passphrase.
 - **DEPAY_RPC_URL**: Ethereum JSON RPC provider
 
+E.g:
+
+```
+NODE_ENV=development
+
+#(0) 0xdde3dc4308A7856D49D1d7303bB630Bccb45Caf9
+#(1) 0x26Fe22F655303151C2ef3b2D097F842ab27Ef940
+#(2) 0x877a79C20028F9ef81e956B43B917703cC22A07A
+#(3) 0x3a36b51c5125A9c064f4Cd2F492989618CF7660E
+DEPAY_MNEMONIC="shine romance erase resource daring bean talk right cupboard visa renew galaxy"
+
+DEPAY_RPC_URL=https://eth-mainnet.alchemyapi.io/v2/ALCHEMY_API_KEY
+```
+
 ## Network context
 
 Here is a file contain hard code of existing smart contracts on mainnet, located at: `./test/helpers/network-context.ts`
