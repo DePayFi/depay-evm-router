@@ -25,8 +25,6 @@ contract DePayRouterV1OneInchSwap01 {
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
 
-  receive() external payable {}
-
   // Pass _OneSplitAudit when deploying this contract.
   constructor(address _OneSplitAudit) {
     OneSplitAudit = _OneSplitAudit;
