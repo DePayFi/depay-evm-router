@@ -8,6 +8,7 @@ import {
   MockProvider,
 } from 'ethereum-waffle'
 
+export const ZERO_ADDRESS='0x0000000000000000000000000000000000000000';
 export const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 export const MAXINT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
 

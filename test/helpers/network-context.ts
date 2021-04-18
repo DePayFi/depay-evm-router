@@ -34,10 +34,12 @@ const context: INetworkContext = {
   mainnet: {
     DePayRouterV1Owner: '',
     DePayRouterV1: '0xae60aC8e69414C2Dc362D0e6a03af643d1D85b92',
+    DePayRouterV1Payment01: '0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9',
     DePayRouterV1Configuration: '0x6EF8833d250f2Df4E7b66ECA01cA5A0D2a34B2fF',
     OneSplitAudit: '0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E',
     WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    REVV: '0x557B933a7C2c45672B610F8954A3deB39a51A8Ca'
+    REVV: '0x557B933a7C2c45672B610F8954A3deB39a51A8Ca',
+    DAI: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
   }
 }
 
@@ -80,8 +82,7 @@ export async function getContractByNameAddAddress(
   contractName: string,
   contractAddress: string = zeroAddress
 ): Promise<Contract> {
-  const instanceFactory = await hre.ethers.getContractFactory(contractName)
-  const instance = await instanceFactory.attach(contractAddress)
+  const instance = await hre.ethers.getContractAt(contractName, contractAddress)
   return instance
 }
 
