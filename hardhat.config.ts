@@ -35,6 +35,7 @@ const config: HardhatUserConfig = {
       blockGasLimit: 12500000,
       gas: 6500000,
       gasPrice: 2000000000,
+      hardfork: 'berlin',
       accounts: {
         mnemonic: (DEPAY_MNEMONIC || '').trim(),
         path: "m/44'/60'/0'/0"
