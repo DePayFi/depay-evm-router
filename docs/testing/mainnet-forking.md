@@ -1,16 +1,20 @@
 # Motivation
 
-DeFi have many complex platforms, each platform is also connect to each other, somehow our effort in development is wasting to clone existing platform on Ropsten.
+In DeFi you have many complex platforms which are interconnected with each other.
 
-Apparently `hardhat-waffle` is good but it's cost us too much to write fixture and write mock contracts. Even we wrote test cases we're always need to test once again with our cloned platforms on Ropsten.
+Often we waste time in development to clone existing platforms to Ropsten.
+
+Apparently `hardhat-waffle` is good but it costs us too much time to write fixtures and mock contracts for very complex DeFi protocols.
+
+Even if we write test-cases, we always need to test once again with cloned platforms and protocols on Ropsten.
 
 Let's consider a trade-off where we sacrifice testing performance in exchange for better code coverage for mainnet environment.
 
-Testing with mainnet's context could reduce development cost which were we spent on fixture, mock contracts, understand third party platform code, clone non-existing platform on Ropsten.
+Testing with a mainnet clone, within the mainnet context can reduce development cost, especially time spent on writing fixtures, mock contracts, trying to understand the internals of third party platform code and deploying other third party platforms to Ropsten.
 
-We're also able to unlock any address, that allow us to have infinity tokens for testing.
+When cloning mainnet for testing, we are also able to unlock any address, which allows us to have infinity tokens for testing.
 
-## Environment variable
+## Environment variables
 
 We need `.env` file contain following this content
 
@@ -34,7 +38,7 @@ DEPAY_RPC_URL=https://eth-mainnet.alchemyapi.io/v2/ALCHEMY_API_KEY
 
 ## Network context
 
-Here is a file contain hard code of existing smart contracts on mainnet, located at: `./test/helpers/network-context.ts`
+The following file initalizes a required network context when forking locally: `./test/helpers/network-context.ts`
 
 Usage:
 
@@ -49,9 +53,11 @@ describe('Contract', () => {
 })
 ```
 
-It's singleton so never mind about performance. There are some address need to read from blockchain so you could found it's empty in hard code addresses.
+Its a singleton so don't mind about performance.
 
-## Unlock address
+There are some address that can't be hardcoded, like depayOwnerWallet, those need to be read from the blockchain after forking it.
+
+## Unlock addresses
 
 ```typescript
 import { unlockSigner } from './helpers/network-context'
@@ -67,7 +73,7 @@ describe('Contract', () => {
 })
 ```
 
-## Deploy & load contract
+## Contracts
 
 ### Deploy new contract
 
@@ -87,15 +93,15 @@ describe('Contract', () => {
 
 ### Load existed contract on mainnet
 
-There are two possible ways,
+There are two possible ways:
 
-Get contract by name. It will try to lookup in network context for related address:
+1. Get a contract by name. It will try to lookup in network context for related address:
 
 ```typescript
 function getContractByName(queryString: string, network: string = 'mainnet')
 ```
 
-Get contract instance by name and address:
+2. Get a contract instance by name and address:
 
 ```typescript
 function getContractByNameAddAddress(contractName: string, contractAddress: string = zeroAddress): Promise<Contract>
