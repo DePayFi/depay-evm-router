@@ -25,6 +25,10 @@ jobs:
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - run: |
+        echo "DEPAY_MNEMONIC=${DEPAY_MNEMONIC}"
+        echo "DEPAY_RPC_URL=${DEPAY_RPC_URL}"
+        
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
