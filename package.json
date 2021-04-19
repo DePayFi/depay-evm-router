@@ -54,7 +54,7 @@
     "precompile": "yarn clean",
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
-    "test": "npx mocha",
+    "test": "npx mocha -t 100000",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"

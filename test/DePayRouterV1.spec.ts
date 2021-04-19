@@ -15,7 +15,6 @@ import {
 
 import {
   ETH,
-  MAXINT,
 } from './utils'
 
 import IDePayRouterV1 from '../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'

@@ -186,6 +186,19 @@ Ropsten: [0x7C4E8ac008d8C78BcDEC1c0cFb98bC4FeAB457A6](https://ropsten.etherscan.
 
 `Gas Cost: 760,000 Gas`
 
+### DePayRouterV1OneInchSwap01
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on OneSplitSwap (1Inch Protocol).
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as flags of 1Inch Protocol.
+
+The rest of remaining elements of `amounts[]` is distribution of 1Inch Protocol.
+
+We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` of pool and `outAmount`. `outAmount` doesn't the real amount you would be received then we need calculate `expectedAmount` by subtract from `outAmount` three percents to make sure our transaction won't get revert in term of market's adjustment.
+
+Mainnet: [XXX](XXX)
+
 ## Examples
 
 ### tokenA to tokenB payment, swapped via Uniswap, with smart contract receiver (e.g. staking pool)

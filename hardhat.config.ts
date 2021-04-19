@@ -3,25 +3,51 @@ import '@nomiclabs/hardhat-vyper'
 import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
 
+import dotenv from 'dotenv'
+dotenv.config()
+
+var { DEPAY_MNEMONIC, DEPAY_RPC_URL } = process.env
+
+/*
+0.7.5   for DePay
+0.5.16  for Uniswap
+0.6.0   for StakingPool
+0.6.2   for StakingPool
+0.6.6   for Uniswap
+0.6.12  for StakingPool
+0.4.18  for WETH
+*/
+const compilers = ['0.4.18', '0.5.16', '0.6.0', '0.6.2', '0.6.6', '0.6.12', '0.7.5'].map((item: string) => ({
+  version: item,
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    }
+  }
+}))
+
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
+    //Do forking mainnet to test
     hardhat: {
       blockGasLimit: 12500000,
       gas: 6500000,
-      gasPrice: 2000000000
+      gasPrice: 2000000000,
+      hardfork: 'berlin',
+      accounts: {
+        mnemonic: (DEPAY_MNEMONIC || '').trim(),
+        path: "m/44'/60'/0'/0"
+      },
+      forking: {
+        url: (DEPAY_RPC_URL || '').trim(),
+        enabled: true
+      }
     }
   },
   solidity: {
-    compilers: [
-      { version: '0.7.5', settings: {} }, // for DePay
-      { version: '0.5.16', settings: {} }, // for Uniswap
-      { version: '0.6.0', settings: {} }, // for StakingPool
-      { version: '0.6.2', settings: {} }, // for StakingPool
-      { version: '0.6.6', settings: {} }, // for Uniswap
-      { version: '0.6.12', settings: {} }, // for StakingPool
-      { version: '0.4.18', settings: {} } // for WETH
-    ]
+    compilers
   },
   vyper: {
     version: '0.2.8' // CurveFi
