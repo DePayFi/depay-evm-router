@@ -22,7 +22,7 @@ chai.use(solidity)
 describe('DePayRouterV1 + DePayRouterV1Payment01', () => {
 
   it('allows to perform simple ETH payments without conversion', async () => {
-    const {router, ownerWallet, otherWallet, paymentPlugin} = await loadFixture(paymentFixture)
+    const {router, ownerWallet, otherWallet, paymentPlugin} = await loadFixture(paymentAndTestTokenFixture)
     
     await expect(
       await route({
