@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: Echo
         run: |
-        echo "DEPAY_MNEMONIC=${DEPAY_MNEMONIC}"
-        echo "DEPAY_RPC_URL=${DEPAY_RPC_URL}"
+          echo "DEPAY_MNEMONIC=${DEPAY_MNEMONIC}"
+          echo "DEPAY_RPC_URL=${DEPAY_RPC_URL}"
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
