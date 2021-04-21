@@ -33,7 +33,10 @@ let depayOneInchSwap01: DePayRouterV1OneInchSwap01,
   tokenWETH: ERC20,
   tokenDAI: ERC20
 
-describe('DePayRouterV1 + DePayRouterV1OneInchSwap01', () => {
+describe('DePayRouterV1 + DePayRouterV1OneInchSwap01', function(){
+  // Upgrade for coverage
+  this.timeout(500000);
+
   it('all context should be loaded correctly', async () => {
     networkContext = <IMainnetContext>await initContext()
     ;[ownerWallet, otherWallet] = await hre.ethers.getSigners()
