@@ -54,13 +54,15 @@
     "precompile": "yarn clean",
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
-    "test": "npx mocha -t 500000",
+    "test": "npx mocha",
+    "coverage": "npx hardhat coverage --solcoverjs ./.solcover.js  --testfiles ./test/DePayRouterV1OneInchSwap.spec.ts",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"
   },
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "solidity-coverage": "^0.7.16"
   }
 }

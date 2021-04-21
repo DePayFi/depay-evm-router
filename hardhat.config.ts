@@ -2,6 +2,7 @@ import { HardhatUserConfig } from 'hardhat/types'
 import '@nomiclabs/hardhat-vyper'
 import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
+import 'solidity-coverage'
 
 import dotenv from 'dotenv'
 dotenv.config()
