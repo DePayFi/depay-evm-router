@@ -150,9 +150,20 @@ Here is how we forge router params:
 
 **note**: CurveFi only works with [sETH](https://etherscan.io/address/0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb)
 
-Mainnet: [XXX](XXX)
+Mainnet: [0xcac512f9a8599d251117d18b72a91cd5b2219a95](https://etherscan.io/address/0xcac512f9a8599d251117d18b72a91cd5b2219a95)
 
 Ropsten: [0x3940b3f4b0464c9447cda7f9460a1540a5514c33](https://ropsten.etherscan.io/address/0x3940b3f4b0464c9447cda7f9460a1540a5514c33)
+
+### DePayRouterV1SushiSwap01
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on SuhiSwap (based on Uniswap) as part of the payment.
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+
+Mainnet: [0xd617fdc26d762ade48Ff54c2E1DE148BFB3F9D22](https://etherscan.io/address/0xd617fdc26d762ade48ff54c2e1de148bfb3f9d22)
+
+Ropsten: [0x7C4E8ac008d8C78BcDEC1c0cFb98bC4FeAB457A6](https://ropsten.etherscan.io/address/0x7c4e8ac008d8c78bcdec1c0cfb98bc4feab457a6#code)
 
 ### DePayRouterV1ApproveAndCallContractAddressAmount01
 
@@ -172,19 +183,6 @@ Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addre
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
 ## Unapproved Plugins
-
-### DePayRouterV1SushiSwap01
-
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on SuhiSwap (based on Uniswap) as part of the payment.
-
-Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
-
-Mainnet: [XXX](XXX)
-
-Ropsten: [0x7C4E8ac008d8C78BcDEC1c0cFb98bC4FeAB457A6](https://ropsten.etherscan.io/address/0x7c4e8ac008d8c78bcdec1c0cfb98bc4feab457a6#code)
-
-`Gas Cost: 760,000 Gas`
 
 ### DePayRouterV1OneInchSwap01
 
@@ -251,6 +249,33 @@ amounts: ["10187046138967433440396","10000000000000000","1711537544"]
 addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
 
 plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
+
+data: []
+```
+
+`Gas usage: approx. 253,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
+to avoid depositing swaps into the payment contract itself (without performing a payment).
+
+### tokenA to tokenB payment, swapped via CurveFi
+
+Mainnet: https://etherscan.io/tx/0xdc63161f2ced3c54c73eb05a328759b66b623a9eaed45f293b567d7ca912008c
+
+Ropsten: xxx
+
+Make sure you've approved token at first index of the path to be approved for the payment protocol smart contract.
+
+```
+value: 0
+
+path: ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48","0xdAC17F958D2ee523a2206206994597C13D831ec7"]
+
+amounts: [10015000,10000000]
+
+addresses: ["0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7","0x08B277154218CCF3380CAE48d630DA13462E3950"]
+
+plugins: ["0xcaC512F9a8599D251117D18B72a91Cd5B2219A95","0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9"]
 
 data: []
 ```
