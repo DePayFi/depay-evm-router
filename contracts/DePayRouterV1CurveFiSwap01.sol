@@ -26,6 +26,8 @@ contract DePayRouterV1CurveFiSwap01 {
   address public immutable SETH;
 
   // Address of CurveFiSwap
+  // Address Provider: https://etherscan.io/address/0x0000000022d53366457f9d5e68ec105046fc4383
+  // Exchange Registry: https://etherscan.io/address/0x2393c368C70B42f055a4932a3fbeC2AC9C548011
   address public immutable CurveFiSwap;
 
   // Indicates that this plugin requires delegate call
