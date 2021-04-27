@@ -490,4 +490,3 @@ StableSwap3Pool: 0x9307C24184863b34a340b2B9cbFc995A350cdc7f,
 
 - CurveFi: `npx hardhat --config hardhat.config.tasks.ts curvefi:test`
 - SushiSwap: `npx hardhat --config hardhat.config.task.ts sushi:test`
-
