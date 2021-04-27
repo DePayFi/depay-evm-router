@@ -165,6 +165,19 @@ Mainnet: [0xd617fdc26d762ade48Ff54c2E1DE148BFB3F9D22](https://etherscan.io/addre
 
 Ropsten: [0x7C4E8ac008d8C78BcDEC1c0cFb98bC4FeAB457A6](https://ropsten.etherscan.io/address/0x7c4e8ac008d8c78bcdec1c0cfb98bc4feab457a6#code)
 
+### DePayRouterV1OneInchSwap01
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on OneSplitSwap (1Inch Protocol).
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as flags of 1Inch Protocol.
+
+The rest of remaining elements of `amounts[]` is distribution of 1Inch Protocol.
+
+We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` of pool and `outAmount`. `outAmount` doesn't the real amount you would be received then we need calculate `expectedAmount` by subtract from `outAmount` three percents to make sure our transaction won't get revert in term of market's adjustment.
+
+Mainnet: [0x8c5d2F0e65275369025c7511c216564beCC8d530](https://etherscan.io/address/0x8c5d2f0e65275369025c7511c216564becc8d530#code)
+
 ### DePayRouterV1ApproveAndCallContractAddressAmount01
 
 Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
@@ -182,20 +195,6 @@ Mainnet: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addre
 
 Ropsten: [0x60cc73eb2b2B983554C9f66B26115174eD2C6335](https://ropsten.etherscan.io/address/0x60cc73eb2b2b983554c9f66b26115174ed2c6335)
 
-## Unapproved Plugins
-
-### DePayRouterV1OneInchSwap01
-
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on OneSplitSwap (1Inch Protocol).
-
-Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as flags of 1Inch Protocol.
-
-The rest of remaining elements of `amounts[]` is distribution of 1Inch Protocol.
-
-We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` of pool and `outAmount`. `outAmount` doesn't the real amount you would be received then we need calculate `expectedAmount` by subtract from `outAmount` three percents to make sure our transaction won't get revert in term of market's adjustment.
-
-Mainnet: [XXX](XXX)
 
 ## Examples
 
