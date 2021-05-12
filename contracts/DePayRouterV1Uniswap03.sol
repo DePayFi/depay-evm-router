@@ -5,7 +5,8 @@ pragma abicoder v2;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/math/SafeMath.sol';
-import './interfaces/IUniswapV3Rounter03.sol';
+import './interfaces/IUniswapV3Router03.sol';
+import './interfaces/IWETH.sol';
 import './libraries/Helper.sol';
 
 contract DePayRouterV1Uniswap03 {
@@ -59,7 +60,7 @@ contract DePayRouterV1Uniswap03 {
       }
     }
 
-    IUniswapV3Rounter03.ExactInputSingleParams memory singleSwap;
+    IUniswapV3Router03.ExactInputSingleParams memory singleSwap;
 
     singleSwap.tokenIn = uniPath[0];
     singleSwap.tokenOut = uniPath[uniPath.length - 1];
@@ -76,11 +77,20 @@ contract DePayRouterV1Uniswap03 {
 
     // Executes ETH<>tokenA, tokenA<>ETH, or tokenA<>tokenB swaps depending on the provided path.
     if (path[0] == ETH) {
-      IUniswapV3Rounter03(UniswapV3Router03).exactInputSingle{value: amounts[0]}(singleSwap);
+      // Swap WETH for ETH
+      IWETH(WETH).deposit{value: amounts[0]}();
+      Helper.safeApprove(WETH, UniswapV3Router03, MAXINT);
+      IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
+      return true;
     } else {
-      IUniswapV3Rounter03(UniswapV3Router03).exactInputSingle(singleSwap);
+      uint256 amountOut = IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
+      // If output is WETH swap it for ETH
+      if (path[path.length - 1] == ETH) {
+        IWETH(WETH).withdraw(amountOut);
+      }
+      return true;
     }
 
-    return true;
+    revert('DePayRouterV1Uniswap03: Unexpected error happened, we not able to swap token');
   }
 }

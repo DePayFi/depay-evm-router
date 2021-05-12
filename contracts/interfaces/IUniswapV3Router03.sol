@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 /// @title Router token swapping functionality
 /// @notice Functions for swapping tokens via Uniswap V3
-interface IUniswapV3Rounter03 {
+interface IUniswapV3Router03 {
     struct ExactInputSingleParams {
         address tokenIn;
         address tokenOut;
