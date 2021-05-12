@@ -45,7 +45,7 @@ contract DePayRouterV1OneInchSwap01 {
   //      uint256 amount,
   //      uint256 minReturn,
   //      uint256[] memory distribution,
-  //      uint256 flags // See contants in IOneSplit.sol
+  //      uint256 flags // See content in IOneSplit.sol
   //  ) public returns (uint256);
   function execute(
     address[] calldata path,
@@ -74,6 +74,7 @@ contract DePayRouterV1OneInchSwap01 {
                 amounts[2]
             )
         );
+        return true;
     } else {
         address(OneSplitAudit).call(
             abi.encodeWithSelector(
@@ -86,7 +87,8 @@ contract DePayRouterV1OneInchSwap01 {
                 amounts[2]
             )
         );
+        return true;
     }
-    return false;
+    revert("DePayRouterV1OneInchSwap01: Unable to process swap");
   }
 }
