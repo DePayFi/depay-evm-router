@@ -40,7 +40,7 @@ contract DePayRouterV1Uniswap03 {
   // using the amount at index 0 (`amounts[0]`) as input amount,
   // the amount at index 1 (`amounts[1]`) as output amount 
   // and the amount at index 2 (`amount[2]`) as combined sqrtPriceLimitX96 || fee.
-  // // and the amount at index 3 (`amount[3]`) as deadline.
+  // and the amount at index 3 (`amount[3]`) as deadline.
   function execute(
     address[] calldata path,
     uint256[] calldata amounts,
