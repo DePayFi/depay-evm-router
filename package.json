@@ -35,7 +35,7 @@
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.0.32",
-    "hardhat": "^2.0.4",
+    "hardhat": "^2.2.1",
     "hardhat-typechain": "^0.3.3",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
@@ -55,7 +55,7 @@
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
     "test": "npx mocha",
-    "coverage": "npx hardhat coverage --solcoverjs ./.solcover.js  --testfiles ./test/DePayRouterV1OneInchSwap.spec.ts",
+    "coverage": "npx hardhat coverage --solcoverjs ./.solcover.js  --testfiles \"{test/DePayRouterV1Uniswap03.spec.ts,test/DePayRouterV1OneInchSwap01.spec.ts}\"",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"

@@ -83,6 +83,29 @@ e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
 
 `plugin`: Address for the plugin to be approved.
 
+## Unapproved Plugins
+
+### DePayRouterV1Uniswap03
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as expecting output amount.
+
+We do packing in `amounts[2]` we use 256 bits to store `fee` (`fee` is used to `0xbb8`, `0x2710`) and `sqrtPriceLimitX96`
+
+```
+[sqrtPriceLimitX96: uint160] [reversed: 72 bits] [fee: uint24]
+```
+
+The amount at index 3 (`amount[3]`) as deadline.
+
+You might need to call `getPool()` of [UniswapV3Factory](https://etherscan.io/address/0x1f98431c8ad98523631ae4a59f267346ea31f984) to check pool's existence.
+
+Mainnet: [XXX](https://etherscan.io/address/?)
+
+Ropsten: [XXX](https://ropsten.etherscan.io/?)
+
 ## Approved Plugins
 
 ### DePayRouterV1Payment01

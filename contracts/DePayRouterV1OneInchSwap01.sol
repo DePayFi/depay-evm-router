@@ -45,7 +45,7 @@ contract DePayRouterV1OneInchSwap01 {
   //      uint256 amount,
   //      uint256 minReturn,
   //      uint256[] memory distribution,
-  //      uint256 flags // See contants in IOneSplit.sol
+  //      uint256 flags // See content in IOneSplit.sol
   //  ) public returns (uint256);
   function execute(
     address[] calldata path,
@@ -53,40 +53,40 @@ contract DePayRouterV1OneInchSwap01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns (bool) {
+    bool success = false;
     // Make sure swapping the token within the payment protocol contract is approved on the OneSplitAudit.
     if ((path[0] != ETH) && IERC20(path[0]).allowance(address(this), OneSplitAudit) < amounts[0]) {
       // Allow OneSplitAudit transfer token
       Helper.safeApprove(path[0], OneSplitAudit, MAXINT);
     }
 
-    IOneSplitAudit oneSplit = IOneSplitAudit(OneSplitAudit);
-
     // From token is ETH,
     if (path[0] == ETH) {
-        address(OneSplitAudit).call{value: amounts[0]}(
-            abi.encodeWithSelector(
-                oneSplit.swap.selector,
-                path[0],
-                path[1],
-                amounts[0],
-                amounts[1],
-                _getDistribution(amounts),
-                amounts[2]
-            )
-        );
+      (success, ) = address(OneSplitAudit).call{value: amounts[0]}(
+        abi.encodeWithSelector(
+          IOneSplitAudit(OneSplitAudit).swap.selector,
+          path[0],
+          path[1],
+          amounts[0],
+          amounts[1],
+          _getDistribution(amounts),
+          amounts[2]
+        )
+      );
     } else {
-        address(OneSplitAudit).call(
-            abi.encodeWithSelector(
-                oneSplit.swap.selector,
-                path[0],
-                path[1],
-                amounts[0],
-                amounts[1],
-                _getDistribution(amounts),
-                amounts[2]
-            )
-        );
+      (success, ) = address(OneSplitAudit).call(
+        abi.encodeWithSelector(
+          IOneSplitAudit(OneSplitAudit).swap.selector,
+          path[0],
+          path[1],
+          amounts[0],
+          amounts[1],
+          _getDistribution(amounts),
+          amounts[2]
+        )
+      );
     }
-    return false;
+    require(success, 'DePayRouterV1OneInchSwap01: The swap was not succeed');
+    return true;
   }
 }
