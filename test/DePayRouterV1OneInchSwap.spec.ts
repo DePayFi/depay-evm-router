@@ -96,9 +96,9 @@ describe('DePayRouterV1 + DePayRouterV1OneInchSwap01', function() {
     expect(afterDAIBalance.sub(beforeDAIBalance).gte(expectedReturn)).to.eq(true)
   })
 
-  it('should able to swap 10 DAI token for ETH', async () => {
+  it('should able to swap 1 DAI token for ETH', async () => {
     const unit = BigNumber.from(10).pow(18)
-    const inAmount = unit.mul(10)
+    const inAmount = unit;
 
     const { returnAmount, distribution } = await oneSplitAudit.getExpectedReturn(
       context.mainnet.DAI,
@@ -110,9 +110,8 @@ describe('DePayRouterV1 + DePayRouterV1OneInchSwap01', function() {
 
     // expected return should be calculated -3%
     const expectedReturn = returnAmount.sub(returnAmount.div(100).mul(3))
-    const checkAddress = context.depayRouterV1.address
-    const beforeETHBalance = await hre.ethers.provider.getBalance(checkAddress)
-    // Transfer 10 DAI from fakeETHAddress to ownerWallet
+    const beforeETHBalance = await hre.ethers.provider.getBalance(context.depayRouterV1.address)
+    // Allow DepayRouter to transfer fund to perform swap
     await context.tokenDAI.connect(context.ownerWallet).approve(context.depayRouterV1.address, MAXINT)
 
     await context.depayRouterV1
@@ -125,7 +124,7 @@ describe('DePayRouterV1 + DePayRouterV1OneInchSwap01', function() {
         []
       )
 
-    const afterETHBalance = await hre.ethers.provider.getBalance(checkAddress)
+    const afterETHBalance = await hre.ethers.provider.getBalance(context.depayRouterV1.address)
     expect(afterETHBalance.sub(beforeETHBalance).gte(expectedReturn)).to.eq(true)
   })
 })
