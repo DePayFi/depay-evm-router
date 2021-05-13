@@ -55,7 +55,7 @@
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
     "test": "npx mocha",
-    "coverage": "npx hardhat coverage --solcoverjs ./.solcover.js  --testfiles ./test/DePayRouterV1OneInchSwap.spec.ts",
+    "coverage": "npx hardhat coverage --solcoverjs ./.solcover.js  --testfiles \"test/DePayRouterV1Uniswap03.spec.ts\"",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"
