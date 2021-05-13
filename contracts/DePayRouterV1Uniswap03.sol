@@ -36,8 +36,11 @@ contract DePayRouterV1Uniswap03 {
   }
 
   // Swap tokenA<>tokenB, ETH<>tokenA or tokenA<>ETH on Uniswap as part of the payment.
-  // Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-  // the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+  // Swaps tokens according to provided `path`
+  // using the amount at index 0 (`amounts[0]`) as input amount,
+  // the amount at index 1 (`amounts[1]`) as output amount 
+  // and the amount at index 2 (`amount[2]`) as combined sqrtPriceLimitX96 || fee.
+  // // and the amount at index 3 (`amount[3]`) as deadline.
   function execute(
     address[] calldata path,
     uint256[] calldata amounts,
@@ -68,7 +71,9 @@ contract DePayRouterV1Uniswap03 {
     // [20 bytes][12 bytes]
     // First 20 bytes (160 bits) is sqrtPriceLimitX96
     // Next 12 bytes contain 3 bytes (24 bits) fee level
+    // Fee used to be: 0xbb8 0x2710
     singleSwap.fee = uint24(amounts[2]);
+    // 256 - 96 = 160
     singleSwap.sqrtPriceLimitX96 = uint160(amounts[2] >> 96);
     singleSwap.amountIn = amounts[0];
     singleSwap.amountOutMinimum = amounts[1];
@@ -81,16 +86,14 @@ contract DePayRouterV1Uniswap03 {
       IWETH(WETH).deposit{value: amounts[0]}();
       Helper.safeApprove(WETH, UniswapV3Router03, MAXINT);
       IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
-      return true;
     } else {
       uint256 amountOut = IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
       // If output is WETH swap it for ETH
       if (path[path.length - 1] == ETH) {
         IWETH(WETH).withdraw(amountOut);
       }
-      return true;
     }
 
-    revert('DePayRouterV1Uniswap03: Unexpected error happened, we not able to swap token');
+    return true;
   }
 }

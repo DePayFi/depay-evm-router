@@ -20,7 +20,7 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap03', function() {
     context = await autoLoad()
   })
 
-  it('should able to deploy 1inch swap plugin on mainnet forking', async () => {
+  it('should able to deploy uniswap v3 swap plugin on mainnet forking', async () => {
     depayUniswap03 = <DePayRouterV1Uniswap03>(
       await contractDeploy(
         context.ownerWallet,
