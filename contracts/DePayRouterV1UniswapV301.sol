@@ -9,7 +9,7 @@ import './interfaces/IUniswapV3Router03.sol';
 import './interfaces/IWETH.sol';
 import './libraries/Helper.sol';
 
-contract DePayRouterV1Uniswap03 {
+contract DePayRouterV1UniswapV301 {
   using SafeMath for uint256;
 
   // Address representating ETH (e.g. in payment routing paths)

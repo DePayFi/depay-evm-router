@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { contractDeploy, getContractByNameAddAddress } from './helpers/network-context'
-import { DePayRouterV1Uniswap03 } from '../typechain/DePayRouterV1Uniswap03'
+import { DePayRouterV1UniswapV301 } from '../typechain/DePayRouterV1UniswapV301'
 import { IUniswapV3Router03 } from '../typechain/IUniswapV3Router03'
 import { autoLoad, IAutoLoadResult } from './helpers/auto-load'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -10,9 +10,9 @@ import hre from 'hardhat'
 
 chai.use(solidity)
 
-let depayUniswap03: DePayRouterV1Uniswap03, context: IAutoLoadResult
+let depayUniswap03: DePayRouterV1UniswapV301, context: IAutoLoadResult
 
-describe('DePayRouterV1 + DePayRouterV1Uniswap03', function() {
+describe('DePayRouterV1 + DePayRouterV1UniswapV301', function() {
   // Upgrade for coverage
   this.timeout(500000)
 
@@ -21,10 +21,10 @@ describe('DePayRouterV1 + DePayRouterV1Uniswap03', function() {
   })
 
   it('should able to deploy uniswap v3 swap plugin on mainnet forking', async () => {
-    depayUniswap03 = <DePayRouterV1Uniswap03>(
+    depayUniswap03 = <DePayRouterV1UniswapV301>(
       await contractDeploy(
         context.ownerWallet,
-        'DePayRouterV1Uniswap03',
+        'DePayRouterV1UniswapV301',
         context.mainnet.WETH,
         context.mainnet.UniSwapRouter
       )
