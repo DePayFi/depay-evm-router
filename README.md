@@ -1,6 +1,6 @@
-# DePay's Ethereum Router
+# DePay's EVM Router
 
-Plugin based ethereum smart contract enabling various peer-to-peer transactions like:
+Plugin based EVM smart contract enabling various peer-to-peer transactions like:
 Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
 
 ## Deployments
@@ -487,9 +487,9 @@ IMPORTANT: The payment log event will be emited on the payment event plugin itse
 
 ## Security Audits
 
-1. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit1.md
-2. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit2.md
-3. https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit3.md
+1. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit1.md
+2. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit2.md
+3. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit3.md
 
 ## Development
 
