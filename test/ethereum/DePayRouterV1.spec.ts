@@ -6,18 +6,18 @@ import {
   loadFixture,
 } from 'ethereum-waffle'
 
-import {routerFixture} from './fixtures/router'
-import {testTokenFixture} from './fixtures/testToken'
+import {routerFixture} from '../fixtures/router'
+import {testTokenFixture} from '../fixtures/testToken'
 
 import {
   route,
-} from './functions'
+} from '../functions'
 
 import {
   ETH,
-} from './utils'
+} from '../utils'
 
-import IDePayRouterV1 from '../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
+import IDePayRouterV1 from '../../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
 
 chai.use(solidity)
 

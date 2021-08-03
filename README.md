@@ -92,6 +92,8 @@ Can be used to perform token sales from decentralized exchanges to the sender by
 
 Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/address/0x99f3f4685a7178f26eb4f4ca8b75a1724f1577b9)
 
+Binance Smart Chain: [0xC9850b32475f4fdE5c972EA6f967982a3c435D10](https://bscscan.com/address/0xc9850b32475f4fde5c972ea6f967982a3c435d10#code)
+
 ### DePayRouterV1PaymentEvent01
 
 Used to log a payment event on-chain if requested. If not required/requested, not using it does safe gas.
@@ -118,6 +120,15 @@ Swaps tokens according to provided `path` using the amount at index 0 (`amounts[
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
+
+### DePayRouterV1PancakeSwap01
+
+Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
+
+Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+
+Binance Smart Chain: [0xfAD2F276D464EAdB71435127BA2c2e9dDefb93a4](https://bscscan.com/address/0xfad2f276d464eadb71435127ba2c2e9ddefb93a4#code)
 
 ### DePayRouterV1UniswapV301
 

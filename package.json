@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@nomiclabs/hardhat-vyper": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.2.0",
     "@types/chai": "^4.2.6",
@@ -35,7 +34,7 @@
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.0.32",
-    "hardhat": "^2.2.1",
+    "hardhat": "^2.5.0",
     "hardhat-typechain": "^0.3.3",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
