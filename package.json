@@ -1,6 +1,6 @@
 {
   "name": "@depay/depay-evm-router",
-  "description": "DePay's EVM Router",
+  "description": "DePay's EVM Router. A set of smart contracts simplifying decentralized payment routing.",
   "version": "1.2.0",
   "homepage": "https://depay.fi",
   "repository": {
