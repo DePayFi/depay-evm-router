@@ -4,6 +4,14 @@ pragma solidity >=0.8.6 <0.9.0;
 
 interface IPancakeRouter02 {
 
+    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
+
+    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
+
+    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
+    
+    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
+
     function swapExactTokensForTokens(
         uint amountIn,
         uint amountOutMin,

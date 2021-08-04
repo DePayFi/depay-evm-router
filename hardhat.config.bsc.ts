@@ -10,6 +10,7 @@ config.networks = {
     },
     forking: {
       url: BSC_RPC_URL!,
+      blockNumber: 9700000,
       enabled: true
     }
   }

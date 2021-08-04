@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./interfaces/IPancakeRouter02.sol";
 import './libraries/Helper.sol';
+import "hardhat/console.sol";
 
 contract DePayRouterV1PancakeSwap01 {
   
@@ -56,10 +57,20 @@ contract DePayRouterV1PancakeSwap01 {
       Helper.safeApprove(path[0], ROUTER, MAXINT);
     }
 
+    // Router uses WRAPPED native token to convert NATIVE to other tokens
+    address[] memory fixedPath = new address[](path.length);
+    for (uint i=0; i<path.length; i++) {
+        if(path[i] == NATIVE) {
+            fixedPath[i] = WRAPPED;
+        } else {
+            fixedPath[i] = path[i];
+        }
+    }
+
     if(path[0] == NATIVE) {
       IPancakeRouter02(ROUTER).swapExactETHForTokens{value: amounts[0]}(
         amounts[1],
-        path,
+        fixedPath,
         address(this),
         amounts[2]
       );
@@ -67,7 +78,7 @@ contract DePayRouterV1PancakeSwap01 {
       IPancakeRouter02(ROUTER).swapExactTokensForETH(
         amounts[0],
         amounts[1],
-        path,
+        fixedPath,
         address(this),
         amounts[2]
       );
@@ -75,7 +86,7 @@ contract DePayRouterV1PancakeSwap01 {
       IPancakeRouter02(ROUTER).swapExactTokensForTokens(
         amounts[0],
         amounts[1],
-        path,
+        fixedPath,
         address(this),
         amounts[2]
       );

@@ -63,5 +63,8 @@
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "depay-web3-tokens": "^2.0.2"
+  }
 }

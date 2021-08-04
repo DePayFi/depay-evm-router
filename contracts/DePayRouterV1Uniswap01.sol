@@ -58,12 +58,12 @@ contract DePayRouterV1Uniswap01 {
 
     // Uniswap uses WETH within their path to indicate bridge swapping (instead of ETH).
     // This prepares the path as applicable to the Uniswap router.
-    address[] memory uniPath = new address[](path.length);
+    address[] memory fixedPath = new address[](path.length);
     for (uint i=0; i<path.length; i++) {
         if(path[i] == ETH) {
-            uniPath[i] = WETH;
+            fixedPath[i] = WETH;
         } else {
-            uniPath[i] = path[i];
+            fixedPath[i] = path[i];
         }
     }
 
@@ -71,7 +71,7 @@ contract DePayRouterV1Uniswap01 {
     if(path[0] == ETH) {
       IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amounts[0]}(
         amounts[1],
-        uniPath,
+        fixedPath,
         address(this),
         amounts[2]
       );
@@ -79,7 +79,7 @@ contract DePayRouterV1Uniswap01 {
       IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
         amounts[0],
         amounts[1],
-        uniPath,
+        fixedPath,
         address(this),
         amounts[2]
       );
@@ -87,7 +87,7 @@ contract DePayRouterV1Uniswap01 {
       IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
         amounts[0],
         amounts[1],
-        uniPath,
+        fixedPath,
         address(this),
         amounts[2]
       );

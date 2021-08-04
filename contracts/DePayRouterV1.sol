@@ -77,7 +77,7 @@ contract DePayRouterV1 {
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
     if(tokenIn == ETH) { 
-      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+      require(msg.value >= amountIn, 'DePay: Insufficient amount payed in!'); 
     } else {
       Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
     }
@@ -95,7 +95,6 @@ contract DePayRouterV1 {
       require(_isApproved(plugins[i]), 'DePay: Plugin not approved!');
       
       IDePayRouterV1Plugin plugin = IDePayRouterV1Plugin(configuration.approvedPlugins(plugins[i]));
-
 
       if(plugin.delegate()) {
         (bool success, bytes memory returnData) = address(plugin).delegatecall(abi.encodeWithSelector(
