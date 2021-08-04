@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import './interfaces/IUniswapV3Router03.sol';
 import './interfaces/IWETH.sol';
 import './libraries/Helper.sol';
@@ -30,7 +30,7 @@ contract DePayRouterV1UniswapV301 {
   bool public immutable delegate = true;
 
   // Pass WETH and the UniswapRouter when deploying this contract.
-  constructor(address _WETH, address _UniswapV3Router03) public {
+  constructor(address _WETH, address _UniswapV3Router03) {
     WETH = _WETH;
     UniswapV3Router03 = _UniswapV3Router03;
   }

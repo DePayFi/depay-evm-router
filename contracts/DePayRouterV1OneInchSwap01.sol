@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import './interfaces/IOneSplitAudit.sol';
 import './libraries/Helper.sol';
 
@@ -30,7 +30,7 @@ contract DePayRouterV1OneInchSwap01 {
     OneSplitAudit = _OneSplitAudit;
   }
 
-  function _getDistribution(uint256[] calldata amounts) internal returns (uint256[] memory buf) {
+  function _getDistribution(uint256[] calldata amounts) internal pure returns (uint256[] memory buf) {
     uint256 len = amounts.length - 3;
     buf = new uint256[](len);
     for (uint256 i = 0; i < len; i += 1) {

@@ -106,7 +106,7 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/math/SafeMath.sol
+// Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
 // pragma solidity >=0.6.0 <0.8.0;
@@ -330,7 +330,7 @@ library SafeMath {
 
 // import "@openzeppelin/contracts/utils/Context.sol";
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/math/SafeMath.sol";
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -637,7 +637,7 @@ contract ERC20 is Context, IERC20 {
 
 // used for running automated hardhat tests
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 
 // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 

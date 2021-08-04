@@ -10,7 +10,7 @@ var { MNEMONIC, ETHEREUM_RPC_URL } = process.env
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: '0.7.5',
+    version: '0.8.6',
     settings: {
       optimizer: {
         enabled: true,

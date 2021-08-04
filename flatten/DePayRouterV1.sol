@@ -79,7 +79,7 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/math/SafeMath.sol
+// Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
 // pragma solidity >=0.6.0 <0.8.0;
@@ -488,13 +488,13 @@ library Address {
 }
 
 
-// Dependency file: @openzeppelin/contracts/token/ERC20/SafeERC20.sol
+// Dependency file: @openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 
 // pragma solidity >=0.6.0 <0.8.0;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/math/SafeMath.sol";
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import "@openzeppelin/contracts/utils/Address.sol";
 
 /**
@@ -569,7 +569,7 @@ library SafeERC20 {
 // Dependency file: contracts/interfaces/IDePayRouterV1Plugin.sol
 
 
-// pragma solidity >=0.7.5 <0.8.0;
+// pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 interface IDePayRouterV1Plugin {
@@ -737,7 +737,7 @@ abstract contract Ownable is Context {
 // Dependency file: contracts/DePayRouterV1Configuration.sol
 
 
-// pragma solidity >=0.7.5 <0.8.0;
+// pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
@@ -778,12 +778,12 @@ contract DePayRouterV1Configuration is Ownable {
 // Root file: contracts/DePayRouterV1.sol
 
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/math/SafeMath.sol";
-// import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+// import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 // import 'contracts/interfaces/IDePayRouterV1Plugin.sol';
 // import 'contracts/libraries/Helper.sol';
 // import 'contracts/DePayRouterV1Configuration.sol';

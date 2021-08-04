@@ -79,7 +79,7 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/math/SafeMath.sol
+// Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
 // pragma solidity >=0.6.0 <0.8.0;
@@ -299,7 +299,7 @@ library SafeMath {
 // Dependency file: contracts/interfaces/ICurveFiSwap.sol
 
 
-// pragma solidity >=0.7.5 <0.8.0;
+// pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 interface ICurveFiSwap {
@@ -446,11 +446,11 @@ library Helper {
 // Root file: contracts/DePayRouterV1CurveFiSwap01.sol
 
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/math/SafeMath.sol";
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import 'contracts/interfaces/ICurveFiSwap.sol';
 // import 'contracts/libraries/Helper.sol';
 

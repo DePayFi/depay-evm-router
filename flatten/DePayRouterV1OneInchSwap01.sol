@@ -79,7 +79,7 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/math/SafeMath.sol
+// Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
 // pragma solidity >=0.6.0 <0.8.0;
@@ -299,7 +299,7 @@ library SafeMath {
 // Dependency file: contracts/interfaces/IOneSplitAudit.sol
 
 
-// pragma solidity >=0.7.5 <0.8.0;
+// pragma solidity >=0.8.6 <0.9.0;
 
 interface IOneSplitAudit {
     event ImplementationUpdated(address indexed newImpl);
@@ -449,11 +449,11 @@ library Helper {
 // Root file: contracts/DePayRouterV1OneInchSwap01.sol
 
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import '/Users/sebastian/Work/DePay/depay-evm-router/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
-// import '/Users/sebastian/Work/DePay/depay-evm-router/node_modules/@openzeppelin/contracts/math/SafeMath.sol';
+// import '/Users/sebastian/Work/DePay/depay-evm-router/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol';
 // import 'contracts/interfaces/IOneSplitAudit.sol';
 // import 'contracts/libraries/Helper.sol';
 
