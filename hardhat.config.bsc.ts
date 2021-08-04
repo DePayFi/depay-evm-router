@@ -1,4 +1,4 @@
-import { config, MNEMONIC, ETHEREUM_RPC_URL } from './hardhat.config.shared'
+import { config, MNEMONIC, BSC_RPC_URL } from './hardhat.config.shared'
 
 config.networks = {
   hardhat: {
@@ -9,7 +9,7 @@ config.networks = {
       mnemonic: MNEMONIC!
     },
     forking: {
-      url: 'https://bsc-dataseed.binance.org',
+      url: BSC_RPC_URL!,
       enabled: true
     }
   }

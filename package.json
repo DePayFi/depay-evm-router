@@ -32,6 +32,9 @@
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
     "chai": "^4.3.4",
+    "depay-web3-constants": "^2.0.1",
+    "depay-web3-exchanges": "^2.0.3",
+    "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.0.32",
     "hardhat": "^2.5.0",
@@ -40,6 +43,7 @@
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
     "solc": "0.5.16",
+    "solidity-coverage": "^0.7.16",
     "ts-generator": "^0.1.1",
     "ts-node": "^8.5.4",
     "typechain": "^4.0.0",
@@ -59,9 +63,5 @@
     "build": "npx hardhat compile",
     "flatten": "waffle flatten"
   },
-  "license": "MIT",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "solidity-coverage": "^0.7.16"
-  }
+  "license": "MIT"
 }

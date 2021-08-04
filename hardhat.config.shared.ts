@@ -6,7 +6,11 @@ import { HardhatUserConfig } from 'hardhat/types'
 import dotenv from 'dotenv'
 dotenv.config()
 
-var { MNEMONIC, ETHEREUM_RPC_URL } = process.env
+var {
+  MNEMONIC,
+  ETHEREUM_RPC_URL,
+  BSC_RPC_URL,
+} = process.env
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -23,5 +27,6 @@ const config: HardhatUserConfig = {
 export {
   config,
   MNEMONIC,
-  ETHEREUM_RPC_URL
+  ETHEREUM_RPC_URL,
+  BSC_RPC_URL
 }
