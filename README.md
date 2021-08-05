@@ -8,7 +8,7 @@ Plugin based EVM smart contract enabling various payment-related peer-to-peer tr
 
 Ethereum: [0xae60ac8e69414c2dc362d0e6a03af643d1d85b92](https://etherscan.io/address/0xae60ac8e69414c2dc362d0e6a03af643d1d85b92)
 
-Binance Smart Chain: [0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd](https://bscscan.com/address/0x78c0f1c712a9aa2004c1f401a7307d8bcb62abbd)
+Binance Smart Chain: [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://bscscan.com/address/0x0dfb7137bc64b63f7a0de7cb9cda178702666220)
 
 ## Summary
 
@@ -17,7 +17,7 @@ This set of smart contracts enables decentralized payments.
 The main purpose of this set of smart contracts evolves around the `route` function,
 which allows a sender to route crypto assets while converting tokens as part of the same transaction if required.
 
-This allows for ETH to ETH, tokenA to tokenA, ETH to tokenA, tokenA to ETH and tokenA to tokenB conversions as part of e.g. payments.
+This allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE and TOKEN_A to TOKEN_B payments.
 
 To increase functionalities and to enable more and future decentralized exchanges and protocols,
 additional plugins can be added/approved by calling `approvePlugin`.
@@ -33,19 +33,19 @@ Arguments:
 `path`: The path of the token conversion:
 
 ```
-ETH to ETH: 
+NATIVE Payment: 
 ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
-DEPAY to DEPAY: 
+TOKEN Payment: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
-ETH to DEPAY: 
+NATIVE to TOKEN Payment: 
 ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb']
 
-DEPAY to ETH: 
+TOKEN to NATIVE Payment:
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE']
 
-DEPAY to UNI (routing goes through WETH): 
+TOKEN_A to TOKEN_B Payment: 
 ['0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984']
 ```
 
@@ -84,15 +84,15 @@ e.g. ["signatureOfSmartContractFunction(address,uint)"] receiving the payment
 
 ### DePayRouterV1Payment01
 
-Used to send a payment (ETH or any transferable token) to a receiver.
+Sends a payment to a receiver.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
 
-Can be used to perform token sales from decentralized exchanges to the sender by setting `addresses` to `[<sender address>]`.
+Can also be used to perform token sales from decentralized exchanges to the sender by setting `addresses` to `[<sender address>]`.
 
 Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/address/0x99f3f4685a7178f26eb4f4ca8b75a1724f1577b9)
 
-Binance Smart Chain: [0xC9850b32475f4fdE5c972EA6f967982a3c435D10](https://bscscan.com/address/0xc9850b32475f4fde5c972ea6f967982a3c435d10#code)
+Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
 ### DePayRouterV1PaymentEvent01
 
@@ -112,44 +112,38 @@ Ethereum: [0xA47D5E0e6684D3ad73F3b94d9DAf18a2f5F97688](https://etherscan.io/addr
 
 ### DePayRouterV1Uniswap01
 
-UniswapV2
+Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on UniswapV2 as part of the payment.
 
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
-
-Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
 
 ### DePayRouterV1PancakeSwap01
 
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
+Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on Pancakeswap as part of the payment.
 
-Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
+Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
 
-Binance Smart Chain: [0xfAD2F276D464EAdB71435127BA2c2e9dDefb93a4](https://bscscan.com/address/0xfad2f276d464eadb71435127ba2c2e9ddefb93a4#code)
+Binance Smart Chain: [0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B](https://bscscan.com/address/0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B)
 
 ### DePayRouterV1UniswapV301
 
-UniswapV3
+Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on UniswapV3 as part of the payment.
 
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on Uniswap as part of the payment.
+Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
+the amount at index 1 (`amounts[1]`).
 
-Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as expecting output amount.
-
-We do packing in `amounts[2]` we use 256 bits to store `fee` (`fee` is used to `0xbb8`, `0x2710`) and `sqrtPriceLimitX96`
+We do packing in `amounts[2]`. We use 256 bits to store `fee` (`fee` is used to `0xbb8`, `0x2710`) and `sqrtPriceLimitX96`
 
 ```
 [sqrtPriceLimitX96: uint160] [reversed: 72 bits] [fee: uint24]
 ```
 
-The amount at index 3 (`amount[3]`) as deadline.
+The amount at index 3 (`amount[3]`) is the deadline of the swap.
 
-You might need to call `getPool()` of [UniswapV3Factory](https://etherscan.io/address/0x1f98431c8ad98523631ae4a59f267346ea31f984) to check pool's existence.
-
-Ethereum: [XXX](https://etherscan.io/address/?)
+Ethereum: [XXX](XXX)
 
 ### DePayRouterV1CurveFiSwap01
 
@@ -177,7 +171,7 @@ Ethereum: [0xcac512f9a8599d251117d18b72a91cd5b2219a95](https://etherscan.io/addr
 
 ### DePayRouterV1SushiSwap01
 
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on SuhiSwap (based on Uniswap) as part of the payment.
+Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on SuhiSwap (based on Uniswap) as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
@@ -186,7 +180,7 @@ Ethereum: [0xd617fdc26d762ade48Ff54c2E1DE148BFB3F9D22](https://etherscan.io/addr
 
 ### DePayRouterV1OneInchSwap01
 
-Swap tokenA to tokenB, ETH to tokenA or tokenA to ETH on OneSplitSwap (1Inch Protocol).
+Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on OneSplitSwap (1Inch Protocol).
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as flags of 1Inch Protocol.
@@ -214,13 +208,13 @@ Ethereum: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/addr
 
 ## Examples
 
-### tokenA to tokenB payment, swapped via Uniswap, with smart contract receiver (e.g. staking pool)
+### TOKEN_A to TOKEN_B payment, swapped via Uniswap, with a smart contract receiver (e.g. staking pool)
 
-Ethereum: [XXX](XXX)
+[XXX](XXX)
 
-`path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
+`path` needs to go through TOKEN_A -> WETH -> TOKEN_B because Uniswap pairs usually share WETH as common route.
 
-Requires to approve token at first index of path to be approved for the payment protocol smart contract.
+Requires to have the token at path index 0 approved for the payment router: `Token(path[0]).approve(ROUTER, MAXINT)`
 
 Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
 
@@ -240,13 +234,13 @@ data: ["depositFor(address,uint256)"]
 
 `Gas usage: approx. 304,000`
 
-### tokenA to tokenB payment, swapped via Uniswap
+### TOKEN_A to TOKEN_B payment, swapped via Uniswap
 
-Ethereum: https://etherscan.io/tx/0x02fcdb7908cfc8274dfc3fb096fac14ec22f8a459b7962921ba1b26b920cb9d3
+https://etherscan.io/tx/0x02fcdb7908cfc8274dfc3fb096fac14ec22f8a459b7962921ba1b26b920cb9d3
 
-`path` needs to go through tokenA -> WETH -> tokenB if executed by Uniswap.
+`path` needs to go through TOKEN_A -> WETH -> TOKEN_B because Uniswap pairs usually share WETH as common route.
 
-Requires to approve token at first index of path to be approved for the payment protocol smart contract.
+Requires to have the token at path index 0 approved for the payment router: `Token(path[0]).approve(ROUTER, MAXINT)`
 
 Get amounts through the Uniswap router by passing the same `path` and the desired output amount to receive the required input amount.
 
@@ -267,9 +261,38 @@ data: []
 `Gas usage: approx. 253,000`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid depositing swaps into the payment contract itself (without performing a payment).
+to avoid depositing swaps into the payment contract itself (without performing an actual payment).
 
-### tokenA to tokenB payment, swapped via CurveFi
+### TOKEN_A to TOKEN_B payment, swapped via Pancakeswap
+
+[https://bscscan.com/tx/0x702e35e3c9759fa8d96c8580223ab8be3043a307fa8152dd68b7374f37db3dc8](https://bscscan.com/tx/0x702e35e3c9759fa8d96c8580223ab8be3043a307fa8152dd68b7374f37db3dc8)
+
+`path` needs to go through TOKEN_A -> WBNB -> TOKEN_B because Pancakeswap pairs usually share WBNB as common route.
+
+Requires to have the token at path index 0 approved for the payment router: `Token(path[0]).approve(ROUTER, MAXINT)`
+
+Get amounts through the Pancakeswap router by passing the same `path` and the desired output amount to receive the required input amount.
+
+```
+value: 0
+
+path: ["0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB","0xc778417e063141139fce010982780140aa0cd5ab","0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"]
+
+amounts: ["10187046138967433440396","10000000000000000","1711537544"]
+
+addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
+
+plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44"]
+
+data: []
+```
+
+`Gas usage: approx. 220,000`
+
+IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
+to avoid depositing swaps into the payment contract itself (without performing an actual payment).
+
+### TOKEN_A to TOKEN_B payment, swapped via CurveFi
 
 Ethereum: https://etherscan.io/tx/0xdc63161f2ced3c54c73eb05a328759b66b623a9eaed45f293b567d7ca912008c
 
@@ -292,9 +315,9 @@ data: []
 `Gas usage: approx. 253,000`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid depositing swaps into the payment contract itself (without performing a payment).
+to avoid depositing swaps into the payment contract itself (without performing an actual payment).
 
-### tokenA to ETH payment, swapped via Uniswap
+### TOKEN_A to ETH payment, swapped via Uniswap
 
 Ethereum: https://etherscan.io/tx/0x4ae0acb287d3a4cc59edacb8206161cc5abf3c188db286e6a751387d7761e409
 
@@ -315,9 +338,9 @@ data: []
 `Gas usage: approx. 213,000`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid depositing swaps into the payment contract itself (without performing a payment).
+to avoid depositing swaps into the payment contract itself (without performing an actual payment).
 
-### ETH to tokenA payment, swapped via Uniswap
+### ETH to TOKEN_A payment, swapped via Uniswap
 
 Ethereum: [XXX](XXX)
 
@@ -338,7 +361,7 @@ data: []
 `Gas usage: approx. 172,000`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid depositing swaps into the payment contract itself (without performing a payment).
+to avoid depositing swaps into the payment contract itself (without performing an actual payment).
 
 ### Sale (sell tokens from decentralized exchanges)
 
@@ -384,11 +407,11 @@ data: []
 
 IMPORTANT: The sale log event will be emited on the sale event plugin itself and will be part of the transaction.
 
-### tokenA to tokenA payment
+### TOKEN_A to TOKEN_A payment
 
 Ethereum: https://etherscan.io/tx/0x9577d0153edcf5e314b990e248657ca18d6a75c5cae3187617144a3adf2c2ac6
 
-_Consider performing tokenA to tokenA transfers directly if you don't rely on any other plugins or the payment event._
+_Consider performing TOKEN_A to TOKEN_A transfers directly if you don't rely on any other plugins or the payment event._
 
 _Needs spending approval on path[0] token contract for the router (spender) first._
 
@@ -409,7 +432,7 @@ data: []
 `Gas usage: approx. 80,000`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid depositing into the payment contract itself without performing a payment.
+to avoid depositing into the payment contract itself without performing an actual payment.
 
 ### ETH to ETH payment
 
@@ -434,7 +457,7 @@ data: []
 `Gas usage: approx. 48,400`
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
-to avoid just depositing into the payment contract itself without performing a payment.
+to avoid just depositing into the payment contract itself without performing an actual payment.
 
 ### Log payment event
 
