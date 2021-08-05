@@ -312,144 +312,95 @@ library SafeMath {
 }
 
 
-// Dependency file: contracts/interfaces/IUniswapV2Router02.sol
+// Dependency file: contracts/interfaces/IUniswapV3Router03.sol
 
 
 // pragma solidity >=0.8.6 <0.9.0;
 
-interface IUniswapV2Router01 {
-    function factory() external pure returns (address);
-    function WETH() external pure returns (address);
+/// @title Router token swapping functionality
+/// @notice Functions for swapping tokens via Uniswap V3
+interface IUniswapV3Router03 {
+    struct ExactInputSingleParams {
+        address tokenIn;
+        address tokenOut;
+        uint24 fee;
+        address recipient;
+        uint256 deadline;
+        uint256 amountIn;
+        uint256 amountOutMinimum;
+        uint160 sqrtPriceLimitX96;
+    }
 
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint amountADesired,
-        uint amountBDesired,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB, uint liquidity);
-    function addLiquidityETH(
-        address token,
-        uint amountTokenDesired,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
-    function removeLiquidity(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETH(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountToken, uint amountETH);
-    function removeLiquidityWithPermit(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETHWithPermit(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountToken, uint amountETH);
-    function swapExactTokensForTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapTokensForExactTokens(
-        uint amountOut,
-        uint amountInMax,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
-    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
+    /// @notice Swaps `amountIn` of one token for as much as possible of another token
+    /// @param params The parameters necessary for the swap, encoded as `ExactInputSingleParams` in calldata
+    /// @return amountOut The amount of the received token
+    function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256 amountOut);
 
-    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
-    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
-    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
-    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
+    struct ExactInputParams {
+        bytes path;
+        address recipient;
+        uint256 deadline;
+        uint256 amountIn;
+        uint256 amountOutMinimum;
+    }
+
+    /// @notice Swaps `amountIn` of one token for as much as possible of another along the specified path
+    /// @param params The parameters necessary for the multi-hop swap, encoded as `ExactInputParams` in calldata
+    /// @return amountOut The amount of the received token
+    function exactInput(ExactInputParams calldata params) external payable returns (uint256 amountOut);
+
+    struct ExactOutputSingleParams {
+        address tokenIn;
+        address tokenOut;
+        uint24 fee;
+        address recipient;
+        uint256 deadline;
+        uint256 amountOut;
+        uint256 amountInMaximum;
+        uint160 sqrtPriceLimitX96;
+    }
+
+    /// @notice Swaps as little as possible of one token for `amountOut` of another token
+    /// @param params The parameters necessary for the swap, encoded as `ExactOutputSingleParams` in calldata
+    /// @return amountIn The amount of the input token
+    function exactOutputSingle(ExactOutputSingleParams calldata params) external payable returns (uint256 amountIn);
+
+    struct ExactOutputParams {
+        bytes path;
+        address recipient;
+        uint256 deadline;
+        uint256 amountOut;
+        uint256 amountInMaximum;
+    }
+
+    /// @notice Swaps as little as possible of one token for `amountOut` of another along the specified path (reversed)
+    /// @param params The parameters necessary for the multi-hop swap, encoded as `ExactOutputParams` in calldata
+    /// @return amountIn The amount of the input token
+    function exactOutput(ExactOutputParams calldata params) external payable returns (uint256 amountIn);
 }
 
-interface IUniswapV2Router02 is IUniswapV2Router01 {
-    function removeLiquidityETHSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountETH);
-    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountETH);
 
-    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
-    function swapExactETHForTokensSupportingFeeOnTransferTokens(
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external payable;
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
+// Dependency file: contracts/interfaces/IWETH.sol
+
+
+// pragma solidity >=0.8.6 <0.9.0;
+
+interface IWETH {
+  function deposit() external payable;
+
+  function withdraw(uint256 wad) external;
+
+  function totalSupply() external view returns (uint256);
+
+  function approve(address guy, uint256 wad) external returns (bool);
+
+  function transfer(address dst, uint256 wad) external returns (bool);
+
+  function transferFrom(
+    address src,
+    address dst,
+    uint256 wad
+  ) external returns (bool);
 }
 
 
@@ -508,100 +459,101 @@ library Helper {
 }
 
 
-// Root file: contracts/DePayRouterV1Uniswap01.sol
+// Root file: contracts/DePayRouterV1UniswapV301.sol
 
 
 pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-// import "contracts/interfaces/IUniswapV2Router02.sol";
+// import '/Users/sebastian/Work/DePay/depay-evm-router/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol';
+// import '/Users/sebastian/Work/DePay/depay-evm-router/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol';
+// import 'contracts/interfaces/IUniswapV3Router03.sol';
+// import 'contracts/interfaces/IWETH.sol';
 // import 'contracts/libraries/Helper.sol';
 
-contract DePayRouterV1Uniswap01 {
-  
-  using SafeMath for uint;
+contract DePayRouterV1UniswapV301 {
+  using SafeMath for uint256;
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // MAXINT to be used only, to increase allowance from
-  // payment protocol contract towards known 
+  // payment protocol contract towards known
   // decentralized exchanges, not to dyanmically called contracts!!!
-  uint public immutable MAXINT = type(uint256).max;
-  
+  uint256 public immutable MAXINT = type(uint256).max;
+
   // Address of WETH.
   address public immutable WETH;
 
   // Address of Uniswap router.
-  address public immutable UniswapV2Router02;
+  address public immutable UniswapV3Router03;
 
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
 
   // Pass WETH and the UniswapRouter when deploying this contract.
-  constructor (
-    address _WETH,
-    address _UniswapV2Router02
-  ) {
+  constructor(address _WETH, address _UniswapV3Router03) {
     WETH = _WETH;
-    UniswapV2Router02 = _UniswapV2Router02;
+    UniswapV3Router03 = _UniswapV3Router03;
   }
 
   // Swap tokenA<>tokenB, ETH<>tokenA or tokenA<>ETH on Uniswap as part of the payment.
-  // Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-  // the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+  // Swaps tokens according to provided `path`
+  // using the amount at index 0 (`amounts[0]`) as input amount,
+  // the amount at index 1 (`amounts[1]`) as output amount 
+  // and the amount at index 2 (`amount[2]`) as combined sqrtPriceLimitX96 || fee.
+  // and the amount at index 3 (`amount[3]`) as deadline.
   function execute(
     address[] calldata path,
-    uint[] calldata amounts,
+    uint256[] calldata amounts,
     address[] calldata addresses,
     string[] calldata data
-  ) external payable returns(bool) {
-    
+  ) external payable returns (bool) {
     // Make sure swapping the token within the payment protocol contract is approved on the Uniswap router.
-    if( 
-      path[0] != ETH &&
-      IERC20(path[0]).allowance(address(this), UniswapV2Router02) < amounts[0]
-    ) {
-      Helper.safeApprove(path[0], UniswapV2Router02, MAXINT);
+    if (path[0] != ETH && IERC20(path[0]).allowance(address(this), UniswapV3Router03) < amounts[0]) {
+      Helper.safeApprove(path[0], UniswapV3Router03, MAXINT);
     }
 
     // Uniswap uses WETH within their path to indicate bridge swapping (instead of ETH).
     // This prepares the path as applicable to the Uniswap router.
-    address[] memory fixedPath = new address[](path.length);
-    for (uint i=0; i<path.length; i++) {
-        if(path[i] == ETH) {
-            fixedPath[i] = WETH;
-        } else {
-            fixedPath[i] = path[i];
-        }
+    address[] memory uniPath = new address[](path.length);
+    for (uint256 i = 0; i < path.length; i++) {
+      if (path[i] == ETH) {
+        uniPath[i] = WETH;
+      } else {
+        uniPath[i] = path[i];
+      }
     }
 
+    IUniswapV3Router03.ExactInputSingleParams memory singleSwap;
+
+    singleSwap.tokenIn = uniPath[0];
+    singleSwap.tokenOut = uniPath[uniPath.length - 1];
+    // We packing fee and sqrtPriceLimitX96 in amount[2]
+    // [20 bytes][12 bytes]
+    // First 20 bytes (160 bits) is sqrtPriceLimitX96
+    // Next 12 bytes contain 3 bytes (24 bits) fee level
+    // Fee used to be: 0xbb8 0x2710
+    singleSwap.fee = uint24(amounts[2]);
+    // 256 - 96 = 160
+    singleSwap.sqrtPriceLimitX96 = uint160(amounts[2] >> 96);
+    singleSwap.amountIn = amounts[0];
+    singleSwap.amountOutMinimum = amounts[1];
+    singleSwap.deadline = amounts[3];
+    singleSwap.recipient = address(this);
+
     // Executes ETH<>tokenA, tokenA<>ETH, or tokenA<>tokenB swaps depending on the provided path.
-    if(path[0] == ETH) {
-      IUniswapV2Router01(UniswapV2Router02).swapExactETHForTokens{value: amounts[0]}(
-        amounts[1],
-        fixedPath,
-        address(this),
-        amounts[2]
-      );
-    } else if (path[path.length-1] == ETH) {
-      IUniswapV2Router01(UniswapV2Router02).swapExactTokensForETH(
-        amounts[0],
-        amounts[1],
-        fixedPath,
-        address(this),
-        amounts[2]
-      );
+    if (path[0] == ETH) {
+      // Swap WETH for ETH
+      IWETH(WETH).deposit{value: amounts[0]}();
+      Helper.safeApprove(WETH, UniswapV3Router03, MAXINT);
+      IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
     } else {
-      IUniswapV2Router02(UniswapV2Router02).swapExactTokensForTokens(
-        amounts[0],
-        amounts[1],
-        fixedPath,
-        address(this),
-        amounts[2]
-      );
+      uint256 amountOut = IUniswapV3Router03(UniswapV3Router03).exactInputSingle(singleSwap);
+      // If output is WETH swap it for ETH
+      if (path[path.length - 1] == ETH) {
+        IWETH(WETH).withdraw(amountOut);
+      }
     }
 
     return true;

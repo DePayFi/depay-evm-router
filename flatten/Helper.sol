@@ -1,6 +1,11 @@
 // Root file: contracts/libraries/Helper.sol
 
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.8.6 <0.9.0;
+
 // Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+
 library Helper {
   function safeApprove(
     address token,

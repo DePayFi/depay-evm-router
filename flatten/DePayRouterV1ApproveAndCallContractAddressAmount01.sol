@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity >=0.6.0 <0.8.0;
+// pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -61,7 +61,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -81,7 +85,11 @@ interface IERC20 {
 
 // Dependency file: contracts/libraries/Helper.sol
 
+
+// pragma solidity >=0.8.6 <0.9.0;
+
 // Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+
 library Helper {
   function safeApprove(
     address token,
