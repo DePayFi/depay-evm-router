@@ -68,7 +68,7 @@ or [for, smartContractReceiver]
 e.g. [DePayRouterV1Uniswap01, DePayRouterV1Payment01] to swap and pay
 or [DePayRouterV1Uniswap01, DePayRouterV1ApproveAndCallContractAddressAmount01] to swap and call another contract
 ```
-See [Approved Plugins](#approved-plugins) for more details about available and approved plugins.
+See [Plugins](#plugins) for more details about available plugins.
 
 `data`: Additional data passed to the payment plugins (e.g. contract call signatures):
 
