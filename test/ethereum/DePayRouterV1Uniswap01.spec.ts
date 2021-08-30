@@ -110,14 +110,14 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
   })
 
   it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
-    // throw "PENDING"
+    throw "PENDING"
   })
 
   it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
-    // throw "PENDING"
+    throw "PENDING"
   })
 
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
-    // throw "PENDING"
+    throw "PENDING"
   })
 })
