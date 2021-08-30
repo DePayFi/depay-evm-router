@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/IDePayRouterV1Plugin.sol';
 import './libraries/Helper.sol';
 import './DePayRouterV1Configuration.sol';
@@ -26,7 +26,7 @@ contract DePayRouterV1 {
   // https://github.com/DePayFi/depay-ethereum-payments/blob/master/docs/Audit3.md#H02
   constructor (
     address _configuration
-  ) public {
+  ) {
     configuration = DePayRouterV1Configuration(_configuration);
   }
 
@@ -77,7 +77,7 @@ contract DePayRouterV1 {
   // required to perform the payment.
   function _ensureTransferIn(address tokenIn, uint amountIn) private {
     if(tokenIn == ETH) { 
-      require(msg.value >= amountIn, 'DePay: Insufficient ETH amount payed in!'); 
+      require(msg.value >= amountIn, 'DePay: Insufficient amount payed in!'); 
     } else {
       Helper.safeTransferFrom(tokenIn, msg.sender, address(this), amountIn);
     }

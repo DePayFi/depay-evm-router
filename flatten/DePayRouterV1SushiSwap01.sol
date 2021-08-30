@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity >=0.6.0 <0.8.0;
+// pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -41,7 +41,7 @@ interface IERC20 {
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
-     * // importANT: Beware that changing an allowance with this method brings the risk
+     * IMPORTANT: Beware that changing an allowance with this method brings the risk
      * that someone may use both the old and the new allowance by unfortunate
      * transaction ordering. One possible solution to mitigate this race
      * condition is to first reduce the spender's allowance to 0 and set the
@@ -61,7 +61,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -79,23 +83,20 @@ interface IERC20 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/math/SafeMath.sol
+// Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
 
-// pragma solidity >=0.6.0 <0.8.0;
+// pragma solidity ^0.8.0;
+
+// CAUTION
+// This version of SafeMath should only be used with Solidity 0.8 or later,
+// because it relies on the compiler's built in overflow checks.
 
 /**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
- * checks.
+ * @dev Wrappers over Solidity's arithmetic operations.
  *
- * Arithmetic operations in Solidity wrap on overflow. This can easily result
- * in bugs, because programmers usually assume that an overflow raises an
- * error, which is the standard behavior in high level programming languages.
- * `SafeMath` restores this intuition by reverting the transaction when an
- * operation overflows.
- *
- * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
+ * NOTE: `SafeMath` is no longer needed starting with Solidity 0.8. The compiler
+ * now has built in overflow checking.
  */
 library SafeMath {
     /**
@@ -104,9 +105,11 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        uint256 c = a + b;
-        if (c < a) return (false, 0);
-        return (true, c);
+        unchecked {
+            uint256 c = a + b;
+            if (c < a) return (false, 0);
+            return (true, c);
+        }
     }
 
     /**
@@ -115,8 +118,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b > a) return (false, 0);
-        return (true, a - b);
+        unchecked {
+            if (b > a) return (false, 0);
+            return (true, a - b);
+        }
     }
 
     /**
@@ -125,13 +130,15 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) return (true, 0);
-        uint256 c = a * b;
-        if (c / a != b) return (false, 0);
-        return (true, c);
+        unchecked {
+            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+            // benefit is lost if 'b' is also tested.
+            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+            if (a == 0) return (true, 0);
+            uint256 c = a * b;
+            if (c / a != b) return (false, 0);
+            return (true, c);
+        }
     }
 
     /**
@@ -140,8 +147,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b == 0) return (false, 0);
-        return (true, a / b);
+        unchecked {
+            if (b == 0) return (false, 0);
+            return (true, a / b);
+        }
     }
 
     /**
@@ -150,8 +159,10 @@ library SafeMath {
      * _Available since v3.4._
      */
     function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b == 0) return (false, 0);
-        return (true, a % b);
+        unchecked {
+            if (b == 0) return (false, 0);
+            return (true, a % b);
+        }
     }
 
     /**
@@ -165,9 +176,7 @@ library SafeMath {
      * - Addition cannot overflow.
      */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
-        return c;
+        return a + b;
     }
 
     /**
@@ -181,7 +190,6 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "SafeMath: subtraction overflow");
         return a - b;
     }
 
@@ -196,26 +204,20 @@ library SafeMath {
      * - Multiplication cannot overflow.
      */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        if (a == 0) return 0;
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-        return c;
+        return a * b;
     }
 
     /**
      * @dev Returns the integer division of two unsigned integers, reverting on
      * division by zero. The result is rounded towards zero.
      *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
+     * Counterpart to Solidity's `/` operator.
      *
      * Requirements:
      *
      * - The divisor cannot be zero.
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: division by zero");
         return a / b;
     }
 
@@ -232,7 +234,6 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: modulo by zero");
         return a % b;
     }
 
@@ -249,17 +250,20 @@ library SafeMath {
      *
      * - Subtraction cannot overflow.
      */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        return a - b;
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b <= a, errorMessage);
+            return a - b;
+        }
     }
 
     /**
      * @dev Returns the integer division of two unsigned integers, reverting with custom message on
      * division by zero. The result is rounded towards zero.
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryDiv}.
      *
      * Counterpart to Solidity's `/` operator. Note: this function uses a
      * `revert` opcode (which leaves remaining gas untouched) while Solidity
@@ -269,9 +273,15 @@ library SafeMath {
      *
      * - The divisor cannot be zero.
      */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        return a / b;
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b > 0, errorMessage);
+            return a / b;
+        }
     }
 
     /**
@@ -289,16 +299,23 @@ library SafeMath {
      *
      * - The divisor cannot be zero.
      */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        return a % b;
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b > 0, errorMessage);
+            return a % b;
+        }
     }
 }
 
 
 // Dependency file: contracts/interfaces/IUniswapV2Router02.sol
 
-// pragma solidity >=0.6.2;
+
+// pragma solidity >=0.8.6 <0.9.0;
 
 interface IUniswapV2Router01 {
     function factory() external pure returns (address);
@@ -438,7 +455,11 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
 
 // Dependency file: contracts/libraries/Helper.sol
 
+
+// pragma solidity >=0.8.6 <0.9.0;
+
 // Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+
 library Helper {
   function safeApprove(
     address token,
@@ -490,11 +511,11 @@ library Helper {
 // Root file: contracts/DePayRouterV1SushiSwap01.sol
 
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// import "@openzeppelin/contracts/math/SafeMath.sol";
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import "contracts/interfaces/IUniswapV2Router02.sol";
 // import 'contracts/libraries/Helper.sol';
 
@@ -523,7 +544,7 @@ contract DePayRouterV1SushiSwap01 {
   constructor (
     address _WETH,
     address _UniswapV2Router02
-  ) public {
+  ) {
     WETH = _WETH;
     UniswapV2Router02 = _UniswapV2Router02;
   }

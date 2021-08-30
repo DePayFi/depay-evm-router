@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity >=0.6.0 <0.8.0;
+// pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -41,7 +41,7 @@ interface IERC20 {
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
-     * // importANT: Beware that changing an allowance with this method brings the risk
+     * IMPORTANT: Beware that changing an allowance with this method brings the risk
      * that someone may use both the old and the new allowance by unfortunate
      * transaction ordering. One possible solution to mitigate this race
      * condition is to first reduce the spender's allowance to 0 and set the
@@ -61,7 +61,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -81,7 +85,11 @@ interface IERC20 {
 
 // Dependency file: contracts/libraries/Helper.sol
 
+
+// pragma solidity >=0.8.6 <0.9.0;
+
 // Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+
 library Helper {
   function safeApprove(
     address token,
@@ -133,7 +141,7 @@ library Helper {
 // Root file: contracts/DePayRouterV1Payment01.sol
 
 
-pragma solidity >=0.7.5 <0.8.0;
+pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -164,5 +172,7 @@ contract DePayRouterV1Payment01 {
     } else {
       Helper.safeTransfer(path[path.length-1], payable(addresses[addresses.length-1]), amounts[1]);
     }
+
+    return true;
   }
 }
