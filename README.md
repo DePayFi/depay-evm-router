@@ -1,6 +1,6 @@
 # DePay's EVM Router
 
-Plugin based EVM smart contract enabling various payment-related peer-to-peer transactions like: One-off Payments, Subscriptions, Sales, Swaps, Payroll and Credit.
+DePay's EVM Router. Plugin-based decentralized payment routing.
 
 ## Deployments
 
