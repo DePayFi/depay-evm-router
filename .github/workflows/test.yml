@@ -42,9 +42,9 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Create .env file
         run: |
-          echo "NODE_ENV=development,
-          echo "MNEMONIC=${DEPAY_MNEMONIC}" > .env,
-          echo "ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}" >> .env
+          echo "NODE_ENV=development" >> .env,
+          echo "MNEMONIC=${DEPAY_MNEMONIC}" >> .env,
+          echo "ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}" >> .env,
           echo "BSC_RPC_URL=${BSC_RPC_URL}" >> .env
 
       - name: Run test
