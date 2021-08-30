@@ -1,6 +1,5 @@
 import '@nomiclabs/hardhat-waffle'
 import 'hardhat-typechain'
-import 'solidity-coverage'
 import { HardhatUserConfig } from 'hardhat/types'
 
 import dotenv from 'dotenv'
