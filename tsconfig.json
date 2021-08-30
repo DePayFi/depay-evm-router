@@ -8,10 +8,6 @@
     "resolveJsonModule": true
   },
   "include": [
-    "./test",
-    "./hardhat.config.ts",
-    "./hardhat.config.shared.ts",
-    "./hardhat.config.ethereum.ts",
-    "./hardhat.config.bsc.ts"
+    "./test"
   ]
 }

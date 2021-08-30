@@ -1,3 +1,6 @@
+import '@nomiclabs/hardhat-waffle'
+import '@nomiclabs/hardhat-ethers'
+import '@typechain/hardhat'
 import { sharedConfig, MNEMONIC, BSC_RPC_URL } from './hardhat.config.shared'
 
 const hardhatConfig = {
