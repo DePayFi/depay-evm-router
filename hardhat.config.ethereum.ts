@@ -9,6 +9,7 @@ const hardhatConfig: HardhatUserConfig = {
       blockGasLimit: 12500000,
       gas: 6500000,
       gasPrice: 2000000000,
+      hardfork: 'berlin',
       accounts: {
         mnemonic: MNEMONIC!
       },
