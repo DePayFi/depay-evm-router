@@ -492,13 +492,19 @@ yarn test
 
 ### Testing
 
+Test on Ethereum:
 ```
-yarn test
+yarn test:ethereum
 ```
 
-or to run single tests:
+Test on BSC:
 ```
-yarn test -g 'deploys router successfully'
+yarn test:bsc
+```
+
+Test on all blockchains:
+```
+yarn test
 ```
 
 ### Deploy
