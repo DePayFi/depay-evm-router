@@ -2,10 +2,10 @@ import deployConfiguration from '../helpers/deploy/configuration'
 import deployRouter from '../helpers/deploy/router'
 import deployTestToken from '../helpers/deploy/testToken'
 import IDePayRouterV1 from '../../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
+import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 
-const CONSTANTS = require('depay-web3-constants').CONSTANTS
 const blockchain = 'ethereum'
 
 describe(`DePayRouterV1 on ${blockchain}`, () => {

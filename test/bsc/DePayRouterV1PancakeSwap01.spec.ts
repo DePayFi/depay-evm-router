@@ -3,18 +3,17 @@ import deployRouter from '../helpers/deploy/router'
 import impersonate from '../helpers/impersonate'
 import IPancakeRouter02 from '../../artifacts/contracts/interfaces/IPancakeRouter02.sol/IPancakeRouter02.json'
 import now from '../helpers/now'
+import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
+import { findByName } from 'depay-web3-exchanges'
 import { Token } from 'depay-web3-tokens'
 
-const CONSTANTS = require('depay-web3-constants').CONSTANTS
-const findByName = require('depay-web3-exchanges').findByName
 const blockchain = 'bsc'
 
 describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   let exchange = findByName('pancakeswap')
-
   let BUSD = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
   let addressWithBUSD = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
   let CAKE = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'

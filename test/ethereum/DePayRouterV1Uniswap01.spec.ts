@@ -3,18 +3,17 @@ import deployRouter from '../helpers/deploy/router'
 import impersonate from '../helpers/impersonate'
 import IUniswapV2Router02 from '../../artifacts/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json'
 import now from '../helpers/now'
+import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
+import { findByName } from 'depay-web3-exchanges'
 import { Token } from 'depay-web3-tokens'
 
-const CONSTANTS = require('depay-web3-constants').CONSTANTS
-const findByName = require('depay-web3-exchanges').findByName
 const blockchain = 'ethereum'
 
 describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
 
   let exchange = findByName('uniswap_v2')
-
   let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
   let addressWithDAI = '0x82810e81cad10b8032d39758c8dba3ba47ad7092'
   let DEPAY = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
