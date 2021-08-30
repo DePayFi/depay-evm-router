@@ -45,5 +45,8 @@ jobs:
           echo "MNEMONIC=${DEPAY_MNEMONIC}" >> .env,
           echo "BSC_RPC_URL=${BSC_RPC_URL}" >> .env
 
+      - name: Compile
+        run: yarn compile
+
       - name: Run test
         run: yarn test:bsc
