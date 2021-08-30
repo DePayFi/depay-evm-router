@@ -94,22 +94,6 @@ Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/addr
 
 Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
-### DePayRouterV1PaymentEvent01
-
-Used to log a payment event on-chain if requested. If not required/requested, not using it does safe gas.
-
-Emits a `Payment` event on the `DePayRouterV1PaymentEvent01` contract using `addresses[0]` as the `sender` of the event and `addresses[addresses.length-1]` as the `receiver` of the `Payment`.
-
-Ethereum: [0xDDe66e253aCb96E03E8CAcEc0Afb9308f496c732](https://etherscan.io/address/0xdde66e253acb96e03e8cacec0afb9308f496c732)
-
-### DePayRouterV1SaleEvent01
-
-Used to log a sale event on-chain if requested. If not required/requested, not using it does safe gas.
-
-Emits a `Sale` event on the `DePayRouterV1SaleEvent01` contract using `addresses[0]` as the `buyer`.
-
-Ethereum: [0xA47D5E0e6684D3ad73F3b94d9DAf18a2f5F97688](https://etherscan.io/address/0xa47d5e0e6684d3ad73f3b94d9daf18a2f5f97688)
-
 ### DePayRouterV1Uniswap01
 
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on UniswapV2 as part of the payment.
@@ -191,26 +175,9 @@ We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` 
 
 Ethereum: [0x8c5d2F0e65275369025c7511c216564beCC8d530](https://etherscan.io/address/0x8c5d2f0e65275369025c7511c216564becc8d530#code)
 
-### DePayRouterV1ApproveAndCallContractAddressAmount01
-
-Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
-
-Approves the amount at index 1 of `amounts` (`amounts[1]`)
-for the token at the last position of `path` (`path[path.length-1]`)
-to be used by the smart contract at index 1 of `addresses` (`addresses[1]`).
-
-Afterwards, calls the smart contract at index 1 of `addresses` (`addresses[1]`),
-passing the address at index 0 of `addresses` (`addresses[0]`)
-and passing the amount at index 1 of `amounts` (`amounts[1]`)
-to the method with the signature provided in `data` at index 0 (`data[0]`).
-
-Ethereum: [0x6F44fF404E57Ec15223d58057bd28519B927ddaB](https://etherscan.io/address/0x6f44ff404e57ec15223d58057bd28519b927ddab)
-
 ## Examples
 
 ### TOKEN_A to TOKEN_B payment, swapped via Uniswap, with a smart contract receiver (e.g. staking pool)
-
-[XXX](XXX)
 
 `path` needs to go through TOKEN_A -> WETH -> TOKEN_B because Uniswap pairs usually share WETH as common route.
 
@@ -342,8 +309,6 @@ to avoid depositing swaps into the payment contract itself (without performing a
 
 ### ETH to TOKEN_A payment, swapped via Uniswap
 
-Ethereum: [XXX](XXX)
-
 ```
 value: "5997801900122"
 
@@ -384,28 +349,6 @@ data: []
 `Gas usage: approx. 187,000`
 
 IMPORTANT: Make sure to set the address of the purchaser (sender == receiver) and to use the actual payment plugin to send the swap back to the purchaser.
-
-### Log sale event
-
-Ethereum: [XXX](XXX)
-
-```
-value: "5998045319783"
-
-path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE","0xAb4c122a024FeB8Eb3A87fBc7044ad69E51645cB"]
-
-amounts: ["5998045319783","1000000000000000000","1711537544"]
-
-addresses: ["0x317D875cA3B9f8d14f960486C0d1D1913be74e90"]
-
-plugins: ["0xc1F6146f45b6EC65FA9E8c8E278bb01879b32268","0x7C9cfd8905E8351303b0bE5D8378b3D453532c44","0x78AC73A852BB11eD09Cb14CAe8c355A4C0fAC476"]
-
-data: []
-```
-
-`Gas usage: approx. 187,000`
-
-IMPORTANT: The sale log event will be emited on the sale event plugin itself and will be part of the transaction.
 
 ### TOKEN_A to TOKEN_A payment
 
@@ -458,28 +401,6 @@ data: []
 
 IMPORTANT: Don't forget to use the actual payment plugin at the end of `plugins`
 to avoid just depositing into the payment contract itself without performing an actual payment.
-
-### Log payment event
-
-Ethereum: [XXX](XXX)
-
-```
-value: "10000000000000000"
-
-path: ["0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"]
-
-amounts: ["10000000000000000","10000000000000000"]
-
-addresses: ["0x08B277154218CCF3380CAE48d630DA13462E3950"]
-
-plugins: ["0x7C9cfd8905E8351303b0bE5D8378b3D453532c44","0x076f1f13efA6b194f636E265856D0381704fC394"]
-
-data: []
-```
-
-`Gas usage: approx. 63,800`
-
-IMPORTANT: The payment log event will be emited on the payment event plugin itself and will be part of the transaction.
 
 ## Development
 
