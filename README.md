@@ -481,12 +481,6 @@ data: []
 
 IMPORTANT: The payment log event will be emited on the payment event plugin itself and will be part of the transaction.
 
-## Security Audits
-
-1. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit1.md
-2. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit2.md
-3. https://github.com/DePayFi/depay-evm-router/blob/master/docs/Audit3.md
-
 ## Development
 
 ### Quick Start
