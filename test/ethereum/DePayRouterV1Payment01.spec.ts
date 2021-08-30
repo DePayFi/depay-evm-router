@@ -63,5 +63,4 @@ describe(`DePayRouterV1Payment01 on ${blockchain}`, function() {
       )
     ).to.changeEtherBalance(wallets[1], amount)
   })
-
 })

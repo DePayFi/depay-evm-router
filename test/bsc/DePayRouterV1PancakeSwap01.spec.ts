@@ -109,15 +109,26 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
     ).to.changeTokenBalance(CAKEToken, wallets[1], amountOutMin)
   })
 
-  it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
-    throw "PENDING"
-  })
-
-  it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
-    throw "PENDING"
-  })
-
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
-    throw "PENDING"
+    let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [BUSD, CONSTANTS[blockchain].WRAPPED, CAKE])
+    let amountOutMin = amountsOut[amountsOut.length-1].toString()
+    let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
+    let CAKEToken = await ethers.getContractAt(Token[blockchain].DEFAULT, CAKE)
+    const signer = await impersonate(addressWithBUSD)
+    await BUSDToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
+    let allowance = await BUSDToken.connect(signer).allowance(addressWithBUSD, router.address)
+    await expect(
+      router.connect(signer).route(
+        [BUSD, CONSTANTS[blockchain].NATIVE, CAKE], // path
+        [amountIn, amountOutMin, now()-60000], // amounts
+        [addressWithBUSD, wallets[1].address], // addresses
+        [swapPlugin.address, paymentPlugin.address], // plugins
+        [] // data
+      )
+    ).to.be.revertedWith(
+      'PancakeRouter: EXPIRED'
+    )
   })
 })

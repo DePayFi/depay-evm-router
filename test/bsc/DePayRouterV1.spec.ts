@@ -2,9 +2,11 @@ import deployConfiguration from '../helpers/deploy/configuration'
 import deployRouter from '../helpers/deploy/router'
 import deployTestToken from '../helpers/deploy/testToken'
 import IDePayRouterV1 from '../../artifacts/contracts/interfaces/IDePayRouterV1.sol/IDePayRouterV1.json'
+import impersonate from '../helpers/impersonate'
 import { CONSTANTS } from 'depay-web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
+import { Token } from 'depay-web3-tokens'
 
 const blockchain = 'bsc'
 
@@ -126,5 +128,62 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
     ).to.be.revertedWith(
       'DePay: Plugin not approved!'
     )
+  })
+
+  describe('requires payment plugin', ()=> {
+
+    let BUSD = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+    let addressWithBUSD = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
+    let addressWithBNB = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
+    let paymentPlugin
+
+    beforeEach(async ()=>{
+      const Plugin = await ethers.getContractFactory('DePayRouterV1Payment01')
+      paymentPlugin = await Plugin.deploy()
+      await paymentPlugin.deployed()
+      await configuration.connect(wallets[0]).approvePlugin(paymentPlugin.address)
+    })
+
+    it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
+      let amountIn = ethers.utils.parseUnits('1000', 18)
+      let amountOut = ethers.utils.parseUnits('2000', 18)
+      let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
+      const signer = await impersonate(addressWithBUSD)
+      await BUSDToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
+      await BUSDToken.connect(signer).transfer(router.address, amountOut)
+      await expect(
+        router.connect(signer).route(
+          [BUSD], // path
+          [amountIn, amountOut], // amounts
+          [addressWithBUSD, wallets[1].address], // addresses
+          [paymentPlugin.address], // plugins
+          [] // data
+        )
+      ).to.be.revertedWith(
+        'DePay: Insufficient balance after payment!'
+      )
+    })
+
+    it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
+      let amountIn = ethers.utils.parseUnits('1', 18)
+      let amountOut = ethers.utils.parseUnits('2', 18)
+      const signer = await impersonate(addressWithBNB)
+      await signer.sendTransaction({
+        to: router.address,
+        value: amountOut
+      })
+      await expect(
+        router.connect(signer).route(
+          [CONSTANTS[blockchain].NATIVE], // path
+          [amountIn, amountOut], // amounts
+          [addressWithBNB, wallets[1].address], // addresses
+          [paymentPlugin.address], // plugins
+          [], // data
+          { value: amountIn }
+        )
+      ).to.be.revertedWith(
+        'DePay: Insufficient balance after payment!'
+      )
+    })
   })
 })

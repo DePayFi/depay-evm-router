@@ -109,15 +109,26 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
     ).to.changeTokenBalance(DEPAYToken, wallets[1], amountOutMin)
   })
 
-  it('makes sure that the token balance in the smart contract is >= after the payment compared to before', async () => {
-    throw "PENDING"
-  })
-
-  it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
-    throw "PENDING"
-  })
-
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
-    throw "PENDING"
+    let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, DEPAY])
+    let amountOutMin = amountsOut[amountsOut.length-1].toString()
+    let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
+    let DEPAYToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DEPAY)
+    const signer = await impersonate(addressWithDAI)
+    await DAIToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
+    let allowance = await DAIToken.connect(signer).allowance(addressWithDAI, router.address)
+    await expect(
+      router.connect(signer).route(
+        [DAI, CONSTANTS[blockchain].NATIVE, DEPAY], // path
+        [amountIn, amountOutMin, now()-60000], // amounts
+        [addressWithDAI, wallets[1].address], // addresses
+        [swapPlugin.address, paymentPlugin.address], // plugins
+        [] // data
+      )
+    ).to.be.revertedWith(
+      'UniswapV2Router: EXPIRED'
+    )
   })
 })

@@ -428,6 +428,12 @@ Test on all blockchains:
 yarn test
 ```
 
+Test single files:
+
+```
+npx hardhat test test/ethereum/DePayRouterV1.spec.ts --config hardhat.config.ethereum.ts
+```
+
 ### Deploy
 
 1. `yarn flatten`
