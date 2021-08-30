@@ -16,6 +16,7 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
   let exchange = findByName('uniswap_v2')
 
   let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
+  let addressWithDAI = '0x82810e81cad10b8032d39758c8dba3ba47ad7092'
   let DEPAY = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
 
   let wallets,
@@ -34,7 +35,7 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
   })
 
   it('deploys the plugin', async () => {
-    const Plugin = await ethers.getContractFactory('DePayRouterV1PancakeSwap01')
+    const Plugin = await ethers.getContractFactory('DePayRouterV1Uniswap01')
     swapPlugin = await Plugin.deploy(CONSTANTS[blockchain].WRAPPED, exchange.contracts.router.address)
     await swapPlugin.deployed()
   })
@@ -51,9 +52,9 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
   })
 
   it('swaps NATIVE to DAI and performs payment in DAI', async () => {
-    let amountIn = 1000
-    let PancakeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
-    let amountsOut = await PancakeRouter.getAmountsOut(amountIn, [CONSTANTS[blockchain].WRAPPED, DAI])
+    let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [CONSTANTS[blockchain].WRAPPED, DAI])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
     await expect(() => 
@@ -63,18 +64,17 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
         [wallets[0].address, wallets[1].address], // addresses
         [swapPlugin.address, paymentPlugin.address], // plugins
         [], // data
-        { value: 1000 }
+        { value: amountIn }
       )
     ).to.changeTokenBalance(DAIToken, wallets[1], amountOutMin)
   })
 
   it('swaps DAI to ETH and performs payment with ETH', async () => {
-    let amountIn = 1000
-    let PancakeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
-    let amountsOut = await PancakeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED])
+    let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
-    const addressWithDAI = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
     const signer = await impersonate(addressWithDAI)
     await DAIToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
     let allowance = await DAIToken.connect(signer).allowance(addressWithDAI, router.address)
@@ -90,13 +90,12 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
   })
 
   it('swaps DAI to DEPAY and performs payment with DEPAY', async () => {
-    let amountIn = 1000
-    let PancakeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
-    let amountsOut = await PancakeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, DEPAY])
+    let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, DEPAY])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
     let DEPAYToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DEPAY)
-    const addressWithDAI = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
     const signer = await impersonate(addressWithDAI)
     await DAIToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
     let allowance = await DAIToken.connect(signer).allowance(addressWithDAI, router.address)
