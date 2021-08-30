@@ -22,7 +22,8 @@ jobs:
 
     env:
       DEPAY_MNEMONIC: ${{secrets.DEPAY_MNEMONIC}}
-      DEPAY_RPC_URL: ${{secrets.DEPAY_RPC_URL}}
+      ETHEREUM_RPC_URL: ${{secrets.ETHEREUM_RPC_URL}}
+      BSC_RPC_URL: ${{secrets.BSC_RPC_URL}}
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -41,7 +42,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Create .env file
         run: |
-          echo "DEPAY_MNEMONIC=${DEPAY_MNEMONIC}" > .env,
+          echo "NODE_ENV=development,
+          echo "MNEMONIC=${DEPAY_MNEMONIC}" > .env,
           echo "ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}" >> .env
           echo "BSC_RPC_URL=${BSC_RPC_URL}" >> .env
 
