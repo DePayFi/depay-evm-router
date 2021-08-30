@@ -50,7 +50,7 @@
   "scripts": {
     "lint": "yarn prettier ./test/*.ts --check",
     "lint:fix": "yarn prettier ./test/*.ts --write",
-    "clean": "rimraf ./build/",
+    "clean": "rimraf artifacts cache typechain",
     "precompile": "yarn clean",
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
@@ -59,7 +59,7 @@
     "test": "yarn test:ethereum && yarn test:bsc",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
-    "flatten": "waffle flatten"
+    "flatten": "rimraf flatten && waffle flatten"
   },
   "license": "MIT",
   "dependencies": {
