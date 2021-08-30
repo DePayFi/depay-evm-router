@@ -1,8 +1,7 @@
-import { HardhatUserConfig } from 'hardhat/types'
-import { config, MNEMONIC, BSC_RPC_URL } from './hardhat.config.shared'
+import { sharedConfig, MNEMONIC, BSC_RPC_URL } from './hardhat.config.shared'
 
-const hardhatConfig: HardhatUserConfig = {
-  ...config,
+const hardhatConfig = {
+  ...sharedConfig,
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {

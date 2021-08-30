@@ -1,7 +1,6 @@
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ethers'
 import '@typechain/hardhat'
-import { HardhatUserConfig } from 'hardhat/types'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -12,7 +11,7 @@ var {
   BSC_RPC_URL,
 } = process.env
 
-const config: HardhatUserConfig = {
+const sharedConfig = {
   solidity: {
     version: '0.8.6',
     settings: {
@@ -25,7 +24,7 @@ const config: HardhatUserConfig = {
 }
 
 export {
-  config,
+  sharedConfig,
   MNEMONIC,
   ETHEREUM_RPC_URL,
   BSC_RPC_URL

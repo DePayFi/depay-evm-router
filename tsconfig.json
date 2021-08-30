@@ -7,5 +7,11 @@
     "noImplicitAny": false,
     "resolveJsonModule": true
   },
-  "include": ["./test"]
+  "include": [
+    "./test",
+    "./hardhat.config.ts",
+    "./hardhat.config.shared.ts",
+    "./hardhat.config.ethereum.ts",
+    "./hardhat.config.bsc.ts"
+  ]
 }
