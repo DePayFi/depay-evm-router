@@ -20,7 +20,8 @@ contract DePayRouterV1PaymentEvent02 {
   // can call the payment event
   address public immutable router;
 
-  // Pass WETH and the UniswapRouter when deploying this contract.
+  // Pass the DePayRouterV1 address to make sure
+  // only the original router can call this plugin.
   constructor (
     address _router
   ) {
