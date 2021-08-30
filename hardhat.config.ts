@@ -2,16 +2,8 @@ import { HardhatUserConfig } from 'hardhat/types'
 import { config } from './hardhat.config.shared'
 
 const hardhatConfig: HardhatUserConfig = {
+  ...config,
   defaultNetwork: 'hardhat',
-  solidity: {
-    version: '0.8.6',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
-    }
-  },
   networks: {
     hardhat: {
       blockGasLimit: 12500000,
