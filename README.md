@@ -88,18 +88,24 @@ Sends a payment to a receiver.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
 
-Can also be used to perform token sales from decentralized exchanges to the sender by setting `addresses` to `[<sender address>]`.
+Can also be used to perform token sales from decentralized exchanges by simply setting receiver to equal sender.
 
 Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/address/0x99f3f4685a7178f26eb4f4ca8b75a1724f1577b9)
 
 Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
+
+### DePayRouterV1PaymentFee01
+
+Sends a payment fee to a third-party address.
+
+Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 4 (`amounts[4]`) to the address at the previous last position (`addresses[addresses.length-2]`).
 
 ### DePayRouterV1Uniswap01
 
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on UniswapV2 as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as deadline.
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
 
@@ -108,7 +114,7 @@ Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/addr
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on Pancakeswap as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as deadline.
 
 Binance Smart Chain: [0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B](https://bscscan.com/address/0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B)
 
@@ -125,9 +131,7 @@ We do packing in `amounts[2]`. We use 256 bits to store `fee` (`fee` is used to 
 [sqrtPriceLimitX96: uint160] [reversed: 72 bits] [fee: uint24]
 ```
 
-The amount at index 3 (`amount[3]`) is the deadline of the swap.
-
-Ethereum: [XXX](XXX)
+The amount at index 3 (`amounts[3]`) is the deadline of the swap.
 
 ### DePayRouterV1CurveFiSwap01
 
@@ -158,7 +162,7 @@ Ethereum: [0xcac512f9a8599d251117d18b72a91cd5b2219a95](https://etherscan.io/addr
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on SuhiSwap (based on Uniswap) as part of the payment.
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as deadline.
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as deadline.
 
 Ethereum: [0xd617fdc26d762ade48Ff54c2E1DE148BFB3F9D22](https://etherscan.io/address/0xd617fdc26d762ade48ff54c2e1de148bfb3f9d22)
 
@@ -167,7 +171,7 @@ Ethereum: [0xd617fdc26d762ade48Ff54c2E1DE148BFB3F9D22](https://etherscan.io/addr
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on OneSplitSwap (1Inch Protocol).
 
 Swaps tokens according to provided `path` using the amount at index 0 (`amounts[0]`) as input amount,
-the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amount[2]`) as flags of 1Inch Protocol.
+the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as flags of 1Inch Protocol.
 
 The rest of remaining elements of `amounts[]` is distribution of 1Inch Protocol.
 
