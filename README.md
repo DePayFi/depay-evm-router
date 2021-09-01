@@ -94,6 +94,24 @@ Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/addr
 
 Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
+### DePayRouterV1PaymentEvent02
+
+Emits an event as part of the payment with the following structure:
+
+```
+event Payment(
+  address indexed sender,
+  address payable indexed receiver,
+  uint256 indexed amount,
+  address token
+);
+```
+
+This plugin takes the address at index 0 (`addresses[0]`) as `sender`,
+the address at the last index (`addresses[addresses.length-1]`) as the `receiver`,
+the amount at index 1 (`amounts[1]`) as the `amount`,
+and the token at the last index (`path[path.length-1]`) as the `token`.
+
 ### DePayRouterV1PaymentFee01
 
 Sends a payment fee to a third-party address.
