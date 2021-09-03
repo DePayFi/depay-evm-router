@@ -112,6 +112,10 @@ the address at the last index (`addresses[addresses.length-1]`) as the `receiver
 the amount at index 1 (`amounts[1]`) as the `amount`,
 and the token at the last index (`path[path.length-1]`) as the `token`.
 
+Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
+
+Binance Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
+
 ### DePayRouterV1PaymentFee01
 
 Sends a payment fee to a third-party address.
