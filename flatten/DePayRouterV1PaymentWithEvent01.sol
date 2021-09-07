@@ -83,6 +83,25 @@ interface IERC20 {
 }
 
 
+// Dependency file: contracts/interfaces/IDePayRouterV1Plugin.sol
+
+
+// pragma solidity >=0.8.6 <0.9.0;
+
+interface IDePayRouterV1Plugin {
+
+  function delegate() external returns(bool);
+
+  function execute(
+    address[] calldata path,
+    uint[] calldata amounts,
+    address[] calldata addresses,
+    string[] calldata data
+  ) external payable returns(bool);
+  
+}
+
+
 // Dependency file: contracts/libraries/Helper.sol
 
 
@@ -160,16 +179,17 @@ library Helper {
 }
 
 
-// Root file: contracts/DePayRouterV1Payment01.sol
+// Root file: contracts/DePayRouterV1PaymentWithEvent01.sol
 
 
 pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import 'contracts/interfaces/IDePayRouterV1Plugin.sol';
 // import 'contracts/libraries/Helper.sol';
 
-contract DePayRouterV1Payment01 {
+contract DePayRouterV1PaymentWithEvent01 {
 
   // Address representating ETH (e.g. in payment routing paths)
   address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -177,10 +197,24 @@ contract DePayRouterV1Payment01 {
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
 
-  event Payment(
-    address indexed sender,
-    address payable indexed receiver
-  );
+  // Address of the router to make sure nobody else 
+  // can call the payment event
+  address public immutable router;
+
+  // Address of the event pluing
+  address public immutable eventPlugin;
+
+  // Pass the DePayRouterV1 address to make sure
+  // only the original router can call this plugin.
+  // Also pass the event plugin which will be called
+  // together with the payment
+  constructor (
+    address _router,
+    address _eventPlugin
+  ) {
+    router = _router;
+    eventPlugin = _eventPlugin;
+  }
 
   function execute(
     address[] calldata path,
@@ -188,12 +222,20 @@ contract DePayRouterV1Payment01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool) {
+    require(address(this) == router, 'Only the DePayRouterV1 can call this plugin!');
 
+    // Send the payment
     if(path[path.length-1] == ETH) {
       Helper.safeTransferETH(payable(addresses[addresses.length-1]), amounts[1]);
     } else {
       Helper.safeTransfer(path[path.length-1], payable(addresses[addresses.length-1]), amounts[1]);
     }
+
+    // Emit the event by calling the event plugin
+    (bool success, bytes memory returnData) = address(eventPlugin).call(abi.encodeWithSelector(
+      IDePayRouterV1Plugin(eventPlugin).execute.selector, path, amounts, addresses, data
+    ));
+    Helper.verifyCallResult(success, returnData, 'Calling payment event plugin failed!');
 
     return true;
   }
