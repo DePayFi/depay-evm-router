@@ -4,6 +4,7 @@ pragma solidity >=0.8.6 <0.9.0;
 pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import './interfaces/IDePayRouterV1Plugin.sol';
 import './libraries/Helper.sol';
 
 contract DePayRouterV1PaymentWithEvent01 {
@@ -39,7 +40,7 @@ contract DePayRouterV1PaymentWithEvent01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns(bool) {
-    require(msg.sender == router, 'Only the DePayRouterV1 can call this plugin!');
+    require(address(this) == router, 'Only the DePayRouterV1 can call this plugin!');
 
     // Send the payment
     if(path[path.length-1] == ETH) {
@@ -50,9 +51,9 @@ contract DePayRouterV1PaymentWithEvent01 {
 
     // Emit the event by calling the event plugin
     (bool success, bytes memory returnData) = address(eventPlugin).call(abi.encodeWithSelector(
-      eventPlugin.execute.selector, path, amounts, addresses, data
+      IDePayRouterV1Plugin(eventPlugin).execute.selector, path, amounts, addresses, data
     ));
-    require(success, string(returnData));
+    Helper.verifyCallResult(success, returnData, 'Calling payment event plugin failed!');
 
     return true;
   }
