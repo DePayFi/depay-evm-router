@@ -94,7 +94,15 @@ Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/addr
 
 Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
-### DePayRouterV1PaymentEvent02
+### DePayRouterV1PaymentWithEvent01
+
+Sends a payment to a receiver and emits an event (in an atomic way, either both or nothing).
+
+Sends a payment to a receiver.
+
+Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 1 (`amounts[1]`) to the address at the last position (`addresses[addresses.length-1]`).
+
+Can also be used to perform token sales from decentralized exchanges by simply setting receiver to equal sender.
 
 Emits an event as part of the payment with the following structure:
 
@@ -112,9 +120,19 @@ the address at the last index (`addresses[addresses.length-1]`) as the `receiver
 the amount at index 1 (`amounts[1]`) as the `amount`,
 and the token at the last index (`path[path.length-1]`) as the `token`.
 
+Ethereum: [0xD8fBC10787b019fE4059Eb5AA5fB11a5862229EF](https://etherscan.io/address/0xd8fbc10787b019fe4059eb5aa5fb11a5862229ef)
+
+Binance Smart Chain: [0x1869E236c03eE67B9FfEd3aCA139f4AeBA79Dc21](https://bscscan.com/address/0x1869e236c03ee67b9ffed3aca139f4aeba79dc21)
+
+This plugin uses DePayRouterV1PaymentEvent02 to emit events. If you want to listen to those events you have to do it for the address of DePayRouterV1PaymentEvent02:
+
 Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
 
 Binance Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
+
+#### Example transactions
+
+
 
 ### DePayRouterV1PaymentFee01
 
