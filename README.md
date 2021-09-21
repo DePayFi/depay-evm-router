@@ -10,6 +10,8 @@ Ethereum: [0xae60ac8e69414c2dc362d0e6a03af643d1d85b92](https://etherscan.io/addr
 
 Binance Smart Chain: [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://bscscan.com/address/0x0dfb7137bc64b63f7a0de7cb9cda178702666220)
 
+Rinkeby Ethereum Testnet: [0x679a790e37fab09e727e814292147053fd9d20a4](https://rinkeby.etherscan.io/address/0x679a790e37fab09e727e814292147053fd9d20a4)
+
 ## Summary
 
 This set of smart contracts enables decentralized payments.
@@ -94,6 +96,8 @@ Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/addr
 
 Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
+Rinkeby Ethereum Testnet: [0xfDd8BAfc85742d8023688223dA46Ec9CA07762B8](https://rinkeby.etherscan.io/address/0xfDd8BAfc85742d8023688223dA46Ec9CA07762B8)
+
 ### DePayRouterV1PaymentWithEvent01
 
 Sends a payment to a receiver and emits an event (in an atomic way, either both or nothing).
@@ -124,15 +128,17 @@ Ethereum: [0xD8fBC10787b019fE4059Eb5AA5fB11a5862229EF](https://etherscan.io/addr
 
 Binance Smart Chain: [0x1869E236c03eE67B9FfEd3aCA139f4AeBA79Dc21](https://bscscan.com/address/0x1869e236c03ee67b9ffed3aca139f4aeba79dc21)
 
+Rinkeby Ethereum Testnet: [0x9995338488253be57bC6E8f457b4ef3E36cf3002](https://rinkeby.etherscan.io/address/0x9995338488253be57bC6E8f457b4ef3E36cf3002)
+
 This plugin uses DePayRouterV1PaymentEvent02 to emit events. If you want to listen to those events you have to do it for the address of DePayRouterV1PaymentEvent02:
+
+#### DePayRouterV1PaymentEvent02
 
 Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
 
 Binance Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
 
-#### Example transactions
-
-
+Rinkeby Ethereum Testnet: [0xbd2F59b2f1f516427F3816A6d8dc5B62Fe61e7f6](https://rinkeby.etherscan.io/address/0xbd2F59b2f1f516427F3816A6d8dc5B62Fe61e7f6)
 
 ### DePayRouterV1PaymentFee01
 
@@ -148,6 +154,8 @@ Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) a
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as deadline.
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
+
+Rinkeby Ethereum Testnet: [0x29C1EAaE532Cbec71aFb6BaEB3e3113e1f3Ad542](https://rinkeby.etherscan.io/address/0x29C1EAaE532Cbec71aFb6BaEB3e3113e1f3Ad542)
 
 ### DePayRouterV1PancakeSwap01
 
