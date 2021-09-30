@@ -227,6 +227,17 @@ We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` 
 
 Ethereum: [0x8c5d2F0e65275369025c7511c216564beCC8d530](https://etherscan.io/address/0x8c5d2f0e65275369025c7511c216564becc8d530#code)
 
+### DePayRouterV1ApproveAndCallContractAddressAmountBoolean01
+
+To be used to send payments to smart contracts.
+
+Approves target smart contract for token at last index of `path` (`path[path.length-1]`) and calls smart contract at address index 1 `address[1]`
+using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
+`uint256` from amounts at index 1 `amounts[1]` and bool based on passing `"true"` or `"false"` as string via `data[1]`.
+
+Ethereum: []
+Binance Smart Chain: []
+
 ## Examples
 
 ### TOKEN_A to TOKEN_B payment, swapped via Uniswap, with a smart contract receiver (e.g. staking pool)
