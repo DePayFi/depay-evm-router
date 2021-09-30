@@ -235,8 +235,9 @@ Approves target smart contract for token at last index of `path` (`path[path.len
 using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
 `uint256` from amounts at index 1 `amounts[1]` and bool based on passing `"true"` or `"false"` as string via `data[1]`.
 
-Ethereum: []
-Binance Smart Chain: []
+Ethereum: [0x7e7E521e123dcb55F7671D17676fAB9305d1c0fC](https://etherscan.io/address/0x7e7e521e123dcb55f7671d17676fab9305d1c0fc)
+
+Binance Smart Chain: [0x5CF9a182BBd5d9b7F8E2b93f8471852dA2a75014](https://bscscan.com/address/0x5cf9a182bbd5d9b7f8e2b93f8471852da2a75014)
 
 ## Examples
 
