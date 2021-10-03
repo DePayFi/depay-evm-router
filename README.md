@@ -231,13 +231,13 @@ Ethereum: [0x8c5d2F0e65275369025c7511c216564beCC8d530](https://etherscan.io/addr
 
 To be used to send payments to smart contracts.
 
-Approves target smart contract for token at last index of `path` (`path[path.length-1]`) and calls smart contract at address index 1 `address[1]`
+Approves target smart contract for token at last index of `path` (`path[path.length-1]`) for amount at index 1 `amounts[1]` and calls smart contract at address index 1 `address[1]`
 using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
-`uint256` from amounts at index 1 `amounts[1]` and bool based on passing `"true"` or `"false"` as string via `data[1]`.
+`uint256` from amounts at index 1 `amounts[1]` and bool based on passing `"true"` or `"false"` as string via `data[1]`. Resets allowance back to 0 after smart contract has been called.
 
-Ethereum: [0x7e7E521e123dcb55F7671D17676fAB9305d1c0fC](https://etherscan.io/address/0x7e7e521e123dcb55f7671d17676fab9305d1c0fc)
+Ethereum: [0xF984eb8b466AD6c728E0aCc7b69Af6f69B32437F](https://etherscan.io/address/0xf984eb8b466ad6c728e0acc7b69af6f69b32437f)
 
-Binance Smart Chain: [0x5CF9a182BBd5d9b7F8E2b93f8471852dA2a75014](https://bscscan.com/address/0x5cf9a182bbd5d9b7f8e2b93f8471852da2a75014)
+Binance Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
 
 ## Examples
 
