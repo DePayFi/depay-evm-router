@@ -1669,6 +1669,14 @@ contract TestStakingPool  {
     return(true);
   }
 
+  function doNotMoveTokens(
+    address _for,
+    uint256 amount,
+    bool lock
+  ) public returns(bool) {
+    return(true);
+  }
+
   function stakeAddressAmountBooleanBUSD(
     address _for,
     uint256 amount,

@@ -194,7 +194,7 @@ contract DePayRouterV1ApproveAndCallContractAddressAmountBoolean01 {
     string[] calldata data
   ) external payable returns(bool) {
 
-    // Approve the amount to be passed to the smart contract be called.
+    // Approve the amount that needs to be passed on to the smart contract.
     if(path[path.length-1] != NATIVE) {
       Helper.safeApprove(
         path[path.length-1],
@@ -225,6 +225,15 @@ contract DePayRouterV1ApproveAndCallContractAddressAmountBoolean01 {
           keccak256(bytes(data[1])) == keccak256(bytes("true"))
         )
       );
+    }
+
+    // Reset allowance after paying to the smart contract
+    if(path[path.length-1] != NATIVE && IERC20(path[path.length-1]).allowance(address(this), addresses[1]) > 0) {
+      Helper.safeApprove(
+        path[path.length-1],
+        addresses[1],
+        0
+      ); 
     }
 
     Helper.verifyCallResult(success, returnData, "Calling smart contract payment receiver failed!");

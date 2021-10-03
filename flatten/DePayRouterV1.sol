@@ -976,8 +976,8 @@ contract DePayRouterV1 {
     }
   }
 
-  // This makes sure that the balance after the payment not less than before.
-  // Prevents draining of the contract.
+  // This makes sure that the balance after the payment is not less than before.
+  // Prevents draining the contract.
   function _ensureBalance(address tokenOut, uint balanceBefore) private view {
     require(_balance(tokenOut) >= balanceBefore, 'DePay: Insufficient balance after payment!');
   }

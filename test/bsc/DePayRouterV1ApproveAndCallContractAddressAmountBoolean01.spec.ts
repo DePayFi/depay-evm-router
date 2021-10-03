@@ -82,6 +82,8 @@ describe(`DePayRouterV1ApproveAndCallContractAddressAmountBoolean01 on ${blockch
       true
     );
     let stakingContractBalance = await(BUSDToken.balanceOf(stakingContract.address))
+    let allowance = await BUSDToken.allowance(router.address, stakingContract.address)
+    expect(allowance.toString()).to.eq('0') // it makes sure to only allow what is required to do the payment
     expect(stakingContractBalance).to.equal(amountOutMin)
   })
 
@@ -108,5 +110,23 @@ describe(`DePayRouterV1ApproveAndCallContractAddressAmountBoolean01 on ${blockch
       true
     )
     expect(await ethers.provider.getBalance(stakingContract.address)).to.equal(amountOutMin)
+  })
+
+  it('resets the token allowance after paying the smart contract to prevent draining the router', async () => {
+     let amountIn = ethers.utils.parseUnits('1000', 18);
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [CONSTANTS[blockchain].WRAPPED, BUSD])
+    let amountOutMin = amountsOut[amountsOut.length-1].toString()
+    let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
+    await router.connect(wallets[0]).route(
+      [CONSTANTS[blockchain].NATIVE, BUSD], // path
+      [amountIn, amountOutMin, now()+60000], // amounts
+      [wallets[0].address, stakingContract.address], // addresses
+      [swapPlugin.address, contractCallPlugin.address], // plugins
+      ['doNotMoveTokens(address,uint256,bool)', 'true'], // data
+      { value: amountIn }
+    )
+    let allowance = await BUSDToken.allowance(router.address, stakingContract.address)
+    expect(allowance.toString()).to.eq('0') // it makes sure to only allow what is required to do the payment
   })
 })
