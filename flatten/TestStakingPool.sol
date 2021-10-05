@@ -1642,6 +1642,20 @@ contract TestStakingPool  {
     return(true);
   }
 
+  function stakeAddressProcessedAmountBooleanNative(
+    address _for,
+    uint256 amount,
+    bool lock
+  ) public payable returns(bool) {
+    emit StakeAddressAmountBooleanNative(
+      _for,
+      amount/2,
+      lock
+    );
+
+    return(true);
+  }
+
   event StakeAddressAmountBooleanToken(
     address _for,
     uint256 amount,
@@ -1663,6 +1677,27 @@ contract TestStakingPool  {
     emit StakeAddressAmountBooleanToken(
       _for,
       amount,
+      lock
+    );
+
+    return(true);
+  }
+
+  function stakeAddressProcessedAmountBooleanDAI(
+    address _for,
+    uint256 amount,
+    bool lock
+  ) public returns(bool) {
+    Helper.safeTransferFrom(
+      address(0x6B175474E89094C44Da98b954EedeAC495271d0F), // DAI
+      msg.sender,
+      address(this),
+      amount/2
+    );
+
+    emit StakeAddressAmountBooleanToken(
+      _for,
+      amount/2,
       lock
     );
 
@@ -1692,6 +1727,27 @@ contract TestStakingPool  {
     emit StakeAddressAmountBooleanToken(
       _for,
       amount,
+      lock
+    );
+
+    return(true);
+  }
+
+  function stakeAddressProcessedAmountBooleanBUSD(
+    address _for,
+    uint256 amount,
+    bool lock
+  ) public returns(bool) {
+    Helper.safeTransferFrom(
+      address(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56), // BUSD
+      msg.sender,
+      address(this),
+      amount/2
+    );
+
+    emit StakeAddressAmountBooleanToken(
+      _for,
+      amount/2,
       lock
     );
 
