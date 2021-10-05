@@ -239,6 +239,18 @@ Ethereum: [0xF984eb8b466AD6c728E0aCc7b69Af6f69B32437F](https://etherscan.io/addr
 
 Binance Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
 
+### DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01
+
+To be used to send payments to smart contracts.
+
+Approves target smart contract for token at last index of `path` (`path[path.length-1]`) for amount at index 1 `amounts[1]` and calls smart contract at address index 1 `address[1]`
+using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
+`uint256` from amounts at index 5 `amounts[5]` and bool based on passing `"true"` or `"false"` as string via `data[1]`. Resets allowance back to 0 after smart contract has been called.
+
+Ethereum: [0x2D18c5A46cc1780d2460DD51B5d0996e55Fd2446](https://etherscan.io/address/0x2d18c5a46cc1780d2460dd51b5d0996e55fd2446)
+
+Binance Smart Chain: [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://bscscan.com/address/0x7e655088214d0657251a51adcce9109cfd23b5b5)
+
 ## Examples
 
 ### TOKEN_A to TOKEN_B payment, swapped via Uniswap, with a smart contract receiver (e.g. staking pool)
