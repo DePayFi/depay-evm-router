@@ -146,6 +146,10 @@ Sends a payment fee to a third-party address.
 
 Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 4 (`amounts[4]`) to the address at the previous last position (`addresses[addresses.length-2]`).
 
+Ethereum: [0x874Cb669D7BFff79d4A6A30F4ea52c5e413BD6A7](https://etherscan.io/address/0x874Cb669D7BFff79d4A6A30F4ea52c5e413BD6A7)
+
+Binance Smart Chain: [0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3](https://bscscan.com/address/0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3)
+
 ### DePayRouterV1Uniswap01
 
 Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on UniswapV2 as part of the payment.
