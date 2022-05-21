@@ -163,6 +163,10 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
 
+#### Quickswap
+
+Polygon (Matic): [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://polygonscan.com/address/0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220)
+
 
 ### DePayRouterV1PancakeSwap01
 
