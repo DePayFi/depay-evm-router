@@ -250,6 +250,9 @@ Ethereum: [0xF984eb8b466AD6c728E0aCc7b69Af6f69B32437F](https://etherscan.io/addr
 
 BNB Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
 
+Polygon (Matic): [0x8698E529E9867eEbcC68b4792daC627cd8870736](https://polygonscan.com/address/0x8698E529E9867eEbcC68b4792daC627cd8870736)
+
+
 ### DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01
 
 To be used to send payments to smart contracts.
@@ -261,6 +264,8 @@ using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(
 Ethereum: [0x2D18c5A46cc1780d2460DD51B5d0996e55Fd2446](https://etherscan.io/address/0x2d18c5a46cc1780d2460dd51b5d0996e55fd2446)
 
 BNB Smart Chain: [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://bscscan.com/address/0x7e655088214d0657251a51adcce9109cfd23b5b5)
+
+Polygon (Matic): [0xAB305eaDf5FB15AF6370106B231C67d103bBbbbC](https://polygonscan.com/address/0xAB305eaDf5FB15AF6370106B231C67d103bBbbbC)
 
 ## Examples
 
