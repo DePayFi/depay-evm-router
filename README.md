@@ -8,9 +8,9 @@ DePay's EVM Router. Plugin-based decentralized payment routing.
 
 Ethereum: [0xae60ac8e69414c2dc362d0e6a03af643d1d85b92](https://etherscan.io/address/0xae60ac8e69414c2dc362d0e6a03af643d1d85b92)
 
-Binance Smart Chain: [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://bscscan.com/address/0x0dfb7137bc64b63f7a0de7cb9cda178702666220)
+BNB Smart Chain: [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://bscscan.com/address/0x0dfb7137bc64b63f7a0de7cb9cda178702666220)
 
-Rinkeby Ethereum Testnet: [0x679a790e37fab09e727e814292147053fd9d20a4](https://rinkeby.etherscan.io/address/0x679a790e37fab09e727e814292147053fd9d20a4)
+Polygon (Matic): [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://polygonscan.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
 
 ## Summary
 
@@ -94,9 +94,17 @@ Can also be used to perform token sales from decentralized exchanges by simply s
 
 Ethereum: [0x99F3F4685a7178F26EB4F4Ca8B75a1724F1577B9](https://etherscan.io/address/0x99f3f4685a7178f26eb4f4ca8b75a1724f1577b9)
 
-Binance Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
+BNB Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.com/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
 
-Rinkeby Ethereum Testnet: [0xfDd8BAfc85742d8023688223dA46Ec9CA07762B8](https://rinkeby.etherscan.io/address/0xfDd8BAfc85742d8023688223dA46Ec9CA07762B8)
+Polygon (Matic): [0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd](https://polygonscan.com/address/0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd)
+
+
+#### DePayRouterV1PaymentEvent02
+
+Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
+
+BNB Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
+
 
 ### DePayRouterV1PaymentWithEvent01
 
@@ -126,19 +134,12 @@ and the token at the last index (`path[path.length-1]`) as the `token`.
 
 Ethereum: [0xD8fBC10787b019fE4059Eb5AA5fB11a5862229EF](https://etherscan.io/address/0xd8fbc10787b019fe4059eb5aa5fb11a5862229ef)
 
-Binance Smart Chain: [0x1869E236c03eE67B9FfEd3aCA139f4AeBA79Dc21](https://bscscan.com/address/0x1869e236c03ee67b9ffed3aca139f4aeba79dc21)
+BNB Smart Chain: [0x1869E236c03eE67B9FfEd3aCA139f4AeBA79Dc21](https://bscscan.com/address/0x1869e236c03ee67b9ffed3aca139f4aeba79dc21)
 
-Rinkeby Ethereum Testnet: [0x9995338488253be57bC6E8f457b4ef3E36cf3002](https://rinkeby.etherscan.io/address/0x9995338488253be57bC6E8f457b4ef3E36cf3002)
+Polygon (Matic): [0xfAD2F276D464EAdB71435127BA2c2e9dDefb93a4](https://polygonscan.com/address/0xfAD2F276D464EAdB71435127BA2c2e9dDefb93a4)
 
-This plugin uses DePayRouterV1PaymentEvent02 to emit events. If you want to listen to those events you have to do it for the address of DePayRouterV1PaymentEvent02:
+This plugin uses DePayRouterV1PaymentEvent02 to emit events. If you want to listen to those events you have to do it for the address of [DePayRouterV1PaymentEvent02](#DePayRouterV1PaymentEvent02).
 
-#### DePayRouterV1PaymentEvent02
-
-Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
-
-Binance Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
-
-Rinkeby Ethereum Testnet: [0xbd2F59b2f1f516427F3816A6d8dc5B62Fe61e7f6](https://rinkeby.etherscan.io/address/0xbd2F59b2f1f516427F3816A6d8dc5B62Fe61e7f6)
 
 ### DePayRouterV1PaymentFee01
 
@@ -148,7 +149,10 @@ Sends the token of path at the last position (`path[path.length-1]`) for the amo
 
 Ethereum: [0x874Cb669D7BFff79d4A6A30F4ea52c5e413BD6A7](https://etherscan.io/address/0x874Cb669D7BFff79d4A6A30F4ea52c5e413BD6A7)
 
-Binance Smart Chain: [0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3](https://bscscan.com/address/0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3)
+BNB Smart Chain: [0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3](https://bscscan.com/address/0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3)
+
+Polygon (Matic): [0xd625c7087E940b2A91ed8bD8db45cB24D3526B56](https://polygonscan.com/address/0xd625c7087E940b2A91ed8bD8db45cB24D3526B56)
+
 
 ### DePayRouterV1Uniswap01
 
@@ -159,7 +163,6 @@ the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 
 
 Ethereum: [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://etherscan.io/address/0xe04b08dfc6caa0f4ec523a3ae283ece7efe00019)
 
-Rinkeby Ethereum Testnet: [0x29C1EAaE532Cbec71aFb6BaEB3e3113e1f3Ad542](https://rinkeby.etherscan.io/address/0x29C1EAaE532Cbec71aFb6BaEB3e3113e1f3Ad542)
 
 ### DePayRouterV1PancakeSwap01
 
@@ -168,7 +171,7 @@ Swaps TOKEN_A to TOKEN_B, NATIVE to TOKEN or TOKEN to NATIVE on Pancakeswap as p
 Swaps tokens according to provided `path` using the amount at 0 (`amounts[0]`) as input amount,
 the amount at index 1 (`amounts[1]`) as output amount and the amount at index 2 (`amounts[2]`) as deadline.
 
-Binance Smart Chain: [0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B](https://bscscan.com/address/0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B)
+BNB Smart Chain: [0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B](https://bscscan.com/address/0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B)
 
 ### DePayRouterV1UniswapV301
 
@@ -241,7 +244,7 @@ using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(
 
 Ethereum: [0xF984eb8b466AD6c728E0aCc7b69Af6f69B32437F](https://etherscan.io/address/0xf984eb8b466ad6c728e0acc7b69af6f69b32437f)
 
-Binance Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
+BNB Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
 
 ### DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01
 
@@ -253,7 +256,7 @@ using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(
 
 Ethereum: [0x2D18c5A46cc1780d2460DD51B5d0996e55Fd2446](https://etherscan.io/address/0x2d18c5a46cc1780d2460dd51b5d0996e55fd2446)
 
-Binance Smart Chain: [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://bscscan.com/address/0x7e655088214d0657251a51adcce9109cfd23b5b5)
+BNB Smart Chain: [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://bscscan.com/address/0x7e655088214d0657251a51adcce9109cfd23b5b5)
 
 ## Examples
 
