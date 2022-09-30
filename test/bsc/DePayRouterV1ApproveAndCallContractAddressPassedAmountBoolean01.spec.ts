@@ -23,7 +23,7 @@ describe(`DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01 on ${b
 
   let exchange = findByName('pancakeswap')
   let BUSD = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
-  let addressWithBUSD = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
+  let addressWithBUSD = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
 
   beforeEach(async ()=>{
     wallets = await ethers.getSigners()

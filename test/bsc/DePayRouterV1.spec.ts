@@ -133,7 +133,7 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
   describe('requires payment plugin', ()=> {
 
     let BUSD = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-    let addressWithBUSD = '0x7Cc3964F0eBc218b6fFb374f9Dad7464e2Cb81C8'
+    let addressWithBUSD = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
     let addressWithBNB = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
     let paymentPlugin
 

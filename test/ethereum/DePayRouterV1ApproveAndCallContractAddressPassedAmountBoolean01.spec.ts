@@ -23,7 +23,7 @@ describe(`DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01 on ${b
 
   let exchange = findByName('uniswap_v2')
   let DAI = '0x6B175474E89094C44Da98b954EedeAC495271d0F'
-  let addressWithDAI = '0xE78388b4CE79068e89Bf8aA7f218eF6b9AB0e9d0'
+  let addressWithDAI = '0x075e72a5eDf65F0A5f44699c7654C1a76941Ddc8'
 
   beforeEach(async ()=>{
     wallets = await ethers.getSigners()
