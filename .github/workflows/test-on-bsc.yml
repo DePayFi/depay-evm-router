@@ -23,6 +23,7 @@ jobs:
     env:
       MNEMONIC: ${{secrets.MNEMONIC}}
       BSC_RPC_URL: ${{secrets.BSC_RPC_URL}}
+      BSC_RPC_API_KEY: ${{secrets.BSC_RPC_API_KEY}}
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
