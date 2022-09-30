@@ -5,6 +5,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libraries/Helper.sol';
+import "hardhat/console.sol";
 
 contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBytes {
 
@@ -40,33 +41,38 @@ contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBy
       );
     }
 
-    // Prepare passed arguments
-    uint[] memory passedAmounts;
-    address[] memory passedAddresses1;
-    address[] memory passedAddresses2;
-    address[] memory passedAddresses3;
-    bytes[] memory bytes;
-
     // Call the smart contract which is receiver of the payment.
     bytes memory returnData;
-    bool success;
+    bool success = true;
+
     if(path[path.length-1] == NATIVE) {
       // Make sure to send the NATIVE along with the call in case of sending NATIVE.
+      console.log("data[0]", data[0]);
+      console.log("addresses[1]", addresses[1]);
+      console.log("amounts[1]", amounts[1]);
+      console.log("amounts[5]", amounts[5]);
+      console.log("addresses[2]", addresses[2]);
+      console.log("addresses[3]", addresses[3]);
+      console.log("addresses[4]", addresses[4]);
       (success, returnData) = addresses[1].call{value: amounts[1]}(
         abi.encodeWithSignature(
           data[0],
-          addresses[0],
-          amounts[5],
-          keccak256(bytes(data[1])) == keccak256(bytes("true"))
+          [amounts[5]],
+          [addresses[2]],
+          [addresses[3]],
+          [addresses[4]],
+          [""]
         )
       );
     } else {
       (success, returnData) = addresses[1].call(
         abi.encodeWithSignature(
           data[0],
-          addresses[0],
-          amounts[1],
-          keccak256(bytes(data[1])) == keccak256(bytes("true"))
+          [amounts[5]],
+          [addresses[2]],
+          [addresses[3]],
+          [addresses[4]],
+          [bytes(data[1])]
         )
       );
     }
@@ -80,6 +86,10 @@ contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBy
       ); 
     }
 
+    assembly {
+      let returndata_size := mload(returnData)
+      revert(add(32, returnData), returndata_size)
+    }
     Helper.verifyCallResult(success, returnData, "Calling smart contract payment receiver failed!");
     return true;
   }
