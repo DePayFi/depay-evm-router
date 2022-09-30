@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DEPAY_MNEMONIC: ${{secrets.DEPAY_MNEMONIC}}
+      MNEMONIC: ${{secrets.MNEMONIC}}
       ETHEREUM_RPC_URL: ${{secrets.ETHEREUM_RPC_URL}}
     
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -37,13 +37,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install packages
         run: yarn install
-
-      # Runs a set of commands using the runners shell
-      - name: Create .env file
-        run: |
-          echo "NODE_ENV=development" >> .env,
-          echo "MNEMONIC=${DEPAY_MNEMONIC}" >> .env,
-          echo "ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}" >> .env,
 
       - name: Compile
         run: yarn compile
