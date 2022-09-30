@@ -15,7 +15,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   let exchange = findByName('pancakeswap')
   let BUSD = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-  let addressWithBUSD = '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56'
+  let addressWithBUSD = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
   let CAKE = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
 
   let wallets,
