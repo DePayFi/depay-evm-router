@@ -14,6 +14,16 @@ contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBy
 
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
+
+  // Prepare unlock purchase via struct
+  // to save local variable slots
+  struct UnlockPurchase {
+    uint256[] _values;
+    address[] _recipients;
+    address[] _referrers;
+    address[] _keyManagers;
+    bytes[] _data;
+  }
   
   // Call another smart contract to deposit an amount for a given address while making sure the amount passed to the contract is approved.
   //
@@ -42,39 +52,49 @@ contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBy
     }
 
     // Call the smart contract which is receiver of the payment.
-    bytes memory returnData;
-    bool success = true;
+    {
+      UnlockPurchase memory purchase;
+      {
+        purchase._values = new uint[](1);
+        purchase._values[0] = amounts[1];
+        purchase._recipients = new address[](1);
+        purchase._recipients[0] = addresses[2];
+        purchase._referrers = new address[](1);
+        purchase._referrers[0] = addresses[2];
+        purchase._keyManagers = new address[](1);
+        purchase._keyManagers[0] = addresses[2];
+      }
 
-    if(path[path.length-1] == NATIVE) {
-      // Make sure to send the NATIVE along with the call in case of sending NATIVE.
-      console.log("data[0]", data[0]);
-      console.log("addresses[1]", addresses[1]);
-      console.log("amounts[1]", amounts[1]);
-      console.log("amounts[5]", amounts[5]);
-      console.log("addresses[2]", addresses[2]);
-      console.log("addresses[3]", addresses[3]);
-      console.log("addresses[4]", addresses[4]);
-      (success, returnData) = addresses[1].call{value: amounts[1]}(
-        abi.encodeWithSignature(
-          data[0],
-          [amounts[5]],
-          [addresses[2]],
-          [addresses[3]],
-          [addresses[4]],
-          [""]
-        )
-      );
-    } else {
-      (success, returnData) = addresses[1].call(
-        abi.encodeWithSignature(
-          data[0],
-          [amounts[5]],
-          [addresses[2]],
-          [addresses[3]],
-          [addresses[4]],
-          [bytes(data[1])]
-        )
-      );
+      if(path[path.length-1] == NATIVE) {
+        // Make sure to send the NATIVE along with the call in case of sending NATIVE.
+        {
+          (bool success, bytes memory returnData) = addresses[1].call{value: amounts[1]}(
+            abi.encodeWithSignature(
+              data[0],
+              purchase._values,
+              purchase._recipients,
+              purchase._referrers,
+              purchase._keyManagers,
+              purchase._data
+            )
+          );
+          Helper.verifyCallResult(success, returnData, "Calling smart contract payment receiver failed!");
+        }
+      } else {
+        {
+          (bool success, bytes memory returnData) = addresses[1].call(
+            abi.encodeWithSignature(
+              data[0],
+              purchase._values,
+              purchase._recipients,
+              purchase._referrers,
+              purchase._keyManagers,
+              purchase._data
+            )
+          );
+          Helper.verifyCallResult(success, returnData, "Calling smart contract payment receiver failed!");
+        }
+      }
     }
 
     // Reset allowance after paying to the smart contract
@@ -86,11 +106,6 @@ contract DePayRouterV1ApproveAndCallContractAmountsAddressesAddressesAddressesBy
       ); 
     }
 
-    assembly {
-      let returndata_size := mload(returnData)
-      revert(add(32, returnData), returndata_size)
-    }
-    Helper.verifyCallResult(success, returnData, "Calling smart contract payment receiver failed!");
     return true;
   }
 }

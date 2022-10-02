@@ -1,6 +1,7 @@
 // Dependency file: @openzeppelin/contracts/token/ERC20/IERC20.sol
 
 // SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
 
 // pragma solidity ^0.8.0;
 
@@ -8,6 +9,20 @@
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
 interface IERC20 {
+    /**
+     * @dev Emitted when `value` tokens are moved from one account (`from`) to
+     * another (`to`).
+     *
+     * Note that `value` may be zero.
+     */
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    /**
+     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
+     * a call to {approve}. `value` is the new allowance.
+     */
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -19,13 +34,13 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 
     /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     * @dev Moves `amount` tokens from the caller's account to `to`.
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address to, uint256 amount) external returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -53,7 +68,7 @@ interface IERC20 {
     function approve(address spender, uint256 amount) external returns (bool);
 
     /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
+     * @dev Moves `amount` tokens from `from` to `to` using the
      * allowance mechanism. `amount` is then deducted from the caller's
      * allowance.
      *
@@ -62,29 +77,16 @@ interface IERC20 {
      * Emits a {Transfer} event.
      */
     function transferFrom(
-        address sender,
-        address recipient,
+        address from,
+        address to,
         uint256 amount
     ) external returns (bool);
-
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to {approve}. `value` is the new allowance.
-     */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
 
 // Dependency file: @openzeppelin/contracts/utils/math/SafeMath.sol
 
+// OpenZeppelin Contracts (last updated v4.6.0) (utils/math/SafeMath.sol)
 
 // pragma solidity ^0.8.0;
 
@@ -95,7 +97,7 @@ interface IERC20 {
 /**
  * @dev Wrappers over Solidity's arithmetic operations.
  *
- * NOTE: `SafeMath` is no longer needed starting with Solidity 0.8. The compiler
+ * NOTE: `SafeMath` is generally not needed starting with Solidity 0.8, since the compiler
  * now has built in overflow checking.
  */
 library SafeMath {
@@ -113,7 +115,7 @@ library SafeMath {
     }
 
     /**
-     * @dev Returns the substraction of two unsigned integers, with an overflow flag.
+     * @dev Returns the subtraction of two unsigned integers, with an overflow flag.
      *
      * _Available since v3.4._
      */
