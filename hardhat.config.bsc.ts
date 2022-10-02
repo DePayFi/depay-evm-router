@@ -13,9 +13,6 @@ const hardhatConfig = {
       },
       forking: {
         url: BSC_RPC_URL!,
-        httpHeaders: {
-          'x-api-key': BSC_RPC_API_KEY
-        },
         enabled: true
       }
     }

@@ -9,7 +9,6 @@ var {
   MNEMONIC,
   ETHEREUM_RPC_URL,
   BSC_RPC_URL,
-  BSC_RPC_API_KEY,
 } = process.env
 
 const sharedConfig = {
@@ -29,5 +28,4 @@ export {
   MNEMONIC,
   ETHEREUM_RPC_URL,
   BSC_RPC_URL,
-  BSC_RPC_API_KEY,
 }
