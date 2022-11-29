@@ -153,6 +153,29 @@ BNB Smart Chain: [0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3](https://bscscan.co
 
 Polygon (Matic): [0xd625c7087E940b2A91ed8bD8db45cB24D3526B56](https://polygonscan.com/address/0xd625c7087E940b2A91ed8bD8db45cB24D3526B56)
 
+### DePayRouterV1WETHWrap01
+
+Wraps NATIVE->WRAPPED (e.g. ETH to WETH) for amouns at index 0 (`amounts[0]`) to perform payment in WRAPPED (WETH).
+
+Path needs to contain NATIVE at index 0 and WRAPPED at index 1.
+
+Ethereum: [0xF4cc97D00dD0639c3e383D7CafB3d815616cbB2C](https://etherscan.io/address/0xF4cc97D00dD0639c3e383D7CafB3d815616cbB2C)
+
+BNB Smart Chain: [0xf361888459a4C863a8498ee344C2688C9196Be51](https://bscscan.com/address/0xf361888459a4C863a8498ee344C2688C9196Be51)
+
+Polygon: [0x8B62F604499c1204573664447D445690E0A0011b](https://polygonscan.com/address/0x8B62F604499c1204573664447D445690E0A0011b)
+
+### DePayRouterV1WETHUnwrap01
+
+Unwraps WRAPPED->NATIVE (e.g. WETH to ETH) for amouns at last index (`amounts.length-1`) to perform payment in NATIVE (ETH).
+
+Path needs to contain WRAPPED at index 0 and NATIVE at index 1.
+
+Ethereum: [0xf2b8f3B0f0Af68816107f53aaDbbF84525d3BeFe](https://etherscan.io/address/0xf2b8f3B0f0Af68816107f53aaDbbF84525d3BeFe)
+
+BNB Smart Chain: [0x271a502587c9b29f3348D92f74d6058AEf8F6A32](https://bscscan.com/address/0x271a502587c9b29f3348D92f74d6058AEf8F6A32)
+
+Polygon: [0x864F165a58e74349cf9C7925217F10B58040db86](https://polygonscan.com/address/0x864F165a58e74349cf9C7925217F10B58040db86)
 
 ### DePayRouterV1Uniswap01
 
