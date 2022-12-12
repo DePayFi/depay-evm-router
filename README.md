@@ -99,13 +99,6 @@ BNB Smart Chain: [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://bscscan.co
 Polygon (Matic): [0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd](https://polygonscan.com/address/0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd)
 
 
-#### DePayRouterV1PaymentEvent02
-
-Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
-
-BNB Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
-
-
 ### DePayRouterV1PaymentWithEvent01
 
 Sends a payment to a receiver and emits an event (in an atomic way, either both or nothing).
@@ -140,6 +133,15 @@ Polygon (Matic): [0xfAD2F276D464EAdB71435127BA2c2e9dDefb93a4](https://polygonsca
 
 This plugin uses DePayRouterV1PaymentEvent02 to emit events. If you want to listen to those events you have to do it for the address of [DePayRouterV1PaymentEvent02](#DePayRouterV1PaymentEvent02).
 
+#### DePayRouterV1PaymentEvent02
+
+The source of the [Payment Event](#DePayRouterV1PaymentWithEvent01)
+
+Ethereum: [0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919](https://etherscan.io/address/0x6A12C2Cc8AF31f125484EB685F7c0bfcE280B919)
+
+BNB Smart Chain: [0xF83f63CCf66dfd9ef285E58217352835c470C56C](https://bscscan.com/address/0xF83f63CCf66dfd9ef285E58217352835c470C56C)
+
+Polygon (Matic): [0xC9850b32475f4fdE5c972EA6f967982a3c435D10](https://polygonscan.com/address/0xC9850b32475f4fdE5c972EA6f967982a3c435D10)
 
 ### DePayRouterV1PaymentFee01
 
@@ -152,6 +154,41 @@ Ethereum: [0x874Cb669D7BFff79d4A6A30F4ea52c5e413BD6A7](https://etherscan.io/addr
 BNB Smart Chain: [0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3](https://bscscan.com/address/0xae33f10AD57A38113f74FCdc1ffA6B1eC47B94E3)
 
 Polygon (Matic): [0xd625c7087E940b2A91ed8bD8db45cB24D3526B56](https://polygonscan.com/address/0xd625c7087E940b2A91ed8bD8db45cB24D3526B56)
+
+### DePayRouterV1PaymentFeeWithEvent01
+
+Sends a payment fee to a third-party address.
+
+Sends the token of path at the last position (`path[path.length-1]`) for the amount at index 4 (`amounts[4]`) to the address at the previous last position (`addresses[addresses.length-2]`).
+
+Emits an event as part of the payment with the following structure:
+
+```
+event Fee(
+  address indexed sender,
+  address payable indexed receiver,
+  uint256 indexed amount,
+  address token
+);
+```
+
+Ethereum: [0x981cAd45c768d56136FDBb2C5E115F33D971bE6C](https://etherscan.io/address/0x981cAd45c768d56136FDBb2C5E115F33D971bE6C)
+
+BNB Smart Chain: [0xF1a05D715AaBFA380543719F7bA8754d0331c5A9](https://bscscan.com/address/0xF1a05D715AaBFA380543719F7bA8754d0331c5A9)
+
+Polygon (Matic): [0xBC56ED8E32b64a33f64Ed7A5fF9EACdFC117e07a](https://polygonscan.com/address/0xBC56ED8E32b64a33f64Ed7A5fF9EACdFC117e07a)
+
+This plugin uses DePayRouterV1PaymentFeeEvent01 to emit events. If you want to listen to those events you have to do it for the address of [DePayRouterV1PaymentFeeEvent01](#DePayRouterV1PaymentFeeEvent01).
+
+#### DePayRouterV1PaymentFeeEvent01
+
+The source of the [Fee Event](#DePayRouterV1PaymentFeeWithEvent01)
+
+Ethereum: [0x0fd54214013F45285E92583632E1124d4dAA049D](https://etherscan.io/address/0x0fd54214013F45285E92583632E1124d4dAA049D)
+
+BNB Smart Chain: [0xB586682CcdA4a5A92293107aB463BfFa207307D3](https://bscscan.com/address/0xB586682CcdA4a5A92293107aB463BfFa207307D3)
+
+Polygon (Matic): [0x86bcEE95cef7D34FaAfA1412d815B7a7C6834865](https://polygonscan.com/address/0x86bcEE95cef7D34FaAfA1412d815B7a7C6834865)
 
 ### DePayRouterV1WETHWrap01
 
