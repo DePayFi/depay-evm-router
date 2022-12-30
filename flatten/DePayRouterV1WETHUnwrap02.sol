@@ -338,7 +338,7 @@ interface IWETH {
 }
 
 
-// Root file: contracts/DePayRouterV1WETHUnwrap01.sol
+// Root file: contracts/DePayRouterV1WETHUnwrap02.sol
 
 
 pragma solidity >=0.8.6 <0.9.0;
@@ -348,7 +348,7 @@ pragma abicoder v2;
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import "contracts/interfaces/IWETH.sol";
 
-contract DePayRouterV1WETHUnwrap01 {
+contract DePayRouterV1WETHUnwrap02 {
   
   using SafeMath for uint;
 
@@ -368,7 +368,7 @@ contract DePayRouterV1WETHUnwrap01 {
     WETH = _WETH;
   }
 
-  // UNWRAP WETH TO ETH to pay in ETH using the amount at last index (`amounts[amounts.length-1]`) as input amount,
+  // UNWRAP WETH TO ETH to pay in ETH using the amount at first index (`amounts[0]`) as input amount,
   function execute(
     address[] calldata path,
     uint[] calldata amounts,
@@ -379,7 +379,7 @@ contract DePayRouterV1WETHUnwrap01 {
     if(
       (path[0] == WETH && path[1] == ETH)
     ) {
-      IWETH(WETH).withdraw(amounts[amounts.length-1]);
+      IWETH(WETH).withdraw(amounts[0]);
     }
 
     return true;

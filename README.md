@@ -202,9 +202,9 @@ BNB Smart Chain: [0xf361888459a4C863a8498ee344C2688C9196Be51](https://bscscan.co
 
 Polygon: [0x8B62F604499c1204573664447D445690E0A0011b](https://polygonscan.com/address/0x8B62F604499c1204573664447D445690E0A0011b)
 
-### DePayRouterV1WETHUnwrap01
+### DePayRouterV1WETHUnwrap02
 
-Unwraps WRAPPED->NATIVE (e.g. WETH to ETH) for amouns at last index (`amounts.length-1`) to perform payment in NATIVE (ETH).
+Unwraps WRAPPED->NATIVE (e.g. WETH to ETH) for amouns at last index (`amounts[0]`) to perform payment in NATIVE (ETH).
 
 Path needs to contain WRAPPED at index 0 and NATIVE at index 1.
 

@@ -9,10 +9,10 @@ import { Token } from 'depay-web3-tokens'
 
 const blockchain = 'ethereum'
 
-describe(`DePayRouterV1WETHUnwrap01 on ${blockchain}`, function() {
+describe(`DePayRouterV1WETHUnwrap02 on ${blockchain}`, function() {
 
   let WETH = CONSTANTS[blockchain].WRAPPED // e.g. 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2 on Ethereum
-  let addressWithWETH = '0x06920C9fC643De77B99cB7670A944AD31eaAA260'
+  let addressWithWETH = '0x8EB8a3b98659Cce290402893d0123abb75E3ab28'
 
   let wallets,
       configuration,
@@ -30,7 +30,7 @@ describe(`DePayRouterV1WETHUnwrap01 on ${blockchain}`, function() {
   })
 
   it('deploys the plugin', async () => {
-    const Plugin = await ethers.getContractFactory('DePayRouterV1WETHUnwrap01')
+    const Plugin = await ethers.getContractFactory('DePayRouterV1WETHUnwrap02')
     unwrapPlugin = await Plugin.deploy(CONSTANTS[blockchain].WRAPPED)
     await unwrapPlugin.deployed()
   })
