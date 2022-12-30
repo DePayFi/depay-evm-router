@@ -134,7 +134,7 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
 
     let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
     let addressWithDAI = '0x82810e81cad10b8032d39758c8dba3ba47ad7092'
-    let addressWithETH = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
+    let addressWithETH = '0x8EB8a3b98659Cce290402893d0123abb75E3ab28'
     let paymentPlugin
 
     beforeEach(async ()=>{
