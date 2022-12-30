@@ -9,7 +9,7 @@ import { Token } from 'depay-web3-tokens'
 
 const blockchain = 'bsc'
 
-describe(`DePayRouterV1WETHUnwrap01 on ${blockchain}`, function() {
+describe(`DePayRouterV1WETHUnwrap02 on ${blockchain}`, function() {
 
   let WETH = CONSTANTS[blockchain].WRAPPED
   let addressWithWETH = '0xf977814e90da44bfa03b6295a0616a897441acec'
@@ -30,7 +30,7 @@ describe(`DePayRouterV1WETHUnwrap01 on ${blockchain}`, function() {
   })
 
   it('deploys the plugin', async () => {
-    const Plugin = await ethers.getContractFactory('DePayRouterV1WETHUnwrap01')
+    const Plugin = await ethers.getContractFactory('DePayRouterV1WETHUnwrap02')
     unwrapPlugin = await Plugin.deploy(CONSTANTS[blockchain].WRAPPED)
     await unwrapPlugin.deployed()
   })
