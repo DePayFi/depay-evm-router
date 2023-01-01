@@ -68,7 +68,6 @@ or [for, smartContractReceiver]
 
 ```
 e.g. [DePayRouterV1Uniswap01, DePayRouterV1Payment01] to swap and pay
-or [DePayRouterV1Uniswap01, DePayRouterV1ApproveAndCallContractAddressAmount01] to swap and call another contract
 ```
 See [Plugins](#plugins) for more details about available plugins.
 
@@ -297,35 +296,6 @@ The rest of remaining elements of `amounts[]` is distribution of 1Inch Protocol.
 We need to call: `OneSplitSwap.getExpectedReturn()` to calculate `distribution` of pool and `outAmount`. `outAmount` doesn't the real amount you would be received then we need calculate `expectedAmount` by subtract from `outAmount` three percents to make sure our transaction won't get revert in term of market's adjustment.
 
 Ethereum: [0x8c5d2F0e65275369025c7511c216564beCC8d530](https://etherscan.io/address/0x8c5d2f0e65275369025c7511c216564becc8d530#code)
-
-### DePayRouterV1ApproveAndCallContractAddressAmountBoolean01
-
-To be used to send payments to smart contracts.
-
-Approves target smart contract for token at last index of `path` (`path[path.length-1]`) for amount at index 1 `amounts[1]` and calls smart contract at address index 1 `address[1]`
-using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
-`uint256` from amounts at index 1 `amounts[1]` and bool based on passing `"true"` or `"false"` as string via `data[1]`. Resets allowance back to 0 after smart contract has been called.
-
-Ethereum: [0xF984eb8b466AD6c728E0aCc7b69Af6f69B32437F](https://etherscan.io/address/0xf984eb8b466ad6c728e0acc7b69af6f69b32437f)
-
-BNB Smart Chain: [0xd73dFeF8F9c213b449fB39B84c2b33FBBc2C8eD3](https://bscscan.com/address/0xd73dfef8f9c213b449fb39b84c2b33fbbc2c8ed3)
-
-Polygon (Matic): [0x8698E529E9867eEbcC68b4792daC627cd8870736](https://polygonscan.com/address/0x8698E529E9867eEbcC68b4792daC627cd8870736)
-
-
-### DePayRouterV1ApproveAndCallContractAddressPassedAmountBoolean01
-
-To be used to send payments to smart contracts.
-
-Approves target smart contract for token at last index of `path` (`path[path.length-1]`) for amount at index 1 `amounts[1]` and calls smart contract at address index 1 `address[1]`
-using method signature passed to `data[0]` (e.g. `stakeAddressAmountBooleanBUSD(address,uint256,bool)`) passing `address` from address at index 0 `address[0]`
-`uint256` from amounts at index 5 `amounts[5]` and bool based on passing `"true"` or `"false"` as string via `data[1]`. Resets allowance back to 0 after smart contract has been called.
-
-Ethereum: [0x2D18c5A46cc1780d2460DD51B5d0996e55Fd2446](https://etherscan.io/address/0x2d18c5a46cc1780d2460dd51b5d0996e55fd2446)
-
-BNB Smart Chain: [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://bscscan.com/address/0x7e655088214d0657251a51adcce9109cfd23b5b5)
-
-Polygon (Matic): [0xAB305eaDf5FB15AF6370106B231C67d103bBbbbC](https://polygonscan.com/address/0xAB305eaDf5FB15AF6370106B231C67d103bBbbbC)
 
 ## Examples
 
