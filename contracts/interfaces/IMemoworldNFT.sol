@@ -7,6 +7,6 @@ interface IMemoworldNFT {
     address account,
     uint256 id,
     uint256 amount,
-    string memory data
+    bytes memory data
   ) external payable;
 }

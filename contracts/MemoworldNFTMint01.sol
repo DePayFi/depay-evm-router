@@ -11,8 +11,9 @@ contract MemoworldNFTMint01 {
 
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
+  address public constant MemoworldContract = 0x4908b9381606C34EaF4ea24C01Eb66CBAB2bc749;
 
-  event RouteMint(address indexed sender, uint256 indexed tokenId, uint256 indexed amount, string data);
+  event RouteMint(address indexed sender, uint256 indexed tokenId, uint256 indexed amount);
 
   constructor() {}
 
@@ -22,11 +23,11 @@ contract MemoworldNFTMint01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns (bool) {
-    IMemoworldNFT memoContract = IMemoworldNFT(addresses[addresses.length - 1]);
+    IMemoworldNFT memoContract = IMemoworldNFT(MemoworldContract);
 
-    memoContract.mint{value: amounts[1]}(addresses[0], amounts[5], amounts[6], data[0]);
+    memoContract.mint{value: amounts[1]}(addresses[0], amounts[5], amounts[6], bytes(''));
 
-    emit RouteMint(addresses[0], amounts[5], amounts[6], data[0]);
+    emit RouteMint(addresses[0], amounts[5], amounts[6]);
 
     return true;
   }
