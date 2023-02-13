@@ -3,17 +3,17 @@ import deployRouter from '../helpers/deploy/router'
 import impersonate from '../helpers/impersonate'
 import IPancakeRouter02 from '../../artifacts/contracts/interfaces/IPancakeRouter02.sol/IPancakeRouter02.json'
 import now from '../helpers/now'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
-import { findByName } from 'depay-web3-exchanges'
-import { Token } from 'depay-web3-tokens'
+import { find } from '@depay/web3-exchanges-evm'
+import { Token } from '@depay/web3-tokens-evm'
 
 const blockchain = 'bsc'
 
 describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
-  let exchange = findByName('pancakeswap')
+  let exchange = find(blockchain, 'pancakeswap')
   let BUSD = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
   let addressWithBUSD = '0x8894E0a0c962CB723c1976a4421c95949bE2D4E3'
   let CAKE = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
@@ -35,7 +35,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   it('deploys the plugin', async () => {
     const Plugin = await ethers.getContractFactory('DePayRouterV1PancakeSwap01')
-    swapPlugin = await Plugin.deploy(CONSTANTS[blockchain].WRAPPED, exchange.contracts.router.address)
+    swapPlugin = await Plugin.deploy(CONSTANTS[blockchain].WRAPPED, exchange.router.address)
     await swapPlugin.deployed()
   })
 
@@ -52,7 +52,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   it('swaps NATIVE to BUSD and performs payment in BUSD', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18)
-    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.router.address)
     let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [CONSTANTS[blockchain].WRAPPED, BUSD])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
@@ -70,7 +70,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   it('swaps BUSD to NATIVE and performs payment with NATIVE', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18)
-    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.router.address)
     let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [BUSD, CONSTANTS[blockchain].WRAPPED])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
@@ -90,7 +90,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   it('swaps BUSD to CAKE and performs payment with CAKE', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18)
-    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.router.address)
     let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [BUSD, CONSTANTS[blockchain].WRAPPED, CAKE])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)
@@ -111,7 +111,7 @@ describe(`DePayRouterV1PancakeSwap01 on ${blockchain}`, function() {
 
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18);
-    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.contracts.router.address)
+    let exchangeRouter = await ethers.getContractAt(IPancakeRouter02.abi, exchange.router.address)
     let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [BUSD, CONSTANTS[blockchain].WRAPPED, CAKE])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let BUSDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, BUSD)

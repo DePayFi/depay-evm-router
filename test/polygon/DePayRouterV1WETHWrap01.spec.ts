@@ -6,12 +6,12 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { Token } from '@depay/web3-tokens-evm'
 
-const blockchain = 'bsc'
+const blockchain = 'polygon'
 
 describe(`DePayRouterV1WETHWrap01 on ${blockchain}`, function() {
 
-  let WETH = CONSTANTS[blockchain].WRAPPED
-  let addressWithETH = '0xe2fc31F816A9b94326492132018C3aEcC4a93aE1'
+  let WMATIC = CONSTANTS[blockchain].WRAPPED // e.g. 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2 on Ethereum
+  let addressWithMATIC = '0xFffbCD322cEace527C8ec6Da8de2461C6D9d4e6e'
 
   let wallets,
       configuration,
@@ -47,18 +47,18 @@ describe(`DePayRouterV1WETHWrap01 on ${blockchain}`, function() {
 
   it('wraps ETH to WETH and performs payment with WETH', async () => {
     let amount = ethers.utils.parseUnits('0.1', 18);
-    const signer = await impersonate(addressWithETH);
-    let WETHToken = await ethers.getContractAt(Token[blockchain].DEFAULT, WETH);
+    const signer = await impersonate(addressWithMATIC);
+    let WMATICToken = await ethers.getContractAt(Token[blockchain].DEFAULT, WMATIC);
     await expect(() => 
       router.connect(signer).route(
         [CONSTANTS[blockchain].NATIVE, CONSTANTS[blockchain].WRAPPED], // path
         [amount, amount], // amounts
-        [addressWithETH, wallets[1].address], // addresses
+        [addressWithMATIC, wallets[1].address], // addresses
         [wrapPlugin.address, paymentPlugin.address], // plugins
         [], // data
         { value: amount }
       )
-    ).to.changeTokenBalance(WETHToken, wallets[1], amount)
+    ).to.changeTokenBalance(WMATICToken, wallets[1], amount)
   })
 
 })

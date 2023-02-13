@@ -1,7 +1,7 @@
 import deployConfiguration from '../helpers/deploy/configuration'
 import deployRouter from '../helpers/deploy/router'
 import deployTestToken from '../helpers/deploy/testToken'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 

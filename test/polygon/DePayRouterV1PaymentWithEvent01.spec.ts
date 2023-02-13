@@ -5,7 +5,7 @@ import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 
-const blockchain = 'ethereum'
+const blockchain = 'polygon'
 
 describe(`DePayRouterV1PaymentWithEvent01 on ${blockchain}`, function() {
 

@@ -8,6 +8,7 @@ dotenv.config()
 var {
   MNEMONIC,
   ETHEREUM_RPC_URL,
+  POLYGON_RPC_URL,
   BSC_RPC_URL,
   BSC_RPC_API_KEY,
 } = process.env
@@ -28,6 +29,7 @@ export {
   sharedConfig,
   MNEMONIC,
   ETHEREUM_RPC_URL,
+  POLYGON_RPC_URL,
   BSC_RPC_URL,
   BSC_RPC_API_KEY,
 }

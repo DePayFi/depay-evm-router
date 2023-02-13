@@ -9,14 +9,14 @@ import { expect } from 'chai'
 import { find } from '@depay/web3-exchanges-evm'
 import { Token } from '@depay/web3-tokens-evm'
 
-const blockchain = 'ethereum'
+const blockchain = 'polygon'
 
 describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
 
-  let exchange = find(blockchain, 'uniswap_v2')
-  let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
-  let addressWithDAI = '0x075e72a5eDf65F0A5f44699c7654C1a76941Ddc8'
-  let DEPAY = '0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb'
+  let exchange = find(blockchain, 'quickswap')
+  let DAI = '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063'
+  let addressWithDAI = '0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245'
+  let SAND = '0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683'
 
   let wallets,
       configuration,
@@ -88,40 +88,40 @@ describe(`DePayRouterV1Uniswap01 on ${blockchain}`, function() {
     ).to.changeEtherBalance(wallets[1], amountOutMin)
   })
 
-  it('swaps DAI to DEPAY and performs payment with DEPAY', async () => {
+  it('swaps DAI to SAND and performs payment with SAND', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18);
     let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.router.address)
-    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, DEPAY])
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, SAND])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
-    let DEPAYToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DEPAY)
+    let SANDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, SAND)
     const signer = await impersonate(addressWithDAI)
     await DAIToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
     let allowance = await DAIToken.connect(signer).allowance(addressWithDAI, router.address)
     await expect(() => 
       router.connect(signer).route(
-        [DAI, CONSTANTS[blockchain].NATIVE, DEPAY], // path
+        [DAI, CONSTANTS[blockchain].NATIVE, SAND], // path
         [amountIn, amountOutMin, now()+60000], // amounts
         [addressWithDAI, wallets[1].address], // addresses
         [swapPlugin.address, paymentPlugin.address], // plugins
         [] // data
       )
-    ).to.changeTokenBalance(DEPAYToken, wallets[1], amountOutMin)
+    ).to.changeTokenBalance(SANDToken, wallets[1], amountOutMin)
   })
 
   it('fails when a miner withholds a swap and executes the payment transaction after the deadline has been reached', async () => {
     let amountIn = ethers.utils.parseUnits('1000', 18);
     let exchangeRouter = await ethers.getContractAt(IUniswapV2Router02.abi, exchange.router.address)
-    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, DEPAY])
+    let amountsOut = await exchangeRouter.getAmountsOut(amountIn, [DAI, CONSTANTS[blockchain].WRAPPED, SAND])
     let amountOutMin = amountsOut[amountsOut.length-1].toString()
     let DAIToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DAI)
-    let DEPAYToken = await ethers.getContractAt(Token[blockchain].DEFAULT, DEPAY)
+    let SANDToken = await ethers.getContractAt(Token[blockchain].DEFAULT, SAND)
     const signer = await impersonate(addressWithDAI)
     await DAIToken.connect(signer).approve(router.address, CONSTANTS[blockchain].MAXINT)
     let allowance = await DAIToken.connect(signer).allowance(addressWithDAI, router.address)
     await expect(
       router.connect(signer).route(
-        [DAI, CONSTANTS[blockchain].NATIVE, DEPAY], // path
+        [DAI, CONSTANTS[blockchain].NATIVE, SAND], // path
         [amountIn, amountOutMin, now()-60000], // amounts
         [addressWithDAI, wallets[1].address], // addresses
         [swapPlugin.address, paymentPlugin.address], // plugins

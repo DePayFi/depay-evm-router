@@ -1,11 +1,10 @@
 import deployConfiguration from '../helpers/deploy/configuration'
 import deployRouter from '../helpers/deploy/router'
 import impersonate from '../helpers/impersonate'
-import { CONSTANTS } from 'depay-web3-constants'
+import { CONSTANTS } from '@depay/web3-constants'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
-import { findByName } from 'depay-web3-exchanges'
-import { Token } from 'depay-web3-tokens'
+import { Token } from '@depay/web3-tokens-evm'
 
 const blockchain = 'ethereum'
 

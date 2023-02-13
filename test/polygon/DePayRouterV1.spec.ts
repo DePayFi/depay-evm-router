@@ -8,7 +8,7 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { Token } from '@depay/web3-tokens-evm'
 
-const blockchain = 'ethereum'
+const blockchain = 'polygon'
 
 describe(`DePayRouterV1 on ${blockchain}`, () => {
 
@@ -132,9 +132,9 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
 
   describe('requires payment plugin', ()=> {
 
-    let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
-    let addressWithDAI = '0x82810e81cad10b8032d39758c8dba3ba47ad7092'
-    let addressWithETH = '0x8EB8a3b98659Cce290402893d0123abb75E3ab28'
+    let DAI = '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063'
+    let addressWithDAI = '0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245'
+    let addressWithMATIC = '0xe7804c37c13166fF0b37F5aE0BB07A3aEbb6e245'
     let paymentPlugin
 
     beforeEach(async ()=>{
@@ -167,7 +167,7 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
     it('makes sure that the eth balance in the smart contract is >= after the payment compared to before', async () => {
       let amountIn = ethers.utils.parseUnits('1', 18)
       let amountOut = ethers.utils.parseUnits('2', 18)
-      const signer = await impersonate(addressWithETH)
+      const signer = await impersonate(addressWithMATIC)
       await signer.sendTransaction({
         to: router.address,
         value: amountOut
@@ -176,7 +176,7 @@ describe(`DePayRouterV1 on ${blockchain}`, () => {
         router.connect(signer).route(
           [CONSTANTS[blockchain].NATIVE], // path
           [amountIn, amountOut], // amounts
-          [addressWithETH, wallets[1].address], // addresses
+          [addressWithMATIC, wallets[1].address], // addresses
           [paymentPlugin.address], // plugins
           [], // data
           { value: amountIn }
