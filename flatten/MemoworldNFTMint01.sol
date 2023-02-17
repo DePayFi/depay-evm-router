@@ -23,8 +23,8 @@ pragma abicoder v2;
 // import {IMemoworldNFT} from 'contracts/interfaces/IMemoworldNFT.sol';
 
 contract MemoworldNFTMint01 {
-  // Address representating ETH (e.g. in payment routing paths)
-  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  // Address representating NATIVE (e.g. in payment routing paths)
+  address public constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // Indicates that this plugin requires delegate call
   bool public immutable delegate = true;
@@ -40,8 +40,9 @@ contract MemoworldNFTMint01 {
     address[] calldata addresses,
     string[] calldata data
   ) external payable returns (bool) {
-    IMemoworldNFT memoContract = IMemoworldNFT(MemoworldContract);
+    require(path[path.length-1] == NATIVE, 'DePay: Target token needs to be NATIVE!');
 
+    IMemoworldNFT memoContract = IMemoworldNFT(MemoworldContract);
     memoContract.mint{value: amounts[1]}(addresses[0], amounts[5], amounts[6], bytes(''));
 
     emit RouteMint(addresses[0], amounts[5], amounts[6]);
