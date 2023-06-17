@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat'
 import deployRouter from '../_helpers/deploy/router'
 
-const blockchain = 'polygon'
+const blockchain = 'optimism'
 
 describe(`DePayRouterV2 on ${blockchain}`, () => {
 

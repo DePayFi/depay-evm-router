@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import deployRouter from '../helpers/deploy/router'
+import deployRouter from '../_helpers/deploy/router'
 
 const blockchain = 'bsc'
 
