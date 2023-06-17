@@ -1,8 +1,8 @@
 {
   "name": "@depay/depay-evm-router",
-  "description": "DePay's EVM Router. Plugin-based decentralized payment routing.",
-  "version": "1.3.0",
-  "homepage": "https://depay.fi",
+  "description": "DePay's EVM Web3 Payment Router.",
+  "version": "2.0.0",
+  "homepage": "https://depay.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/depayfi/depay-evm-router"
@@ -12,11 +12,11 @@
     "evm",
     "smart contract",
     "payments",
-    "swapping",
-    "sales",
+    "conversion",
     "router",
     "decentralized",
-    "defi"
+    "defi",
+    "web3"
   ],
   "files": [
     "contracts",
@@ -26,28 +26,27 @@
     "node": ">=10"
   },
   "devDependencies": {
-    "@depay/web3-blockchains": "^6.4.0",
-    "@depay/web3-client-evm": "^10.3.1",
-    "@depay/web3-constants": "^6.3.2",
-    "@depay/web3-exchanges-evm": "^11.3.3",
-    "@depay/web3-tokens-evm": "^9.14.0",
-    "@nomiclabs/hardhat-ethers": "^2.1.1",
-    "@nomiclabs/hardhat-waffle": "^2.0.3",
-    "@openzeppelin/contracts": "^4.7.3",
-    "@typechain/ethers-v5": "^10.1.0",
-    "@types/chai": "^4.3.3",
-    "@types/mocha": "^10.0.0",
-    "chai": "^4.3.6",
-    "dotenv": "^8.2.0",
-    "ethereum-waffle": "^3.4.4",
-    "ethers": "^5.7.1",
-    "hardhat": "^2.11.2",
-    "lodash": "^4.17.21",
-    "prettier": "^2.3.2",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.9.1",
-    "typechain": "^8.1.0",
-    "typescript": "^4.8.4"
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-etherscan": "^2.1.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@typechain/ethers-v5": "^4.0.0",
+    "@types/chai": "^4.2.6",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "decimal.js": "^10.2.1",
+    "dotenv": "^16.3.0",
+    "ethereum-waffle": "^3.0.2",
+    "ethers": "^5.0.8",
+    "hardhat": "^2.9.6",
+    "hardhat-typechain": "^0.3.5",
+    "import-toml": "1.0.0",
+    "mocha": "^6.2.2",
+    "mocha-chai-jest-snapshot": "^1.1.0",
+    "prettier": "2.8.6",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^8.5.4",
+    "typechain": "^4.0.0",
+    "typescript": "^3.7.3"
   },
   "scripts": {
     "lint": "yarn prettier ./test/*.ts --check",
@@ -64,8 +63,8 @@
     "build": "npx hardhat compile",
     "flatten": "rimraf flatten && waffle flatten"
   },
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "dependencies": {
-    "@typechain/hardhat": "^2.3.0"
+    "@openzeppelin/contracts": "4.4.2"
   }
 }

@@ -1,8 +1,8 @@
 import { ethers } from 'hardhat'
 
-export default async (configuration: string) => {
-  const Router = await ethers.getContractFactory('DePayRouterV1')
-  const router = await Router.deploy(configuration)
+export default async () => {
+  const Router = await ethers.getContractFactory('DePayRouterV2')
+  const router = await Router.deploy()
   await router.deployed()
 
   return router

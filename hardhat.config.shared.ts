@@ -1,6 +1,5 @@
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ethers'
-import '@typechain/hardhat'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -15,7 +14,7 @@ var {
 
 const sharedConfig = {
   solidity: {
-    version: '0.8.6',
+    version: '0.8.18',
     settings: {
       optimizer: {
         enabled: true,
@@ -29,7 +28,7 @@ export {
   sharedConfig,
   MNEMONIC,
   ETHEREUM_RPC_URL,
-  POLYGON_RPC_URL,
   BSC_RPC_URL,
   BSC_RPC_API_KEY,
+  POLYGON_RPC_URL,
 }
