@@ -1,3 +1,3 @@
 import payWithNative from '../_pay-with-native'
 
-payWithNative({ blockchain: 'avalanche' })
+payWithNative({ blockchain: 'arbitrum' })

@@ -1,19 +1,3 @@
-import { ethers } from 'hardhat'
-import deployRouter from '../_helpers/deploy/router'
+import payWithNative from '../_pay-with-native'
 
-const blockchain = 'ethereum'
-
-describe(`DePayRouterV2 on ${blockchain}`, () => {
-
-  let wallets
-  let router
-
-  beforeEach(async ()=>{
-    wallets = await ethers.getSigners()
-  })
-
-  it('deploys router successfully', async () => {
-    router = await deployRouter()
-  })
-
-})
+payWithNative({ blockchain: 'ethereum' })

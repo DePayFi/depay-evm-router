@@ -26,6 +26,7 @@
     "node": ">=10"
   },
   "devDependencies": {
+    "@depay/web3-blockchains": "^8.1.1",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
@@ -55,8 +56,7 @@
     "precompile": "yarn clean",
     "compile": "npx hardhat compile",
     "pretest": "yarn compile",
-    "test:arbitrum_nova": "npx hardhat test test/arbitrum_nova/* --config hardhat.config.arbitrum_nova.ts",
-    "test:arbitrum_one": "npx hardhat test test/arbitrum_one/* --config hardhat.config.arbitrum_one.ts",
+    "test:arbitrum": "npx hardhat test test/arbitrum/* --config hardhat.config.arbitrum.ts",
     "test:avalanche": "npx hardhat test test/avalanche/* --config hardhat.config.avalanche.ts",
     "test:bsc": "npx hardhat test test/bsc/* --config hardhat.config.bsc.ts",
     "test:ethereum": "npx hardhat test test/ethereum/* --config hardhat.config.ethereum.ts",
@@ -64,9 +64,7 @@
     "test:gnosis": "npx hardhat test test/gnosis/* --config hardhat.config.gnosis.ts",
     "test:optimism": "npx hardhat test test/optimism/* --config hardhat.config.optimism.ts",
     "test:polygon": "npx hardhat test test/polygon/* --config hardhat.config.polygon.ts",
-    "test:polygon_zkevm": "npx hardhat test test/polygon_zkevm/* --config hardhat.config.polygon_zkevm.ts",
-    "test:zksync_era": "npx hardhat test test/zksync_era/* --config hardhat.config.zksync_era.ts",
-    "test": "yarn test:arbitrum_nova && yarn test:arbitrum_one && yarn test:avalanche && yarn test:bsc && yarn test:ethereum && yarn test:fantom && yarn test:gnosis && yarn test:optimism && yarn test:polygon && yarn test:polygon_zkevm && yarn test:zksync_era",
+    "test": "yarn test:arbitrum && yarn test:avalanche && yarn test:bsc && yarn test:ethereum && yarn test:fantom && yarn test:gnosis && yarn test:optimism && yarn test:polygon",
     "prepublishOnly": "yarn test",
     "build": "npx hardhat compile",
     "flatten": "rimraf flatten && waffle flatten"
