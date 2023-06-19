@@ -4,6 +4,7 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "hardhat/console.sol";
 
 contract DePayRouterV2 is Ownable {
 
@@ -40,19 +41,19 @@ contract DePayRouterV2 is Ownable {
     // Make sure payment deadline has not been passed, yet
     require(deadline > block.timestamp, "DePay: Payment deadline has passed!");
 
-    // Make sure that the sender has paid in the correct token & amount
-    if(tokenIn == NATIVE) {
-      require(msg.value >= amountIn, 'DePay: Insufficient amount paid in!');
-    } else {
-      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-    }
-
     // Store tokenOut balance prior to conversion & payment
     uint balanceBefore;
     if(tokenOut == NATIVE) {
       balanceBefore = address(this).balance - msg.value;
     } else {
       balanceBefore = IERC20(tokenOut).balanceOf(address(this));
+    }
+
+    // Make sure that the sender has paid in the correct token & amount
+    if(tokenIn == NATIVE) {
+      require(msg.value >= amountIn, 'DePay: Insufficient amount paid in!');
+    } else {
+      IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
     }
 
     //(bool success,) = exchange_address.call{value: amount_in}(exchange_call);
@@ -63,7 +64,7 @@ contract DePayRouterV2 is Ownable {
       (bool success,) = paymentReceiver.call{value: paymentAmount}(new bytes(0));
       require(success, 'DePay: NATIVE payment receiver pay out failed!');
     } else {
-      IERC20(tokenIn).safeTransferFrom(address(this), paymentReceiver, paymentAmount);
+      IERC20(tokenOut).safeTransfer(paymentReceiver, paymentAmount);
     }
 
     // Pay feeReceiver
@@ -72,7 +73,7 @@ contract DePayRouterV2 is Ownable {
         (bool success,) = feeReceiver.call{value: feeAmount}(new bytes(0));
         require(success, 'DePay: NATIVE fee receiver pay out failed!');
       } else {
-        IERC20(tokenIn).safeTransferFrom(address(this), feeReceiver, feeAmount);
+        IERC20(tokenOut).safeTransfer(feeReceiver, feeAmount);
       }
     }
 
@@ -80,7 +81,7 @@ contract DePayRouterV2 is Ownable {
     if(tokenOut == NATIVE) {
       require(address(this).balance >= balanceBefore, 'DePay: Insufficient balance after payment!');
     } else {
-      require(IERC20(tokenIn).balanceOf(address(this)) >= balanceBefore, 'DePay: Insufficient balance after payment!');
+      require(IERC20(tokenOut).balanceOf(address(this)) >= balanceBefore, 'DePay: Insufficient balance after payment!');
     }
 
     return true;

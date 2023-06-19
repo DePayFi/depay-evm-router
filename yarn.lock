@@ -328,6 +328,16 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-8.1.1.tgz#1de5dff71ead45bde57a1d8e0374d24aadde6533"
   integrity sha512-wrtCFNH726Y+xX1+EtzhILMfhLcPEzuaBV3oCef97eJsht0PYjEWpzqB48LwHpY9adwzjarG1dSJIR2VAWpmUA==
 
+"@depay/web3-client-evm@^10.15.1":
+  version "10.15.1"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.15.1.tgz#634439827b6e9b6b0fca1e51b3a857366fa785f1"
+  integrity sha512-xPhrdHXbPdJYG7yh60MJn4zMe5ub+RF/GrUZUCB8vB5c2MKJrxIagrPxe9q0PNFuIfuPdY/z6/eUYr/07TI9SA==
+
+"@depay/web3-tokens-evm@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-tokens-evm/-/web3-tokens-evm-10.0.0.tgz#9a509e7341f0fbffbb09ab60ba34303075660a2f"
+  integrity sha512-MI7F8t9BiKHHqGWbTHedSNPIMB1rhnDcEFjEOjEt9surUsAVHHJ11uc7cckLEoxyY0/5XDb58bGJtWXsqUcKFA==
+
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@ensdomains/ens/-/ens-0.4.5.tgz#e0aebc005afdc066447c6e22feb4eda89a5edbfc"

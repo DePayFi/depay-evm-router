@@ -1,26 +1,32 @@
-import Web3Blockchains from '@depay/web3-blockchains'
 import deployRouter from './_helpers/deploy/router'
+import impersonate from './_helpers/impersonate'
 import now from './_helpers/now'
+import Token from '@depay/web3-tokens-evm'
+import Web3Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 
-export default ({ blockchain })=>{
+export default ({ blockchain, token, tokenHolder, tokenReversalReason })=>{
 
   const NATIVE = Web3Blockchains[blockchain].currency.address
   const WRAPPED = Web3Blockchains[blockchain].wrapped.address
+  const TOKEN = token
   const ZERO = Web3Blockchains[blockchain].zero
   const provider = ethers.provider
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
-    describe(`pay with NATIVE`, ()=> {
+    describe(`pay with TOKEN`, ()=> {
 
       let wallets
       let router
       let deadline
+      let tokenContract
 
       beforeEach(async ()=>{
         wallets = await ethers.getSigners()
+        tokenContract = new ethers.Contract(TOKEN, Token[blockchain]['20'], wallets[0])
+        if(typeof tokenHolder === 'string') { tokenHolder = await impersonate(tokenHolder) }
         deadline = now()+ 86400 // 1 day
       })
 
@@ -28,14 +34,14 @@ export default ({ blockchain })=>{
         router = await deployRouter({ WRAPPED })
       })
 
-      it('fails if native amount was not paid in', async ()=> {
+      it('fails if approval was not granted and amount was not paid in', async ()=> {
         await expect(
-          router.connect(wallets[0]).pay(
+          router.connect(tokenHolder).pay(
             1000000000, // amountIn
-            NATIVE, // tokenIn
+            TOKEN, // tokenIn
             ZERO, // exchangeAddress
             ZERO, // exchangeCall
-            NATIVE, // tokenOut
+            TOKEN, // tokenOut
             1000000000, // paymentAmount
             wallets[1].address, // paymentReceiver
             0, // feeAmount
@@ -43,7 +49,7 @@ export default ({ blockchain })=>{
             deadline // deadline
           )
         ).to.be.revertedWith(
-          'DePay: Insufficient amount paid in!'
+          tokenReversalReason
         )
       })
 
@@ -51,24 +57,24 @@ export default ({ blockchain })=>{
         const amountIn = 1000000000
         const paymentAmount = 1000000000
 
-        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
 
-        await router.connect(wallets[0]).pay(
+        await tokenContract.connect(tokenHolder).approve(router.address, amountIn)
+
+        await router.connect(tokenHolder).pay(
           amountIn, // amountIn
-          NATIVE, // tokenIn
+          TOKEN, // tokenIn
           ZERO, // exchangeAddress
           ZERO, // exchangeCall
-          NATIVE, // tokenOut
+          TOKEN, // tokenOut
           paymentAmount, // paymentAmount
           wallets[1].address, // paymentReceiver
           0, // feeAmount
           ZERO, // feeReceiver
           deadline, // deadline
-          { value: 1000000000 }
         )
 
-        const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
-
+        const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
       })
 
@@ -77,44 +83,55 @@ export default ({ blockchain })=>{
         const paymentAmount = 900000000
         const feeAmount = 100000000
 
-        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
-        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceBefore = await tokenContract.balanceOf(wallets[2].address)
 
-        await router.connect(wallets[0]).pay(
+        await tokenContract.connect(tokenHolder).approve(router.address, amountIn)
+
+        await router.connect(tokenHolder).pay(
           amountIn, // amountIn
-          NATIVE, // tokenIn
+          TOKEN, // tokenIn
           ZERO, // exchangeAddress
           ZERO, // exchangeCall
-          NATIVE, // tokenOut
+          TOKEN, // tokenOut
           paymentAmount, // paymentAmount
           wallets[1].address, // paymentReceiver
           feeAmount, // feeAmount
           wallets[2].address, // feeReceiver
           deadline, // deadline
-          { value: 1000000000 }
         )
 
-        const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
-        const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+        const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceAfter = await tokenContract.balanceOf(wallets[2].address)
 
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
       it('fails if paid out amount was more than paid in', async()=>{
-        await wallets[0].sendTransaction({ to: router.address, value: 1000000000 });
+        const amountIn = 1000000000
+        const paymentAmount = 1000000000
+        const feeAmount = 100000000
+
+        const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceBefore = await tokenContract.balanceOf(wallets[2].address)
+
+        await tokenContract.connect(tokenHolder).approve(router.address, amountIn)
+
+        await tokenContract.connect(tokenHolder).transfer(router.address, feeAmount)
+
         await expect(
-          router.connect(wallets[0]).pay(
-            0, // amountIn
-            NATIVE, // tokenIn
+          router.connect(tokenHolder).pay(
+            amountIn, // amountIn
+            TOKEN, // tokenIn
             ZERO, // exchangeAddress
             ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            1000000000, // paymentAmount
+            TOKEN, // tokenOut
+            paymentAmount, // paymentAmount
             wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
-            deadline // deadline
+            feeAmount, // feeAmount
+            wallets[2].address, // feeReceiver
+            deadline, // deadline
           )
         ).to.be.revertedWith(
           'DePay: Insufficient balance after payment!'
