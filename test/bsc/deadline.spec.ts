@@ -1,3 +1,3 @@
-import deadline from '../_pay-with-native'
+import deadline from '../_deadline'
 
 deadline({ blockchain: 'bsc' })

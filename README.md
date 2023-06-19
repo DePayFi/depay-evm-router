@@ -21,7 +21,7 @@ This allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE and TOKEN_A t
 
 ## Functionalities
 
-### `pay` Route Transactions
+### pay
 
 The main function to route payments.
 
@@ -32,7 +32,7 @@ Arguments:
 ```
 ```
 
-### Transfer polyfil (internal transfers)
+#### Transfer polyfil (internal transfers)
 
 The `DePayRouterV2` emits a `Transfer` event only for payments (pay outs) with the native token (e.g. ether).
 

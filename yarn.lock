@@ -333,10 +333,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.15.1.tgz#634439827b6e9b6b0fca1e51b3a857366fa785f1"
   integrity sha512-xPhrdHXbPdJYG7yh60MJn4zMe5ub+RF/GrUZUCB8vB5c2MKJrxIagrPxe9q0PNFuIfuPdY/z6/eUYr/07TI9SA==
 
-"@depay/web3-tokens-evm@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-tokens-evm/-/web3-tokens-evm-10.0.0.tgz#9a509e7341f0fbffbb09ab60ba34303075660a2f"
-  integrity sha512-MI7F8t9BiKHHqGWbTHedSNPIMB1rhnDcEFjEOjEt9surUsAVHHJ11uc7cckLEoxyY0/5XDb58bGJtWXsqUcKFA==
+"@depay/web3-tokens-evm@^10.1.0":
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-tokens-evm/-/web3-tokens-evm-10.1.0.tgz#34251da8cf5891caf5078c1d3a3a3d61fe7dd892"
+  integrity sha512-bYS1O0WIyOYgStyhTwJRIroPiiIm04jpgqUcp+R0MUx483rG6vkGfsy1eakf9AMd1sJeu0YsM4URLsgJU0LZwQ==
 
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"

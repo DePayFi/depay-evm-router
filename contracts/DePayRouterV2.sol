@@ -16,6 +16,9 @@ contract DePayRouterV2 is Ownable {
   // Address of the WRAPPED native token (e.g. WETH, WBNB, etc.)
   address public immutable WRAPPED;
 
+  // List of approved exchanges for conversion
+  mapping (address => bool) public exchanges;
+
   // Pass the address to the WRAPPED token standard upon initialization
   constructor (address _WRAPPED) {
     WRAPPED = _WRAPPED;
@@ -24,7 +27,7 @@ contract DePayRouterV2 is Ownable {
   // Accepts NATIVE payments, which is required in order to swap from and to NATIVE, especially unwrapping as part of conversions
   receive() external payable {}
 
-  // Transfer polyfil event for internal transfers.
+  // Transfer polyfil event for internal transfers
   event Transfer(
     address indexed from,
     address indexed to,
@@ -63,8 +66,17 @@ contract DePayRouterV2 is Ownable {
       IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
     }
 
-    //(bool success,) = exchange_address.call{value: amount_in}(exchange_call);
-    //require(success, "Call failed");
+    // Perform conversion if required
+    if(exchangeAddress != address(0)) {
+      require(exchanges[exchangeAddress], 'DePay: Exchange has not been approved!');
+      bool success;
+      if(tokenIn == NATIVE) {
+        (success,) = exchangeAddress.call{value: msg.value}(exchangeCall);
+      } else {
+        (success,) = exchangeAddress.call(exchangeCall);
+      }
+      require(success, "DePay: exchange call failed!");
+    }
 
     // Pay paymentReceiver
     if(tokenOut == NATIVE) {
@@ -93,6 +105,18 @@ contract DePayRouterV2 is Ownable {
       require(IERC20(tokenOut).balanceOf(address(this)) >= balanceBefore, 'DePay: Insufficient balance after payment!');
     }
 
+    return true;
+  }
+
+  // Event emitted if new exchange has been approved
+  event Approved(
+    address indexed exchange
+  );
+
+  // Approves exchange
+  function approve(address exchange) external onlyOwner returns(bool) {
+    exchanges[exchange] = true;
+    emit Approved(exchange);
     return true;
   }
 
