@@ -24,6 +24,13 @@ contract DePayRouterV2 is Ownable {
   // Accepts NATIVE payments, which is required in order to swap from and to NATIVE, especially unwrapping as part of conversions
   receive() external payable {}
 
+  // Transfer polyfil event for internal transfers.
+  event Transfer(
+    address indexed from,
+    address indexed to,
+    uint256 value
+  );
+
   // The main pay functionality
   function pay(
     uint amountIn, // amount paid in from sender
@@ -63,6 +70,7 @@ contract DePayRouterV2 is Ownable {
     if(tokenOut == NATIVE) {
       (bool success,) = paymentReceiver.call{value: paymentAmount}(new bytes(0));
       require(success, 'DePay: NATIVE payment receiver pay out failed!');
+      emit Transfer(msg.sender, paymentReceiver, paymentAmount);
     } else {
       IERC20(tokenOut).safeTransfer(paymentReceiver, paymentAmount);
     }
@@ -72,6 +80,7 @@ contract DePayRouterV2 is Ownable {
       if(tokenOut == NATIVE) {
         (bool success,) = feeReceiver.call{value: feeAmount}(new bytes(0));
         require(success, 'DePay: NATIVE fee receiver pay out failed!');
+        emit Transfer(msg.sender, paymentReceiver, paymentAmount);
       } else {
         IERC20(tokenOut).safeTransfer(feeReceiver, feeAmount);
       }

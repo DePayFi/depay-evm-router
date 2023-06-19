@@ -47,32 +47,34 @@ export default ({ blockchain })=>{
         )
       })
 
-      it('pays payment receiver', async ()=> {
+      it('pays payment receiver and emits Transfer polyfil event', async ()=> {
         const amountIn = 1000000000
         const paymentAmount = 1000000000
 
         const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
 
-        await router.connect(wallets[0]).pay(
-          amountIn, // amountIn
-          NATIVE, // tokenIn
-          ZERO, // exchangeAddress
-          ZERO, // exchangeCall
-          NATIVE, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          0, // feeAmount
-          ZERO, // feeReceiver
-          deadline, // deadline
-          { value: 1000000000 }
-        )
+        await expect(
+          router.connect(wallets[0]).pay(
+            amountIn, // amountIn
+            NATIVE, // tokenIn
+            ZERO, // exchangeAddress
+            ZERO, // exchangeCall
+            NATIVE, // tokenOut
+            paymentAmount, // paymentAmount
+            wallets[1].address, // paymentReceiver
+            0, // feeAmount
+            ZERO, // feeReceiver
+            deadline, // deadline
+            { value: 1000000000 }
+          )
+        ).to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
 
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
       })
 
-      it('pays payment receiver and fee receiver', async ()=> {
+      it('pays payment receiver and fee receiver and emits Transfer polyfil event', async ()=> {
         const amountIn = 1000000000
         const paymentAmount = 900000000
         const feeAmount = 100000000
@@ -80,19 +82,23 @@ export default ({ blockchain })=>{
         const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
-        await router.connect(wallets[0]).pay(
-          amountIn, // amountIn
-          NATIVE, // tokenIn
-          ZERO, // exchangeAddress
-          ZERO, // exchangeCall
-          NATIVE, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          feeAmount, // feeAmount
-          wallets[2].address, // feeReceiver
-          deadline, // deadline
-          { value: 1000000000 }
+        await expect(
+          router.connect(wallets[0]).pay(
+            amountIn, // amountIn
+            NATIVE, // tokenIn
+            ZERO, // exchangeAddress
+            ZERO, // exchangeCall
+            NATIVE, // tokenOut
+            paymentAmount, // paymentAmount
+            wallets[1].address, // paymentReceiver
+            feeAmount, // feeAmount
+            wallets[2].address, // feeReceiver
+            deadline, // deadline
+            { value: 1000000000 }
+          )
         )
+        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
+        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)

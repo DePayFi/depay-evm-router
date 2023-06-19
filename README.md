@@ -32,6 +32,14 @@ Arguments:
 ```
 ```
 
+### Transfer polyfil (internal transfers)
+
+The `DePayRouterV2` emits a `Transfer` event only for payments (pay outs) with the native token (e.g. ether).
+
+This is done to not rely on scanning for internal transfers, but to to rely on transfer events for token + native transfers.
+
+Other tokens already do emit `Transfer` events as part of their standard.
+
 ## Development
 
 ### Quick Start
