@@ -10,14 +10,23 @@ BNB Smart Chain: [](https://bscscan.com/address/)
 
 Polygon (POS): [](https://polygonscan.com/address/)
 
+Avalanche: [](https://snowtrace.io/address/)
+
+Fantom: [](https://ftmscan.com/address/)
+
+Gnosis: [](https://gnosisscan.io/address/)
+
+Arbitrum: [](https://arbiscan.io/address/)
+
+Optimsm: [](https://optimistic.etherscan.io/address/)
+
 ## Summary
 
-This set of smart contracts enables decentralized payments.
+This smart contract enables decentralized payments with auto-conversion and payment-fee extraction.
 
-The main purpose of this set of smart contracts evolves around the `pay` function,
-which allows a sender to pay a receiver with any convertible token
+The main purpose of this smart contract evolves around the `pay` function.
 
-This allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE and TOKEN_A to TOKEN_B payments.
+This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE, WRAPPED to NATIVE, NATIVE to WRAPPED and TOKEN_A to TOKEN_B payments.
 
 ## Functionalities
 
@@ -67,7 +76,7 @@ yarn test
 Test single files:
 
 ```
-npx hardhat test test/ethereum/DePayRouterV1.spec.ts --config hardhat.config.ethereum.ts
+npx hardhat test test/ethereum/pay_with_exchange_conversion.spec.ts --config hardhat.config.ethereum.ts
 ```
 
 ### Deploy
