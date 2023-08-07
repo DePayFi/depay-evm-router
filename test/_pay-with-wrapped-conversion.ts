@@ -46,15 +46,24 @@ export default ({ blockchain })=>{
         const feeReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[2].address)
 
         await router.connect(wallets[0]).pay(
-          amountIn, // amountIn
-          NATIVE, // tokenIn
-          WRAPPED, // exchangeAddress
-          callData, // exchangeCall
-          WRAPPED, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          feeAmount, // feeAmount
-          wallets[2].address, // feeReceiver
+          [ // amounts
+            amountIn, // amountIn
+            paymentAmount, // paymentAmount
+            feeAmount // feeAmount
+          ],
+          [ // addresses
+            NATIVE, // tokenIn
+            WRAPPED, // exchangeAddress
+            WRAPPED, // tokenOut
+            wallets[1].address, // paymentReceiver
+            wallets[2].address, // feeReceiver
+          ],
+          [ // types
+            0
+          ],
+          [ // calls
+            callData, // exchangeCall
+          ],
           deadline, // deadline
           { value: 1000000000 }
         )
@@ -81,16 +90,25 @@ export default ({ blockchain })=>{
         await wrapperContract.connect(wallets[0]).approve(router.address, amountIn)
 
         await router.connect(wallets[0]).pay(
-          amountIn, // amountIn
-          WRAPPED, // tokenIn
-          WRAPPED, // exchangeAddress
-          callData, // exchangeCall
-          NATIVE, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          feeAmount, // feeAmount
-          wallets[2].address, // feeReceiver
-          deadline // deadline
+          [ // amounts
+            amountIn, // amountIn
+            paymentAmount, // paymentAmount
+            feeAmount // feeAmount
+          ],
+          [ // addresses
+            WRAPPED, // tokenIn
+            WRAPPED, // exchangeAddress
+            NATIVE, // tokenOut
+            wallets[1].address, // paymentReceiver
+            wallets[2].address, // feeReceiver
+          ],
+          [ // types
+            0
+          ],
+          [ // calls
+            callData, // exchangeCall
+          ],
+          deadline, // deadline
         )
 
         const paymentReceiverBalanceAfter = await await provider.getBalance(wallets[1].address)

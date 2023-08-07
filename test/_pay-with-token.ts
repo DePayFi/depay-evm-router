@@ -36,17 +36,24 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
 
       it('fails if approval was not granted and amount was not paid in', async ()=> {
         await expect(
-          router.connect(fromAccount).pay(
-            1000000000, // amountIn
-            TOKEN, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            TOKEN, // tokenOut
-            1000000000, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
-            deadline // deadline
+          router.connect(wallets[0]).pay(
+            [ // amounts
+              1000000000, // amountIn
+              1000000000, // paymentAmount
+              0 // feeAmount
+            ],
+            [ // addresses
+              TOKEN, // tokenIn
+              ZERO, // exchangeAddress
+              TOKEN, // tokenOut
+              wallets[1].address, // paymentReceiver
+              ZERO, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
+            deadline, // deadline
           )
         ).to.be.revertedWith(
           reversalReason
@@ -62,15 +69,22 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
         await tokenContract.connect(fromAccount).approve(router.address, amountIn)
 
         await router.connect(fromAccount).pay(
-          amountIn, // amountIn
-          TOKEN, // tokenIn
-          ZERO, // exchangeAddress
-          ZERO, // exchangeCall
-          TOKEN, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          0, // feeAmount
-          ZERO, // feeReceiver
+          [ // amounts
+            amountIn, // amountIn
+            paymentAmount, // paymentAmount
+            0 // feeAmount
+          ],
+          [ // addresses
+            TOKEN, // tokenIn
+            ZERO, // exchangeAddress
+            TOKEN, // tokenOut
+            wallets[1].address, // paymentReceiver
+            ZERO, // feeReceiver
+          ],
+          [], // types
+          [ // calls
+            ZERO, // exchangeCall
+          ],
           deadline, // deadline
         )
 
@@ -89,15 +103,22 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
         await tokenContract.connect(fromAccount).approve(router.address, amountIn)
 
         await router.connect(fromAccount).pay(
-          amountIn, // amountIn
-          TOKEN, // tokenIn
-          ZERO, // exchangeAddress
-          ZERO, // exchangeCall
-          TOKEN, // tokenOut
-          paymentAmount, // paymentAmount
-          wallets[1].address, // paymentReceiver
-          feeAmount, // feeAmount
-          wallets[2].address, // feeReceiver
+          [ // amounts
+            amountIn, // amountIn
+            paymentAmount, // paymentAmount
+            feeAmount // feeAmount
+          ],
+          [ // addresses
+            TOKEN, // tokenIn
+            ZERO, // exchangeAddress
+            TOKEN, // tokenOut
+            wallets[1].address, // paymentReceiver
+            wallets[2].address, // feeReceiver
+          ],
+          [], // types
+          [ // calls
+            ZERO, // exchangeCall
+          ],
           deadline, // deadline
         )
 
@@ -122,19 +143,26 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
 
         await expect(
           router.connect(fromAccount).pay(
-            amountIn, // amountIn
-            TOKEN, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            TOKEN, // tokenOut
-            paymentAmount, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            feeAmount, // feeAmount
-            wallets[2].address, // feeReceiver
+            [ // amounts
+              amountIn, // amountIn
+              paymentAmount, // paymentAmount
+              feeAmount // feeAmount
+            ],
+            [ // addresses
+              TOKEN, // tokenIn
+              ZERO, // exchangeAddress
+              TOKEN, // tokenOut
+              wallets[1].address, // paymentReceiver
+              wallets[2].address, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
             deadline, // deadline
           )
         ).to.be.revertedWith(
-          'DePay: Insufficient balance after payment!'
+          'DePay: Insufficient balanceIn after payment!'
         )
       })
     })

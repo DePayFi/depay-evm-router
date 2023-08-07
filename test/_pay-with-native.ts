@@ -31,16 +31,23 @@ export default ({ blockchain })=>{
       it('fails if native amount was not paid in', async ()=> {
         await expect(
           router.connect(wallets[0]).pay(
-            1000000000, // amountIn
-            NATIVE, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            1000000000, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
-            deadline // deadline
+            [ // amounts
+              1000000000, // amountIn
+              1000000000, // paymentAmount
+              0 // feeAmount
+            ],
+            [ // addresses
+              NATIVE, // tokenIn
+              ZERO, // exchangeAddress
+              NATIVE, // tokenOut
+              wallets[1].address, // paymentReceiver
+              ZERO, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
+            deadline, // deadline
           )
         ).to.be.revertedWith(
           'DePay: Insufficient amount paid in!'
@@ -55,15 +62,22 @@ export default ({ blockchain })=>{
 
         await expect(
           router.connect(wallets[0]).pay(
-            amountIn, // amountIn
-            NATIVE, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            paymentAmount, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
+            [ // amounts
+              amountIn, // amountIn
+              paymentAmount, // paymentAmount
+              0 // feeAmount
+            ],
+            [ // addresses
+              NATIVE, // tokenIn
+              ZERO, // exchangeAddress
+              NATIVE, // tokenOut
+              wallets[1].address, // paymentReceiver
+              ZERO, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
             deadline, // deadline
             { value: 1000000000 }
           )
@@ -84,15 +98,22 @@ export default ({ blockchain })=>{
 
         await expect(
           router.connect(wallets[0]).pay(
-            amountIn, // amountIn
-            NATIVE, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            paymentAmount, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            feeAmount, // feeAmount
-            wallets[2].address, // feeReceiver
+            [ // amounts
+              amountIn, // amountIn
+              paymentAmount, // paymentAmount
+              feeAmount // feeAmount
+            ],
+            [ // addresses
+              NATIVE, // tokenIn
+              ZERO, // exchangeAddress
+              NATIVE, // tokenOut
+              wallets[1].address, // paymentReceiver
+              wallets[2].address, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
             deadline, // deadline
             { value: 1000000000 }
           )
@@ -111,19 +132,26 @@ export default ({ blockchain })=>{
         await wallets[0].sendTransaction({ to: router.address, value: 1000000000 });
         await expect(
           router.connect(wallets[0]).pay(
-            0, // amountIn
-            NATIVE, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            1000000000, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
-            deadline // deadline
+            [ // amounts
+              0, // amountIn
+              1000000000, // paymentAmount
+              0 // feeAmount
+            ],
+            [ // addresses
+              NATIVE, // tokenIn
+              ZERO, // exchangeAddress
+              NATIVE, // tokenOut
+              wallets[1].address, // paymentReceiver
+              ZERO, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
+            deadline, // deadline
           )
         ).to.be.revertedWith(
-          'DePay: Insufficient balance after payment!'
+          'DePay: Insufficient balanceIn after payment!'
         )
       })
     })

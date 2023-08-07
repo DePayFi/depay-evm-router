@@ -55,10 +55,14 @@ contract DePayRouterV2 is Ownable {
     
     // pull requires approve, push is pushing the token prior calling
     // [
-    //    0: exchangePullToken,
-    //    1: receiverPullToken
+    //    0: exchangeType,
+    //    1: receiverType
     // ] 
-    bool[] calldata pull,
+    //    type
+    //      0: do nothing
+    //      1: pull
+    //      2: push
+    uint8[] calldata types,
     
     // [
     //    0: exchangeCallData,
@@ -104,9 +108,9 @@ contract DePayRouterV2 is Ownable {
       if(addresses[0] == NATIVE) {
         (success,) = addresses[1].call{value: msg.value}(calls[0]);
       } else {
-        if(pull[0]) {
+        if(types[0] == 1) { // pull
           IERC20(addresses[0]).safeApprove(addresses[1], amounts[0]);
-        } else { // push
+        } else if(types[0] == 2) { // push
           IERC20(addresses[0]).safeTransfer(addresses[1], amounts[0]);
         }
         (success,) = addresses[1].call(calls[0]);

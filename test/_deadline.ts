@@ -31,15 +31,22 @@ export default ({ blockchain })=>{
       it('fails if payment deadline has passed', async ()=> {
         await expect(
           router.connect(wallets[0]).pay(
-            1000000000, // amountIn
-            NATIVE, // tokenIn
-            ZERO, // exchangeAddress
-            ZERO, // exchangeCall
-            NATIVE, // tokenOut
-            1000000000, // paymentAmount
-            wallets[1].address, // paymentReceiver
-            0, // feeAmount
-            ZERO, // feeReceiver
+            [ // amounts
+              1000000000, // amountIn
+              1000000000, // paymentAmount
+              1 // feeAmount
+            ],
+            [ // addresses
+              NATIVE, // tokenIn
+              ZERO, // exchangeAddress
+              NATIVE, // tokenOut
+              wallets[1].address, // paymentReceiver
+              ZERO, // feeReceiver
+            ],
+            [], // types
+            [ // calls
+              ZERO, // exchangeCall
+            ],
             0, // deadline
             { value: 1000000000 }
           )

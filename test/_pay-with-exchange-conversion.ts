@@ -61,9 +61,7 @@ export default ({ blockchain, fromToken, fromAccount, exchanges })=>{
                 wallets[1].address, // paymentReceiver
                 wallets[2].address, // feeReceiver
               ],
-              [ // pull
-                false
-              ],
+              [0], // types
               [ // calls
                 Web3Blockchains[blockchain].zero, // exchangeCall
               ],
@@ -129,8 +127,8 @@ export default ({ blockchain, fromToken, fromAccount, exchanges })=>{
                   wallets[1].address, // paymentReceiver
                   wallets[2].address, // feeReceiver
                 ],
-                [ // pull
-                  exchange.type === 'pull'
+                [ // types
+                  exchange.type === 'pull' ? 1 : 2
                 ],
                 [ // calls
                   callData, // exchangeCall
