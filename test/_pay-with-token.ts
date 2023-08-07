@@ -36,7 +36,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
 
       it('fails if approval was not granted and amount was not paid in', async ()=> {
         await expect(
-          router.connect(wallets[0]).pay(
+          router.connect(fromAccount).pay(
             [ // amounts
               1000000000, // amountIn
               1000000000, // paymentAmount
