@@ -128,7 +128,7 @@ export default ({ blockchain })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
-      it('fails if paid out amount was more than paid in', async()=>{
+      it('fails if balanceIn is less after payment', async()=>{
         await wallets[0].sendTransaction({ to: router.address, value: 1000000000 });
         await expect(
           router.connect(wallets[0]).pay(

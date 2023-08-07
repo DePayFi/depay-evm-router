@@ -79,71 +79,131 @@ export default ({ blockchain, fromToken, fromAccount, exchanges })=>{
 
       describe('using token approvals', ()=> {
 
-        beforeEach(async()=>{
+        it('requires token approval for the router', async ()=>{
           await fromTokenContract.connect(fromAccount).approve(router.address, Web3Blockchains[blockchain].maxInt)
         })
 
-        describe('TOKEN to NATIVE', ()=>{
+        it('fails if balanceOut is less after payment', async()=>{
+          const exchange = exchanges[0]
+          const paymentAmount = 9
+          const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+          const feeAmount = 1
+          const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+          const totalAmount = paymentAmount + feeAmount
 
-          it('converts TOKEN to NATIVE via exchanges as part of the payment', async ()=>{
+          await wallets[0].sendTransaction({ to: router.address, value: ethers.BigNumber.from("100000000000000000") });
 
-            await Promise.all(exchanges.map(async (exchange)=>{
-
-              const paymentAmount = 9
-              const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
-              const feeAmount = 1
-              const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
-              const totalAmount = paymentAmount + feeAmount
-
-              const route = await Web3Exchanges[exchange.name].route({
-                blockchain,
-                tokenIn: fromToken,
-                tokenOut: Web3Blockchains[blockchain].currency.address,
-                amountOutMin: totalAmount
-              })
-
-              const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: true })
-              const callData = getCallData({
-                address: transaction.to,
-                api: transaction.api,
-                provider: wallets[0],
-                method: transaction.method,
-                params: transaction.params,
-              })
-
-              const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
-              const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
-
-              await router.connect(fromAccount).pay(
-                [ // amounts
-                  route.amountIn, // amountIn
-                  paymentAmountBN, // paymentAmount
-                  feeAmountBN // feeAmount
-                ],
-                [ // addresses
-                  route.tokenIn, // tokenIn
-                  transaction.to, // exchangeAddress
-                  route.tokenOut, // tokenOut
-                  wallets[1].address, // paymentReceiver
-                  wallets[2].address, // feeReceiver
-                ],
-                [ // types
-                  exchange.type === 'pull' ? 1 : 2
-                ],
-                [ // calls
-                  callData, // exchangeCall
-                ],
-                deadline, // deadline
-              )
-
-              const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
-              const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
-
-              expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
-              expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
-            }))
+          const route = await Web3Exchanges[exchange.name].route({
+            blockchain,
+            tokenIn: fromToken,
+            tokenOut: Web3Blockchains[blockchain].currency.address,
+            amountOutMin: totalAmount
           })
+
+          const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: true })
+          const callData = getCallData({
+            address: transaction.to,
+            api: transaction.api,
+            provider: wallets[0],
+            method: transaction.method,
+            params: transaction.params,
+          })
+
+          const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+          const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+          await expect(
+            router.connect(fromAccount).pay(
+              [ // amounts
+                route.amountIn, // amountIn
+                paymentAmountBN, // paymentAmount
+                feeAmountBN.add(ethers.BigNumber.from("100000000000000000")) // feeAmount
+              ],
+              [ // addresses
+                route.tokenIn, // tokenIn
+                transaction.to, // exchangeAddress
+                route.tokenOut, // tokenOut
+                wallets[1].address, // paymentReceiver
+                wallets[2].address, // feeReceiver
+              ],
+              [ // types
+                exchange.type === 'pull' ? 1 : 2
+              ],
+              [ // calls
+                callData, // exchangeCall
+              ],
+              deadline, // deadline
+            )
+          ).to.be.revertedWith(
+            'DePay: Insufficient balanceOut after payment!'
+          )
         })
+
+        it('converts TOKEN to NATIVE via exchanges as part of the payment', async ()=>{
+
+          await Promise.all(exchanges.map(async (exchange)=>{
+
+            const paymentAmount = 9
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const feeAmount = 1
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const totalAmount = paymentAmount + feeAmount
+
+            const route = await Web3Exchanges[exchange.name].route({
+              blockchain,
+              tokenIn: fromToken,
+              tokenOut: Web3Blockchains[blockchain].currency.address,
+              amountOutMin: totalAmount
+            })
+
+            const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: true })
+            const callData = getCallData({
+              address: transaction.to,
+              api: transaction.api,
+              provider: wallets[0],
+              method: transaction.method,
+              params: transaction.params,
+            })
+
+            const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+            const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+            await router.connect(fromAccount).pay(
+              [ // amounts
+                route.amountIn, // amountIn
+                paymentAmountBN, // paymentAmount
+                feeAmountBN // feeAmount
+              ],
+              [ // addresses
+                route.tokenIn, // tokenIn
+                transaction.to, // exchangeAddress
+                route.tokenOut, // tokenOut
+                wallets[1].address, // paymentReceiver
+                wallets[2].address, // feeReceiver
+              ],
+              [ // types
+                exchange.type === 'pull' ? 1 : 2
+              ],
+              [ // calls
+                callData, // exchangeCall
+              ],
+              deadline, // deadline
+            )
+
+            const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+            const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+
+            expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
+            expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
+          }))
+        })
+
+        it('converts NATIVE to TOKEN via exchanges as part of the payment', async ()=>{
+        })
+
+        it('converts TOKEN to TOKEN via exchanges as part of the payment', async ()=>{
+        })
+
       })
     })
   })
