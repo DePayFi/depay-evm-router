@@ -28,7 +28,7 @@
   "devDependencies": {
     "@depay/web3-blockchains": "^8.4.0",
     "@depay/web3-client-evm": "^10.16.3",
-    "@depay/web3-exchanges-evm": "^13.2.0",
+    "@depay/web3-exchanges-evm": "^13.2.1",
     "@depay/web3-tokens-evm": "^10.1.0",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
@@ -36,6 +36,7 @@
     "@typechain/ethers-v5": "^4.0.0",
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
+    "@types/sinon-chai": "^3.2.9",
     "chai": "^4.2.0",
     "decimal.js": "^10.2.1",
     "dotenv": "^16.3.0",

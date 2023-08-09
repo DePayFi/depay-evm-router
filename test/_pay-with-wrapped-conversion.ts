@@ -28,7 +28,7 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter({ WRAPPED })
+        router = await deployRouter()
       })
 
       it('approves WRAPPER contract as exchange to convert payments', async ()=> {

@@ -333,10 +333,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.16.3.tgz#63f736fe8df83b62d2c7d0c9777ccbd7981ffc49"
   integrity sha512-q1KmFScKgqCeLtg5v3xaQ12l3xNgyKEIgGBCfPXGbsK3kBaG6actZbAugIsK+GzEGwAetKYoM+MmK5P8bt5r6Q==
 
-"@depay/web3-exchanges-evm@^13.2.0":
-  version "13.2.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.0.tgz#423b8daffea4a3bd5e819dca7b6863f0162b072b"
-  integrity sha512-UN1pYSbaHL1S9JbwI75/TkERA0Z5zEt4K5cw9b0Cm9XeDLy5I0fwUfaUSYzJINQLBg8QnZSY87yMfKVgrnMk1g==
+"@depay/web3-exchanges-evm@^13.2.1":
+  version "13.2.1"
+  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.1.tgz#029fd33d7de735b022c5f7c038c3f07893d706f3"
+  integrity sha512-RPjLqKVNQCC+CoIF2GNVtmtfmmqUpt9HNA3G+o+YcZ6xlRsOoEMFlpH2aG5a7LM4roi/p6wFo0NpIfrsbmywJw==
 
 "@depay/web3-tokens-evm@^10.1.0":
   version "10.1.0"
@@ -1541,7 +1541,7 @@
     "@types/node" "*"
     "@types/responselike" "^1.0.0"
 
-"@types/chai@^4.2.6":
+"@types/chai@*", "@types/chai@^4.2.6":
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.5.tgz#ae69bcbb1bebb68c4ac0b11e9d8ed04526b3562b"
   integrity sha512-mEo1sAde+UCE6b2hxn332f1g1E8WfYRu6p5SvTKr2ZKC1f7gFJXk4h5PyGP9Dt6gCaG8y8XhwnXWC6Iy2cmBng==
@@ -1664,6 +1664,26 @@
   integrity sha512-QMg+9v0bbNJ2peLuHRWxzmy0HRJIG6gFZNhaRSp7S3ggSbCCxiqQB2/ybvhXyhHOCequpNkrx7OavNhrWOsW0A==
   dependencies:
     "@types/node" "*"
+
+"@types/sinon-chai@^3.2.9":
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/@types/sinon-chai/-/sinon-chai-3.2.9.tgz#71feb938574bbadcb176c68e5ff1a6014c5e69d4"
+  integrity sha512-/19t63pFYU0ikrdbXKBWj9PCdnKyTd0Qkz0X91Ta081cYsq90OxYdcWwK/dwEoDa6dtXgj2HJfmzgq+QZTHdmQ==
+  dependencies:
+    "@types/chai" "*"
+    "@types/sinon" "*"
+
+"@types/sinon@*":
+  version "10.0.16"
+  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-10.0.16.tgz#4bf10313bd9aa8eef1e50ec9f4decd3dd455b4d3"
+  integrity sha512-j2Du5SYpXZjJVJtXBokASpPRj+e2z+VUhCPHmM6WMfe3dpHu6iVKJMU6AiBcMp/XTAYnEj6Wc1trJUWwZ0QaAQ==
+  dependencies:
+    "@types/sinonjs__fake-timers" "*"
+
+"@types/sinonjs__fake-timers@*":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.2.tgz#bf2e02a3dbd4aecaf95942ecd99b7402e03fad5e"
+  integrity sha512-9GcLXF0/v3t80caGs5p2rRfkB+a8VBGLJZVih6CNFkx8IZ994wiKKLSRs9nuFwk1HevWs/1mnUmkApGrSGsShA==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"

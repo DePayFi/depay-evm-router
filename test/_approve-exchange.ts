@@ -25,7 +25,7 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter({ WRAPPED })
+        router = await deployRouter()
       })
 
       it('only allows the owner to approve exchanges', async ()=> {

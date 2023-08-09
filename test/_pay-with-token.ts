@@ -31,7 +31,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter({ WRAPPED })
+        router = await deployRouter()
       })
 
       it('fails if approval was not granted and amount was not paid in', async ()=> {

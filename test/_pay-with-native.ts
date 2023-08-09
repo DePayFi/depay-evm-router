@@ -25,7 +25,7 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter({ WRAPPED })
+        router = await deployRouter()
       })
 
       it('fails if native amount was not paid in', async ()=> {

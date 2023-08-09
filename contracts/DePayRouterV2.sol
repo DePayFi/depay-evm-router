@@ -13,15 +13,15 @@ contract DePayRouterV2 is Ownable {
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address public constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // Address of the WRAPPED native token (e.g. WETH, WBNB, etc.)
-  address public immutable WRAPPED;
+  // Address of the FORWARDER contract
+  address public immutable FORWARDER;
 
   // List of approved exchanges for conversion
   mapping (address => bool) public exchanges;
 
-  // Pass the address to the WRAPPED token standard upon initialization
-  constructor (address _WRAPPED) {
-    WRAPPED = _WRAPPED;
+  // Pass the forwarder contract address upon initialization
+  constructor (address _FORWARDER) {
+    FORWARDER = _FORWARDER;
   }
 
   // Accepts NATIVE payments, which is required in order to swap from and to NATIVE, especially unwrapping as part of conversions
@@ -68,7 +68,7 @@ contract DePayRouterV2 is Ownable {
     //    0: exchangeCallData,
     //    1: receiverCallData
     // ]
-    bytes[] calldata calls,
+    bytes[] calldata callData,
     
     // timestamp after which the payment will be declined
     uint256 deadline
@@ -106,14 +106,14 @@ contract DePayRouterV2 is Ownable {
       require(exchanges[addresses[1]], 'DePay: Exchange has not been approved!');
       bool success;
       if(addresses[0] == NATIVE) {
-        (success,) = addresses[1].call{value: msg.value}(calls[0]);
+        (success,) = addresses[1].call{value: msg.value}(callData[0]);
       } else {
         if(types[0] == 1) { // pull
           IERC20(addresses[0]).safeApprove(addresses[1], amounts[0]);
         } else if(types[0] == 2) { // push
           IERC20(addresses[0]).safeTransfer(addresses[1], amounts[0]);
         }
-        (success,) = addresses[1].call(calls[0]);
+        (success,) = addresses[1].call(callData[0]);
       }
       require(success, "DePay: exchange call failed!");
     }
