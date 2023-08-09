@@ -323,20 +323,20 @@
     "@chainsafe/persistent-merkle-tree" "^0.4.2"
     case "^1.6.3"
 
-"@depay/web3-blockchains@^8.4.0":
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-8.4.0.tgz#062f4bef96b1f2824c6f25ce44fd79bc4368f5f2"
-  integrity sha512-CcUi1t9nr7XKVKAaysFayf2StG5Vwwxw9vEwQukZruYxROg0smVFM+xaaAY3i7P0JcGUkqYXu9P+X5r4ixE3Qw==
+"@depay/web3-blockchains@^8.4.2":
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-8.4.2.tgz#3f5f072f337acc334e5f0f097627dd85af85848c"
+  integrity sha512-kvzTy0R7zBqL6w2CSRGm3SO1K9QuYpuOCa0BTMt4O7ATqxFg+uXor3uWjS8oWvlQwOdqLl8WT7aaKT8OD63KXw==
 
 "@depay/web3-client-evm@^10.16.3":
   version "10.16.3"
   resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.16.3.tgz#63f736fe8df83b62d2c7d0c9777ccbd7981ffc49"
   integrity sha512-q1KmFScKgqCeLtg5v3xaQ12l3xNgyKEIgGBCfPXGbsK3kBaG6actZbAugIsK+GzEGwAetKYoM+MmK5P8bt5r6Q==
 
-"@depay/web3-exchanges-evm@^13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.1.tgz#029fd33d7de735b022c5f7c038c3f07893d706f3"
-  integrity sha512-RPjLqKVNQCC+CoIF2GNVtmtfmmqUpt9HNA3G+o+YcZ6xlRsOoEMFlpH2aG5a7LM4roi/p6wFo0NpIfrsbmywJw==
+"@depay/web3-exchanges-evm@^13.2.2":
+  version "13.2.2"
+  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.2.tgz#7034936a057f3faf65bdd4803ea6e5b70f19056e"
+  integrity sha512-n4bingbSmLale60/2v8IanUBeBJGcKD0vtDwrIm5+xfIf64deP3ylH0xmxLKgXKT5Wzy8GaYDhUieZ/zAWZD1g==
 
 "@depay/web3-tokens-evm@^10.1.0":
   version "10.1.0"
