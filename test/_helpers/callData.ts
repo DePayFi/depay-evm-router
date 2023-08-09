@@ -18,13 +18,22 @@ export default ({
   })
   let paramsToEncode
   if(fragment.inputs.length === 1 && fragment.inputs[0].type === 'tuple') {
-    paramsToEncode = [params[fragment.inputs[0].name]]
     contractMethod = method
+    paramsToEncode = [params[fragment.inputs[0].name]]
   } else {
-    paramsToEncode = fragment.inputs.map((input) => {
-      return params[input.name]
-    })
     contractMethod = `${method}(${fragment.inputs.map((input)=>input.type).join(',')})`
+    paramsToEncode = fragment.inputs.map((input) => {
+      if(input.type === 'tuple') {
+        let tuple = {}
+        input.components.forEach((component, index)=>{
+          tuple[component.name] = params[input.name][index]
+        })
+        contractMethod = method
+        return tuple
+      } else {
+        return params[input.name]
+      }
+    })
   }
   return contract.interface.encodeFunctionData(contractMethod, paramsToEncode)
 }
