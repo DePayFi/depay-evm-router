@@ -38,14 +38,26 @@ contract DePayRouterV2 is Ownable {
     uint256 value
   );
 
-  // Perform a payment
-  function pay(IDePayRouterV2.Payment memory payment) external payable returns(bool){
 
+  // Perform a payment (approval granted prior)
+  function pay(IDePayRouterV2.Payment memory payment) external payable returns(bool){
+    uint256 balanceInBefore;
+    uint256 balanceOutBefore;
+
+    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+
+    _performPayment(payment);
+
+    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
+
+    return true;
+  }
+
+  function _validatePreConditions(IDePayRouterV2.Payment memory payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
     // Make sure payment deadline has not been passed, yet
     require(payment.deadline > block.timestamp, "DePay: Payment deadline has passed!");
 
     // Store tokenIn balance prior to payment
-    uint256 balanceInBefore;
     if(payment.tokenInAddress == NATIVE) {
       balanceInBefore = address(this).balance - msg.value;
     } else {
@@ -53,7 +65,6 @@ contract DePayRouterV2 is Ownable {
     }
 
     // Store tokenOut balance prior to payment
-    uint256 balanceOutBefore;
     if(payment.tokenOutAddress == NATIVE) {
       balanceOutBefore = address(this).balance - msg.value;
     } else {
@@ -66,7 +77,9 @@ contract DePayRouterV2 is Ownable {
     } else {
       IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
     }
+  }
 
+  function _performPayment(IDePayRouterV2.Payment memory payment) internal {
     // Perform conversion if required
     if(payment.exchangeAddress != address(0)) {
       _convert(payment);
@@ -79,7 +92,9 @@ contract DePayRouterV2 is Ownable {
     if(payment.feeReceiverAddress != address(0)) {
       _payFee(payment);
     }
+  }
 
+  function _validatePostConditions(IDePayRouterV2.Payment memory payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
       require(address(this).balance >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
@@ -93,8 +108,6 @@ contract DePayRouterV2 is Ownable {
     } else {
       require(IERC20(payment.tokenOutAddress).balanceOf(address(this)) >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
     }
-
-    return true;
   }
 
   function _convert(IDePayRouterV2.Payment memory payment) internal {

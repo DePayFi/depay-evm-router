@@ -28,19 +28,6 @@ The main purpose of this smart contract evolves around the `pay` function.
 
 This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE, WRAPPED to NATIVE, NATIVE to WRAPPED and TOKEN_A to TOKEN_B payments.
 
-## Functionalities
-
-### pay
-
-The main function to route payments.
-
-#### amounts
-
-`amounts`: Amounts passed
-
-```
-```
-
 #### Transfer polyfil
 
 The `DePayRouterV2` emits a `Transfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
