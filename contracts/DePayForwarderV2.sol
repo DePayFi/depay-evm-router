@@ -4,7 +4,6 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "hardhat/console.sol";
 
 contract DePayForwarderV2 is Ownable {
 
@@ -21,19 +20,26 @@ contract DePayForwarderV2 is Ownable {
   function forward(
     uint256 amount,
     address token,
-    uint8 forwardingType,
+    bool push,
     address receiver,
     bytes calldata callData
   ) external payable returns(bool){
 
     bool success;
-    if(forwardingType == 1) { // pull
-      IERC20(token).safeApprove(receiver, amount);
-      // (success,) = receiver.delegateCall(callData);
-    } else if(forwardingType == 2) { // push
-      IERC20(token).safeTransfer(receiver, amount);
+    if(push) {
+      if(token == NATIVE) {
+        (success,) = receiver.call(callData);
+      } else {
+        IERC20(token).safeTransfer(receiver, amount);
+        (success,) = receiver.call(callData);
+      }
+    } else { // pull
+      if(token != NATIVE) {
+        IERC20(token).safeApprove(receiver, amount);
+      }
       (success,) = receiver.call(callData);
     }
+
     require(success, "DePay: forwarding payment to receiver failed!");
 
     return true;

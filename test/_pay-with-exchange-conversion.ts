@@ -1,4 +1,4 @@
-import deployRouter from './_helpers/deployRouter'
+import deploy from './_helpers/deploy'
 import getCallData from './_helpers/callData'
 import impersonate from './_helpers/impersonate'
 import now from './_helpers/now'
@@ -40,45 +40,40 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
         })
 
         it('deploys router successfully', async ()=> {
-          router = await deployRouter()
+          router = await deploy()
         })
 
         it('fails if trying to convert through a not permitted exchange', async ()=>{
 
           await expect(
-            router.connect(fromAccount).pay(
-              [ // amounts
-                1, // amountIn
-                1, // paymentAmount
-                1 // feeAmount
-              ],
-              [ // addresses
-                Web3Blockchains[blockchain].currency.address, // tokenIn
-                Web3Exchanges[exchange.name][blockchain].router.address, // exchangeAddress
-                Web3Blockchains[blockchain].currency.address, // tokenOut
-                wallets[1].address, // paymentReceiver
-                wallets[2].address, // feeReceiver
-              ],
-              [0], // types
-              [ // calls
-                Web3Blockchains[blockchain].zero, // exchangeCall
-              ],
-              deadline, // deadline
-              { value: 1 }
-            )
+            router.connect(fromAccount).pay({
+              amountIn: 1,
+              paymentAmount: 1,
+              feeAmount: 1,
+              tokenInAddress: Web3Blockchains[blockchain].currency.address,
+              exchangeAddress: Web3Exchanges[exchange.name][blockchain].router.address,
+              tokenOutAddress: Web3Blockchains[blockchain].currency.address,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: 0,
+              receiverType: 0,
+              exchangeCallData: ZERO,
+              receiverCallData: ZERO,
+              deadline,
+            },{ value: 1 })
           ).to.be.revertedWith(
             'DePay: Exchange has not been approved!'
           )
         })
 
-        it('approves exchange contract as exchange to convert payments', async ()=> {
+        it('approves exchange contract to enable converting payments', async ()=> {
           await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].router.address)
           if(Web3Exchanges[exchange.name][blockchain].smartRouter) {
             await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].smartRouter.address)
           }
         })
 
-        describe('using permit2', ()=> { // needs to be tested prior to token approvals being stored
+        describe('using permit2', ()=> { // needs to be tested prior to token approvals being stored/tested
           
         })
 
@@ -118,27 +113,21 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
             await expect(
-              router.connect(fromAccount).pay(
-                [ // amounts
-                  route.amountIn, // amountIn
-                  paymentAmountBN, // paymentAmount
-                  feeAmountBN.add(ethers.BigNumber.from("100000000000000000")) // feeAmount
-                ],
-                [ // addresses
-                  route.tokenIn, // tokenIn
-                  transaction.to, // exchangeAddress
-                  route.tokenOut, // tokenOut
-                  wallets[1].address, // paymentReceiver
-                  wallets[2].address, // feeReceiver
-                ],
-                [ // types
-                  exchange.type === 'pull' ? 1 : 2
-                ],
-                [ // calls
-                  callData, // exchangeCall
-                ],
-                deadline, // deadline
-              )
+              router.connect(fromAccount).pay({
+                amountIn: route.amountIn,
+                paymentAmount: paymentAmountBN,
+                feeAmount: feeAmountBN.add(ethers.BigNumber.from("100000000000000000")),
+                tokenInAddress: route.tokenIn,
+                exchangeAddress: transaction.to,
+                tokenOutAddress: route.tokenOut,
+                paymentReceiverAddress: wallets[1].address,
+                feeReceiverAddress: wallets[2].address,
+                exchangeType: exchange.type === 'pull' ? 1 : 2,
+                receiverType: 0,
+                exchangeCallData: callData,
+                receiverCallData: ZERO,
+                deadline,
+              })
             ).to.be.revertedWith(
               'DePay: Insufficient balanceOut after payment!'
             )
@@ -171,27 +160,21 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
-            await router.connect(fromAccount).pay(
-              [ // amounts
-                route.amountIn, // amountIn
-                paymentAmountBN, // paymentAmount
-                feeAmountBN // feeAmount
-              ],
-              [ // addresses
-                route.tokenIn, // tokenIn
-                transaction.to, // exchangeAddress
-                route.tokenOut, // tokenOut
-                wallets[1].address, // paymentReceiver
-                wallets[2].address, // feeReceiver
-              ],
-              [ // types
-                exchange.type === 'pull' ? 1 : 2
-              ],
-              [ // calls
-                callData, // exchangeCall
-              ],
-              deadline, // deadline
-            )
+            await router.connect(fromAccount).pay({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            })
 
             const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
             const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
@@ -227,28 +210,21 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await router.connect(fromAccount).pay(
-              [ // amounts
-                route.amountIn, // amountIn
-                paymentAmountBN, // paymentAmount
-                feeAmountBN // feeAmount
-              ],
-              [ // addresses
-                route.tokenIn, // tokenIn
-                transaction.to, // exchangeAddress
-                route.tokenOut, // tokenOut
-                wallets[1].address, // paymentReceiver
-                wallets[2].address, // feeReceiver
-              ],
-              [ // types
-                exchange.type === 'pull' ? 1 : 2
-              ],
-              [ // calls
-                callData, // exchangeCall
-              ],
-              deadline, // deadline,
-              { value: route.amountIn }
-            )
+            await router.connect(fromAccount).pay({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            }, { value: route.amountIn })
 
             const paymentReceiverBalanceAfter = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceAfter = await toTokenContract.balanceOf(wallets[2].address)
@@ -284,28 +260,21 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await router.connect(fromAccount).pay(
-              [ // amounts
-                route.amountIn, // amountIn
-                paymentAmountBN, // paymentAmount
-                feeAmountBN // feeAmount
-              ],
-              [ // addresses
-                route.tokenIn, // tokenIn
-                transaction.to, // exchangeAddress
-                route.tokenOut, // tokenOut
-                wallets[1].address, // paymentReceiver
-                wallets[2].address, // feeReceiver
-              ],
-              [ // types
-                exchange.type === 'pull' ? 1 : 2
-              ],
-              [ // calls
-                callData, // exchangeCall
-              ],
-              deadline, // deadline,
-              { value: route.amountIn }
-            )
+            await router.connect(fromAccount).pay({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            })
 
             const paymentReceiverBalanceAfter = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceAfter = await toTokenContract.balanceOf(wallets[2].address)

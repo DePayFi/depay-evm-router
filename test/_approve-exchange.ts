@@ -1,4 +1,4 @@
-import deployRouter from './_helpers/deployRouter'
+import deploy from './_helpers/deploy'
 import now from './_helpers/now'
 import Web3Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'hardhat'
@@ -25,7 +25,7 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter()
+        router = await deploy()
       })
 
       it('only allows the owner to approve exchanges', async ()=> {
@@ -47,26 +47,21 @@ export default ({ blockchain })=>{
 
       it('fails if trying to convert through a not-approved exchange', async ()=> {
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              1000000000, // amountIn
-              1000000000, // paymentAmount
-              1 // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              "0x00000000000080C886232E9b7EBBFb942B5987AA", // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              ZERO, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            deadline, // deadline
-            { value: 1000000000 }
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: 1000000000,
+            paymentAmount: 1000000000,
+            feeAmount: 1,
+            tokenInAddress: NATIVE,
+            exchangeAddress: "0x00000000000080C886232E9b7EBBFb942B5987AA",
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
         ).to.be.revertedWith(
           'DePay: Exchange has not been approved!'
         )

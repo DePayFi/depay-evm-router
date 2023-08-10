@@ -1,5 +1,5 @@
 import Web3Blockchains from '@depay/web3-blockchains'
-import deployRouter from './_helpers/deployRouter'
+import deploy from './_helpers/deploy'
 import now from './_helpers/now'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
@@ -25,30 +25,26 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter()
+        router = await deploy()
       })
 
       it('fails if native amount was not paid in', async ()=> {
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              1000000000, // amountIn
-              1000000000, // paymentAmount
-              0 // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              ZERO, // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              ZERO, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            deadline, // deadline
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: 1000000000,
+            paymentAmount: 1000000000,
+            feeAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 0 })
         ).to.be.revertedWith(
           'DePay: Insufficient amount paid in!'
         )
@@ -61,26 +57,21 @@ export default ({ blockchain })=>{
         const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
 
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              amountIn, // amountIn
-              paymentAmount, // paymentAmount
-              0 // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              ZERO, // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              ZERO, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            deadline, // deadline
-            { value: 1000000000 }
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
         ).to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
@@ -97,26 +88,21 @@ export default ({ blockchain })=>{
         const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              amountIn, // amountIn
-              paymentAmount, // paymentAmount
-              feeAmount // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              ZERO, // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              wallets[2].address, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            deadline, // deadline
-            { value: 1000000000 }
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
         )
         .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
         .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
@@ -131,25 +117,21 @@ export default ({ blockchain })=>{
       it('fails if balanceIn is less after payment', async()=>{
         await wallets[0].sendTransaction({ to: router.address, value: 1000000000 });
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              0, // amountIn
-              1000000000, // paymentAmount
-              0 // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              ZERO, // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              ZERO, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            deadline, // deadline
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: 0,
+            paymentAmount: 1000000000,
+            feeAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 0 })
         ).to.be.revertedWith(
           'DePay: Insufficient balanceIn after payment!'
         )

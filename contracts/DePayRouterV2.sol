@@ -4,7 +4,7 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "hardhat/console.sol";
+import './interfaces/IDePayForwarderV2.sol';
 
 contract DePayRouterV2 is Ownable {
 
@@ -13,14 +13,17 @@ contract DePayRouterV2 is Ownable {
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address public constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // Address of the FORWARDER contract
+  // Address of PERMIT2
+  address public immutable PERMIT2;
+
+  // Address of the payment FORWARDER contract
   address public immutable FORWARDER;
 
   // List of approved exchanges for conversion
   mapping (address => bool) public exchanges;
 
-  // Pass the forwarder contract address upon initialization
-  constructor (address _FORWARDER) {
+  constructor (address _PERMIT2, address _FORWARDER) {
+    PERMIT2 = _PERMIT2;
     FORWARDER = _FORWARDER;
   }
 
@@ -34,125 +37,137 @@ contract DePayRouterV2 is Ownable {
     uint256 value
   );
 
-  // perform a payment
-  function pay(
+  // Payment structure
+  struct Payment {
+    uint256 amountIn;
+    uint256 paymentAmount;
+    uint256 feeAmount;
+    address tokenInAddress;
+    address exchangeAddress;
+    address tokenOutAddress;
+    address paymentReceiverAddress;
+    address feeReceiverAddress;
+    uint8 exchangeType;
+      // 0: do nothing e.g. WETH
+      // 1: pull e.g. Uniswap v2
+      // 2: push e.g. Uniswap v3
+    uint8 receiverType;
+      // 0: do not call receiver
+      // 1: pull payment from receiver
+      // 2: push payment to receiver
+    bytes exchangeCallData;
+    bytes receiverCallData;
+    uint256 deadline;
+  }
 
-    // [
-    //    0: amountIn,
-    //    1: paymentAmount,
-    //    2: feeAmount
-    // ]
-    uint256[] calldata amounts, 
-    
-    // [
-    //    0: tokenInAddress,
-    //    1: exchangeAddress,
-    //    2: tokenOutAddress,
-    //    3: paymentReceiverAddress,
-    //    4: feeAddress
-    // ]
-    address[] calldata addresses,
-    
-    // pull requires approve, push is pushing the token prior calling
-    // [
-    //    0: exchangeType,
-    //    1: receiverType
-    // ] 
-    //    type
-    //      0: do nothing
-    //      1: pull
-    //      2: push
-    uint8[] calldata types,
-    
-    // [
-    //    0: exchangeCallData,
-    //    1: receiverCallData
-    // ]
-    bytes[] calldata callData,
-    
-    // timestamp after which the payment will be declined
-    uint256 deadline
-
-  ) external payable returns(bool){
+  // Perform a payment
+  function pay(Payment memory payment) external payable returns(bool){
 
     // Make sure payment deadline has not been passed, yet
-    require(deadline > block.timestamp, "DePay: Payment deadline has passed!");
+    require(payment.deadline > block.timestamp, "DePay: Payment deadline has passed!");
 
     // Store tokenIn balance prior to payment
     uint256 balanceInBefore;
-    if(addresses[0] == NATIVE) {
+    if(payment.tokenInAddress == NATIVE) {
       balanceInBefore = address(this).balance - msg.value;
     } else {
-      balanceInBefore = IERC20(addresses[0]).balanceOf(address(this));
+      balanceInBefore = IERC20(payment.tokenInAddress).balanceOf(address(this));
     }
 
     // Store tokenOut balance prior to payment
     uint256 balanceOutBefore;
-    if(addresses[2] == NATIVE) {
+    if(payment.tokenOutAddress == NATIVE) {
       balanceOutBefore = address(this).balance - msg.value;
     } else {
-      balanceOutBefore = IERC20(addresses[2]).balanceOf(address(this));
+      balanceOutBefore = IERC20(payment.tokenOutAddress).balanceOf(address(this));
     }
 
     // Make sure that the sender has paid in the correct token & amount
-    if(addresses[0] == NATIVE) {
-      require(msg.value >= amounts[0], 'DePay: Insufficient amount paid in!');
+    if(payment.tokenInAddress == NATIVE) {
+      require(msg.value >= payment.amountIn, 'DePay: Insufficient amount paid in!');
     } else {
-      IERC20(addresses[0]).safeTransferFrom(msg.sender, address(this), amounts[0]);
+      IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
     }
 
     // Perform conversion if required
-    if(addresses[1] != address(0)) {
-      require(exchanges[addresses[1]], 'DePay: Exchange has not been approved!');
-      bool success;
-      if(addresses[0] == NATIVE) {
-        (success,) = addresses[1].call{value: msg.value}(callData[0]);
-      } else {
-        if(types[0] == 1) { // pull
-          IERC20(addresses[0]).safeApprove(addresses[1], amounts[0]);
-        } else if(types[0] == 2) { // push
-          IERC20(addresses[0]).safeTransfer(addresses[1], amounts[0]);
-        }
-        (success,) = addresses[1].call(callData[0]);
-      }
-      require(success, "DePay: exchange call failed!");
-    }
+    if(payment.exchangeAddress != address(0)) { _convert(payment); }
 
-    // Pay paymentReceiver
-    if(addresses[2] == NATIVE) {
-      (bool success,) = addresses[3].call{value: amounts[1]}(new bytes(0));
-      require(success, 'DePay: NATIVE payment receiver pay out failed!');
-      emit Transfer(msg.sender, addresses[3], amounts[1]);
-    } else {
-      IERC20(addresses[2]).safeTransfer(addresses[3], amounts[1]);
-    }
-
-    // Pay feeReceiver
-    if(addresses[4] != address(0)) {
-      if(addresses[2] == NATIVE) {
-        (bool success,) = addresses[4].call{value: amounts[2]}(new bytes(0));
-        require(success, 'DePay: NATIVE fee receiver pay out failed!');
-        emit Transfer(msg.sender, addresses[4], amounts[2]);
-      } else {
-        IERC20(addresses[2]).safeTransfer(addresses[4], amounts[2]);
-      }
-    }
+    // Perform payment to paymentReceiver and feereceiver
+    _payReceiver(payment);
+    _payFees(payment);
 
     // Ensure balances of tokenIn remained
-    if(addresses[0] == NATIVE) {
+    if(payment.tokenInAddress == NATIVE) {
       require(address(this).balance >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
     } else {
-      require(IERC20(addresses[0]).balanceOf(address(this)) >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
+      require(IERC20(payment.tokenInAddress).balanceOf(address(this)) >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
     }
 
     // Ensure balances of tokenOut remained
-    if(addresses[2] == NATIVE) {
+    if(payment.tokenOutAddress == NATIVE) {
       require(address(this).balance >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
     } else {
-      require(IERC20(addresses[2]).balanceOf(address(this)) >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
+      require(IERC20(payment.tokenOutAddress).balanceOf(address(this)) >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
     }
 
     return true;
+  }
+
+  function _convert(Payment memory payment) internal {
+    require(exchanges[payment.exchangeAddress], 'DePay: Exchange has not been approved!');
+    bool success;
+    if(payment.tokenInAddress == NATIVE) {
+      (success,) = payment.exchangeAddress.call{value: msg.value}(payment.exchangeCallData);
+    } else {
+      if(payment.exchangeType == 1) { // pull
+        IERC20(payment.tokenInAddress).safeApprove(payment.exchangeAddress, payment.amountIn);
+      } else if(payment.exchangeType == 2) { // push
+        IERC20(payment.tokenInAddress).safeTransfer(payment.exchangeAddress, payment.amountIn);
+      }
+      (success,) = payment.exchangeAddress.call(payment.exchangeCallData);
+    }
+    require(success, "DePay: exchange call failed!");
+  }
+
+  function _payReceiver(Payment memory payment) internal {
+    if(payment.receiverType != 0) { // call receiver contract
+
+      // if(addresses[2] == NATIVE) {
+      //   bool success = IDePayForwarderV2(FORWARDER).forward{value: amounts[1]}(
+      //     amounts[1], // amount
+      //     addresses[2], // token
+      //     types[1] == 2, // push
+      //     addresses[3], // receiver
+      //     callData[1] // callData
+      //   );
+      //   require(success, 'DePay: NATIVE payment receiver pay out to contract failed!');
+      //   emit Transfer(msg.sender, addresses[3], amounts[1]);
+      // } else {
+
+      // }
+
+    } else { // just send payment to address
+
+      if(payment.tokenOutAddress == NATIVE) {
+        (bool success,) = payment.paymentReceiverAddress.call{value: payment.paymentAmount}(new bytes(0));
+        require(success, 'DePay: NATIVE payment receiver pay out failed!');
+        emit Transfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
+      } else {
+        IERC20(payment.tokenOutAddress).safeTransfer(payment.paymentReceiverAddress, payment.paymentAmount);
+      }
+    }
+  }
+
+  function _payFees(Payment memory payment) internal {
+    if(payment.feeReceiverAddress != address(0)) {
+      if(payment.tokenOutAddress == NATIVE) {
+        (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
+        require(success, 'DePay: NATIVE fee receiver pay out failed!');
+        emit Transfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
+      } else {
+        IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);
+      }
+    }
   }
 
   // Event emitted if new exchange has been approved
@@ -165,29 +180,5 @@ contract DePayRouterV2 is Ownable {
     exchanges[exchange] = true;
     emit Approved(exchange);
     return true;
-  }
-
-  // Decodes call (to exchange or receiver contract) and determines type (push vs. pull)
-  function decodeCall(bytes memory encoded) internal pure returns (bool pull, bytes memory callData) {
-    assembly {
-      // Load pull
-      pull := iszero(iszero(byte(31, mload(encoded))))
-
-      // Load the length of callData, which is found at position encoded + 32.
-      let callDataLength := mload(add(encoded, 32))
-
-      // Allocate memory for callData.
-      callData := mload(0x40)  // fetch the free memory pointer
-      mstore(0x40, add(callData, add(callDataLength, 0x20)))  // adjust the free memory pointer
-
-      // Store the length of callData.
-      mstore(callData, callDataLength)
-
-      // Copy callData.
-      let callDataStart := add(encoded, 0x40)  // start of 'bytes' data
-      for { let end := add(callDataStart, callDataLength) } lt(callDataStart, end) { callDataStart := add(callDataStart, 0x20) } {
-        mstore(add(callData, sub(callDataStart, add(encoded, 0x40))), mload(callDataStart))
-      }
-    }
   }
 }

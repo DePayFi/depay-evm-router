@@ -1,5 +1,5 @@
 import Web3Blockchains from '@depay/web3-blockchains'
-import deployRouter from './_helpers/deployRouter'
+import deploy from './_helpers/deploy'
 import now from './_helpers/now'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
@@ -25,31 +25,27 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter()
+        router = await deploy()
       })
 
       it('fails if payment deadline has passed', async ()=> {
+
         await expect(
-          router.connect(wallets[0]).pay(
-            [ // amounts
-              1000000000, // amountIn
-              1000000000, // paymentAmount
-              1 // feeAmount
-            ],
-            [ // addresses
-              NATIVE, // tokenIn
-              ZERO, // exchangeAddress
-              NATIVE, // tokenOut
-              wallets[1].address, // paymentReceiver
-              ZERO, // feeReceiver
-            ],
-            [], // types
-            [ // calls
-              ZERO, // exchangeCall
-            ],
-            0, // deadline
-            { value: 1000000000 }
-          )
+          router.connect(wallets[0]).pay({
+            amountIn: 1000000000,
+            paymentAmount: 1000000000,
+            feeAmount: 1,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline: 0,
+          }, { value: 1000000000 })
         ).to.be.revertedWith(
           'DePay: Payment deadline has passed!'
         )

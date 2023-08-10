@@ -1,4 +1,4 @@
-import deployRouter from './_helpers/deployRouter'
+import deploy from './_helpers/deploy'
 import now from './_helpers/now'
 import Token from '@depay/web3-tokens-evm'
 import Web3Blockchains from '@depay/web3-blockchains'
@@ -28,7 +28,7 @@ export default ({ blockchain })=>{
       })
 
       it('deploys router successfully', async ()=> {
-        router = await deployRouter()
+        router = await deploy()
       })
 
       it('approves WRAPPER contract as exchange to convert payments', async ()=> {
@@ -45,28 +45,21 @@ export default ({ blockchain })=>{
         const paymentReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[2].address)
 
-        await router.connect(wallets[0]).pay(
-          [ // amounts
-            amountIn, // amountIn
-            paymentAmount, // paymentAmount
-            feeAmount // feeAmount
-          ],
-          [ // addresses
-            NATIVE, // tokenIn
-            WRAPPED, // exchangeAddress
-            WRAPPED, // tokenOut
-            wallets[1].address, // paymentReceiver
-            wallets[2].address, // feeReceiver
-          ],
-          [ // types
-            0
-          ],
-          [ // calls
-            callData, // exchangeCall
-          ],
-          deadline, // deadline
-          { value: 1000000000 }
-        )
+        await router.connect(wallets[0]).pay({
+          amountIn: amountIn,
+          paymentAmount: paymentAmount,
+          feeAmount: feeAmount,
+          tokenInAddress: NATIVE,
+          exchangeAddress: WRAPPED,
+          tokenOutAddress: WRAPPED,
+          paymentReceiverAddress: wallets[1].address,
+          feeReceiverAddress: wallets[2].address,
+          exchangeType: 0,
+          receiverType: 0,
+          exchangeCallData: callData,
+          receiverCallData: ZERO,
+          deadline,
+        }, { value: 1000000000 })
 
         const paymentReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[2].address)
@@ -89,27 +82,21 @@ export default ({ blockchain })=>{
         await wrapperContract.connect(wallets[0]).deposit({ value: amountIn })
         await wrapperContract.connect(wallets[0]).approve(router.address, amountIn)
 
-        await router.connect(wallets[0]).pay(
-          [ // amounts
-            amountIn, // amountIn
-            paymentAmount, // paymentAmount
-            feeAmount // feeAmount
-          ],
-          [ // addresses
-            WRAPPED, // tokenIn
-            WRAPPED, // exchangeAddress
-            NATIVE, // tokenOut
-            wallets[1].address, // paymentReceiver
-            wallets[2].address, // feeReceiver
-          ],
-          [ // types
-            0
-          ],
-          [ // calls
-            callData, // exchangeCall
-          ],
-          deadline, // deadline
-        )
+        await router.connect(wallets[0]).pay({
+          amountIn: amountIn,
+          paymentAmount: paymentAmount,
+          feeAmount: feeAmount,
+          tokenInAddress: WRAPPED,
+          exchangeAddress: WRAPPED,
+          tokenOutAddress: NATIVE,
+          paymentReceiverAddress: wallets[1].address,
+          feeReceiverAddress: wallets[2].address,
+          exchangeType: 0,
+          receiverType: 0,
+          exchangeCallData: callData,
+          receiverCallData: ZERO,
+          deadline,
+        })
 
         const paymentReceiverBalanceAfter = await await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceAfter = await await provider.getBalance(wallets[2].address)
