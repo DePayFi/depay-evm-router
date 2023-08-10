@@ -73,10 +73,6 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
           }
         })
 
-        describe('using permit2', ()=> { // needs to be tested prior to token approvals being stored/tested
-          
-        })
-
         describe('using token approvals', ()=> {
 
           it('requires token approval for the router', async ()=>{

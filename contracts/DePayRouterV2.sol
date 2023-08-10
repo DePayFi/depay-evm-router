@@ -4,6 +4,7 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import './interfaces/IDePayRouterV2.sol';
 import './interfaces/IDePayForwarderV2.sol';
 
 contract DePayRouterV2 is Ownable {
@@ -37,31 +38,8 @@ contract DePayRouterV2 is Ownable {
     uint256 value
   );
 
-  // Payment structure
-  struct Payment {
-    uint256 amountIn;
-    uint256 paymentAmount;
-    uint256 feeAmount;
-    address tokenInAddress;
-    address exchangeAddress;
-    address tokenOutAddress;
-    address paymentReceiverAddress;
-    address feeReceiverAddress;
-    uint8 exchangeType;
-      // 0: do nothing e.g. WETH
-      // 1: pull e.g. Uniswap v2
-      // 2: push e.g. Uniswap v3
-    uint8 receiverType;
-      // 0: do not call receiver
-      // 1: pull payment from receiver
-      // 2: push payment to receiver
-    bytes exchangeCallData;
-    bytes receiverCallData;
-    uint256 deadline;
-  }
-
   // Perform a payment
-  function pay(Payment memory payment) external payable returns(bool){
+  function pay(IDePayRouterV2.Payment memory payment) external payable returns(bool){
 
     // Make sure payment deadline has not been passed, yet
     require(payment.deadline > block.timestamp, "DePay: Payment deadline has passed!");
@@ -90,11 +68,17 @@ contract DePayRouterV2 is Ownable {
     }
 
     // Perform conversion if required
-    if(payment.exchangeAddress != address(0)) { _convert(payment); }
+    if(payment.exchangeAddress != address(0)) {
+      _convert(payment);
+    }
 
-    // Perform payment to paymentReceiver and feereceiver
+    // Perform payment to paymentReceiver
     _payReceiver(payment);
-    _payFees(payment);
+
+    // Perform payment to feeReceiver
+    if(payment.feeReceiverAddress != address(0)) {
+      _payFee(payment);
+    }
 
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
@@ -113,7 +97,7 @@ contract DePayRouterV2 is Ownable {
     return true;
   }
 
-  function _convert(Payment memory payment) internal {
+  function _convert(IDePayRouterV2.Payment memory payment) internal {
     require(exchanges[payment.exchangeAddress], 'DePay: Exchange has not been approved!');
     bool success;
     if(payment.tokenInAddress == NATIVE) {
@@ -129,22 +113,20 @@ contract DePayRouterV2 is Ownable {
     require(success, "DePay: exchange call failed!");
   }
 
-  function _payReceiver(Payment memory payment) internal {
+  function _payReceiver(IDePayRouterV2.Payment memory payment) internal {
     if(payment.receiverType != 0) { // call receiver contract
 
-      // if(addresses[2] == NATIVE) {
-      //   bool success = IDePayForwarderV2(FORWARDER).forward{value: amounts[1]}(
-      //     amounts[1], // amount
-      //     addresses[2], // token
-      //     types[1] == 2, // push
-      //     addresses[3], // receiver
-      //     callData[1] // callData
-      //   );
-      //   require(success, 'DePay: NATIVE payment receiver pay out to contract failed!');
-      //   emit Transfer(msg.sender, addresses[3], amounts[1]);
-      // } else {
-
-      // }
+      {
+        bool success;
+        if(payment.tokenOutAddress == NATIVE) {
+          success = IDePayForwarderV2(FORWARDER).forward{value: payment.paymentAmount}(payment);
+          emit Transfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
+        } else {
+          IERC20(payment.tokenOutAddress).safeTransfer(FORWARDER, payment.paymentAmount);
+          success = IDePayForwarderV2(FORWARDER).forward(payment);
+        }
+        require(success, 'DePay: Forwarding payment to contract failed!');
+      }
 
     } else { // just send payment to address
 
@@ -158,15 +140,13 @@ contract DePayRouterV2 is Ownable {
     }
   }
 
-  function _payFees(Payment memory payment) internal {
-    if(payment.feeReceiverAddress != address(0)) {
-      if(payment.tokenOutAddress == NATIVE) {
-        (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
-        require(success, 'DePay: NATIVE fee receiver pay out failed!');
-        emit Transfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
-      } else {
-        IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);
-      }
+  function _payFee(IDePayRouterV2.Payment memory payment) internal {
+    if(payment.tokenOutAddress == NATIVE) {
+      (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
+      require(success, 'DePay: NATIVE fee receiver pay out failed!');
+      emit Transfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
+    } else {
+      IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);
     }
   }
 
