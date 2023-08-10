@@ -32,7 +32,7 @@ export default ({ blockchain })=>{
       })
 
       it('approves WRAPPER contract as exchange to convert payments', async ()=> {
-        await router.connect(wallets[0]).approve(WRAPPED)
+        await router.connect(wallets[0]).enable(WRAPPED, true)
       })
 
       it('wraps NATIVE to WRAPPED and pays out WRAPPED', async ()=>{

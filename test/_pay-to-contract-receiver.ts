@@ -165,9 +165,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
       it('pays NATIVE->TOKEN into the receiver contract (pull) after conversion', async ()=> {
 
-        await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].router.address)
+        await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].router.address, true)
         if(Web3Exchanges[exchange.name][blockchain].smartRouter) {
-          await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].smartRouter.address)
+          await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].smartRouter.address, true)
         }
 
         const paymentAmount = 9

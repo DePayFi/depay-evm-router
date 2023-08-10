@@ -67,9 +67,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
         })
 
         it('approves exchange contract to enable converting payments', async ()=> {
-          await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].router.address)
+          await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].router.address, true)
           if(Web3Exchanges[exchange.name][blockchain].smartRouter) {
-            await router.connect(wallets[0]).approve(Web3Exchanges[exchange.name][blockchain].smartRouter.address)
+            await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].smartRouter.address, true)
           }
         })
 

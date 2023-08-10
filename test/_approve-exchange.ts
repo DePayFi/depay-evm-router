@@ -13,7 +13,7 @@ export default ({ blockchain })=>{
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
-    describe(`approve exchange`, ()=> {
+    describe(`approve/disapprove exchange`, ()=> {
 
       let wallets
       let router
@@ -30,8 +30,8 @@ export default ({ blockchain })=>{
 
       it('only allows the owner to approve exchanges', async ()=> {
         await expect(
-          router.connect(wallets[0]).approve(WRAPPED)
-        ).to.emit(router, 'Approved').withArgs(WRAPPED)
+          router.connect(wallets[0]).enable(WRAPPED, true)
+        ).to.emit(router, 'Enabled').withArgs(WRAPPED)
 
         let isApproved = await router.connect(wallets[0]).exchanges(WRAPPED)
         expect(isApproved).to.eq(true)
@@ -39,7 +39,7 @@ export default ({ blockchain })=>{
 
       it('does not allow others to approve exchanges', async ()=> {
         await expect(
-          router.connect(wallets[1]).approve(WRAPPED)
+          router.connect(wallets[1]).enable(WRAPPED, true)
         ).to.be.revertedWith(
           'Ownable: caller is not the owner'
         )
@@ -65,6 +65,23 @@ export default ({ blockchain })=>{
         ).to.be.revertedWith(
           'DePay: Exchange has not been approved!'
         )
+      })
+
+      it('does not allow others to disapprove exchanges', async ()=> {
+        await expect(
+          router.connect(wallets[1]).enable(WRAPPED, false)
+        ).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
+      })
+
+      it('only allows the owner to disapprove exchanges', async ()=> {
+        await expect(
+          router.connect(wallets[0]).enable(WRAPPED, false)
+        ).to.emit(router, 'Disabled').withArgs(WRAPPED)
+
+        let isApproved = await router.connect(wallets[0]).exchanges(WRAPPED)
+        expect(isApproved).to.eq(false)
       })
     })
   })

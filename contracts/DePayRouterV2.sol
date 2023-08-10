@@ -150,15 +150,24 @@ contract DePayRouterV2 is Ownable {
     }
   }
 
-  // Event emitted if new exchange has been approved
-  event Approved(
+  // Event emitted if new exchange has been enabled
+  event Enabled(
     address indexed exchange
   );
 
-  // Approves exchange
-  function approve(address exchange) external onlyOwner returns(bool) {
-    exchanges[exchange] = true;
-    emit Approved(exchange);
+  // Event emitted if an exchange has been disabled
+  event Disabled(
+    address indexed exchange
+  );
+
+  // Enable/Disable an exchange
+  function enable(address exchange, bool enabled) external onlyOwner returns(bool) {
+    exchanges[exchange] = enabled;
+    if(enabled) {
+      emit Enabled(exchange);
+    } else {
+      emit Disabled(exchange);
+    }
     return true;
   }
 }

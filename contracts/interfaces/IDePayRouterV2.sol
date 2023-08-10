@@ -22,10 +22,14 @@ interface IDePayRouterV2 {
 
   function pay(Payment memory payment) external payable returns(bool);
 
-  event Approved(
+  event Enabled(
     address indexed exchange
   );
 
-  function approve(address exchange) external returns(bool);
+  event Disabled(
+    address indexed exchange
+  );
+
+  function enable(address exchange, bool enabled) external returns(bool);
 
 }
