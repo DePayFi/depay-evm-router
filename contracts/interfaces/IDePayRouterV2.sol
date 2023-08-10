@@ -32,4 +32,6 @@ interface IDePayRouterV2 {
 
   function enable(address exchange, bool enabled) external returns(bool);
 
+  function withdraw(address token, uint amount) external returns(bool);
+
 }

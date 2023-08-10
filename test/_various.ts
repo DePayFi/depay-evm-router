@@ -1,5 +1,6 @@
 import deploy from './_helpers/deploy'
 import now from './_helpers/now'
+import Token from '@depay/web3-tokens-evm'
 import Web3Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
@@ -13,7 +14,7 @@ export default ({ blockchain })=>{
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
-    describe(`approve/disapprove exchange`, ()=> {
+    describe(`various other router functionalities`, ()=> {
 
       let wallets
       let router
@@ -82,6 +83,51 @@ export default ({ blockchain })=>{
 
         let isApproved = await router.connect(wallets[0]).exchanges(WRAPPED)
         expect(isApproved).to.eq(false)
+      })
+
+      it('does not allow others to withdraw stuck NATIVE tokens', async ()=> {
+        await wallets[0].sendTransaction({ to: router.address, value: 1000 })
+        await expect(
+          router.connect(wallets[1]).withdraw(NATIVE, 1000)
+        ).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
+      })
+
+      it('only allows the owner to approve exchanges', async ()=> {
+        const amountBN = ethers.BigNumber.from('100000000000000')
+        await wallets[0].sendTransaction({ to: router.address, value: amountBN })
+        const balanceBefore = await provider.getBalance(wallets[0].address)
+        await router.connect(wallets[0]).withdraw(NATIVE, amountBN)
+        const balanceAfter = await provider.getBalance(wallets[0].address)
+        expect(balanceAfter > balanceBefore).to.eq(true)
+      })
+
+      it('allows the owner to withdraw stuck TOKENS', async ()=> {
+
+        const amountBN = ethers.BigNumber.from('100000000000000')
+        const token = new ethers.Contract(WRAPPED, Token[blockchain].DEFAULT, wallets[0])
+        await wallets[0].sendTransaction({ to: WRAPPED, value: amountBN })
+        await token.transfer(router.address, amountBN)
+
+        const balanceBefore = await token.balanceOf(wallets[0].address)
+        await router.connect(wallets[0]).withdraw(WRAPPED, amountBN)
+        const balanceAfter = await token.balanceOf(wallets[0].address)
+        expect(balanceAfter).to.eq(balanceBefore.add(amountBN))
+      })
+
+      it('does not allow others to withdraw stuck TOKENS', async ()=> {
+
+        const amountBN = ethers.BigNumber.from('100000000000000')
+        const token = new ethers.Contract(WRAPPED, Token[blockchain].DEFAULT, wallets[0])
+        await wallets[0].sendTransaction({ to: WRAPPED, value: amountBN })
+        await token.transfer(router.address, amountBN)
+
+        await expect(
+          router.connect(wallets[1]).withdraw(WRAPPED, amountBN)
+        ).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
       })
     })
   })

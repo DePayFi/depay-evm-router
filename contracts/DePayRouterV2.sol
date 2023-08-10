@@ -170,4 +170,18 @@ contract DePayRouterV2 is Ownable {
     }
     return true;
   }
+
+  // Allows to withdraw accidentally sent tokens.
+  function withdraw(
+    address token,
+    uint amount
+  ) external onlyOwner returns(bool) {
+    if(token == NATIVE) {
+      (bool success,) = address(msg.sender).call{value: amount}(new bytes(0));
+      require(success, 'DePay: withdraw failed!');
+    } else {
+      IERC20(token).safeTransfer(msg.sender, amount);
+    }
+    return true;
+  }
 }
