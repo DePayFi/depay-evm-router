@@ -1,4 +1,4 @@
-import deployRouter from './_helpers/deploy/router'
+import deployRouter from './_helpers/deployRouter'
 import getCallData from './_helpers/callData'
 import impersonate from './_helpers/impersonate'
 import now from './_helpers/now'

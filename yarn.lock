@@ -333,10 +333,10 @@
   resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.16.3.tgz#63f736fe8df83b62d2c7d0c9777ccbd7981ffc49"
   integrity sha512-q1KmFScKgqCeLtg5v3xaQ12l3xNgyKEIgGBCfPXGbsK3kBaG6actZbAugIsK+GzEGwAetKYoM+MmK5P8bt5r6Q==
 
-"@depay/web3-exchanges-evm@^13.2.2":
-  version "13.2.2"
-  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.2.tgz#7034936a057f3faf65bdd4803ea6e5b70f19056e"
-  integrity sha512-n4bingbSmLale60/2v8IanUBeBJGcKD0vtDwrIm5+xfIf64deP3ylH0xmxLKgXKT5Wzy8GaYDhUieZ/zAWZD1g==
+"@depay/web3-exchanges-evm@^13.2.3":
+  version "13.2.3"
+  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.3.tgz#2d15850bd49a5c5d4cac4079742134a61bbb31bd"
+  integrity sha512-MuP0MGilPVECI9hXwLt4whk/ul6TVhTjKegFQV+L3s7HdXevxsPC6TDXd1WQP2u+659l7r6btqqPrSDgEDaWaA==
 
 "@depay/web3-tokens-evm@^10.1.0":
   version "10.1.0"

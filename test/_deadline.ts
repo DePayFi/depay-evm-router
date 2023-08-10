@@ -1,5 +1,5 @@
 import Web3Blockchains from '@depay/web3-blockchains'
-import deployRouter from './_helpers/deploy/router'
+import deployRouter from './_helpers/deployRouter'
 import now from './_helpers/now'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'

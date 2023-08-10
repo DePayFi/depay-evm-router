@@ -28,7 +28,7 @@
   "devDependencies": {
     "@depay/web3-blockchains": "^8.4.2",
     "@depay/web3-client-evm": "^10.16.3",
-    "@depay/web3-exchanges-evm": "^13.2.2",
+    "@depay/web3-exchanges-evm": "^13.2.3",
     "@depay/web3-tokens-evm": "^10.1.0",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
