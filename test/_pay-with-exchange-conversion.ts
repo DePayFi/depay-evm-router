@@ -16,6 +16,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
   const provider = ethers.provider
   const FROM_ACCOUNT_ADDRESS = fromAccount
   const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
+  const ESTIMATE = 'estimate((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
@@ -278,6 +279,49 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
             expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
             expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
+          })
+
+          it('provides an estimate method allowing you to estimate the gas required', async ()=>{
+
+            const paymentAmount = 9
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
+            const feeAmount = 1
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
+            const totalAmount = paymentAmount + feeAmount
+
+            const route = await Exchanges[exchange.name].route({
+              blockchain,
+              tokenIn: fromToken,
+              tokenOut: Blockchains[blockchain].currency.address,
+              amountOutMin: totalAmount
+            })
+
+            const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
+            const callData = getCallData({
+              address: transaction.to,
+              api: transaction.api,
+              provider: wallets[0],
+              method: transaction.method,
+              params: transaction.params,
+            })
+
+            const result = await router.connect(fromAccount).callStatic[ESTIMATE]({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            })
+
+            expect(result.gasEstimate.toNumber()>0).to.eq(true)
           })
         })
       })

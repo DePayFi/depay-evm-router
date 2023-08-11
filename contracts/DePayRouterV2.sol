@@ -39,10 +39,10 @@ contract DePayRouterV2 is Ownable {
     uint256 value
   );
 
-  // Perform a payment (tokenIn approval has been granted prior)
-  function pay(
+  // Perform a payment (tokenIn approval has been granted prior), internal
+  function _pay(
     IDePayRouterV2.Payment calldata payment
-  ) external payable returns(bool){
+  ) internal returns(bool){
     uint256 balanceInBefore;
     uint256 balanceOutBefore;
 
@@ -54,12 +54,28 @@ contract DePayRouterV2 is Ownable {
     return true;
   }
 
-  // Perform a payment (including permit2 approval)
+  // Perform a payment (tokenIn approval has been granted prior), external
   function pay(
+    IDePayRouterV2.Payment calldata payment
+  ) external payable returns(bool){
+    return _pay(payment);
+  }
+
+  // Estimate a payment (tokenIn approval has been granted prior)
+  function estimate(
+    IDePayRouterV2.Payment calldata payment
+  ) external payable returns(bool result, uint256 gasEstimate){
+    uint256 gasBefore = gasleft();
+    result = _pay(payment);
+    return (result, gasBefore - gasleft());
+  }
+
+  // Perform a payment (including permit2 approval), internal
+  function _pay(
     IDePayRouterV2.Payment calldata payment,
     IPermit2.PermitSingle memory permitSingle,
     bytes calldata signature
-  ) external payable returns(bool){
+  ) internal returns(bool){
     uint256 balanceInBefore;
     uint256 balanceOutBefore;
 
@@ -70,6 +86,26 @@ contract DePayRouterV2 is Ownable {
     _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
 
     return true;
+  }
+
+  // Perform a payment (including permit2 approval), external
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IPermit2.PermitSingle memory permitSingle,
+    bytes calldata signature
+  ) external payable returns(bool){
+    return _pay(payment, permitSingle, signature);
+  }
+
+  // Estimate a payment (including permit2 approval)
+  function estimate(
+    IDePayRouterV2.Payment calldata payment,
+    IPermit2.PermitSingle memory permitSingle,
+    bytes calldata signature
+  ) external payable returns(bool result, uint256 gasEstimate){
+    uint256 gasBefore = gasleft();
+    result = _pay(payment, permitSingle, signature);
+    return (result, gasBefore - gasleft());
   }
 
   function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
