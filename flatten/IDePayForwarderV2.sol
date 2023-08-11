@@ -88,8 +88,6 @@ pragma solidity >=0.8.18 <0.9.0;
 
 interface IDePayForwarderV2 {
 
-  function ETH() external view returns(address);
-
   function forward(
     IDePayRouterV2.Payment calldata payment
   ) external payable returns(bool);

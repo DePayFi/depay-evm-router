@@ -601,8 +601,6 @@ interface IDePayRouterV2 {
 
 interface IDePayForwarderV2 {
 
-  function ETH() external view returns(address);
-
   function forward(
     IDePayRouterV2.Payment calldata payment
   ) external payable returns(bool);
