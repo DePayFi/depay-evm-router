@@ -2,6 +2,8 @@
 
 ## Deployments
 
+Optimization Level: 800,000
+
 `DePayRouterV2`
 
 Ethereum: [](https://etherscan.io/address/)
