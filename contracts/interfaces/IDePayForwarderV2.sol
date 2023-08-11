@@ -9,7 +9,7 @@ interface IDePayForwarderV2 {
   function ETH() external view returns(address);
 
   function forward(
-    IDePayRouterV2.Payment memory payment
+    IDePayRouterV2.Payment calldata payment
   ) external payable returns(bool);
 
   function toggle(bool stop) external returns(bool);

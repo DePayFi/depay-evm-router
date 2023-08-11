@@ -6,6 +6,7 @@ interface IDePayRouterV2 {
 
   struct Payment {
     uint256 amountIn;
+    bool permit2;
     uint256 paymentAmount;
     uint256 feeAmount;
     address tokenInAddress;
@@ -20,7 +21,7 @@ interface IDePayRouterV2 {
     uint256 deadline;
   }
 
-  function pay(Payment memory payment) external payable returns(bool);
+  function pay(Payment calldata payment) external payable returns(bool);
 
   event Enabled(
     address indexed exchange

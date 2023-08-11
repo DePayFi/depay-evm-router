@@ -3,18 +3,19 @@ import getCallData from './_helpers/callData'
 import impersonate from './_helpers/impersonate'
 import now from './_helpers/now'
 import Token from '@depay/web3-tokens-evm'
-import Web3Blockchains from '@depay/web3-blockchains'
-import Web3Exchanges from '@depay/web3-exchanges-evm'
+import Blockchains from '@depay/web3-blockchains'
+import Exchanges from '@depay/web3-exchanges-evm'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 
 export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
-  const NATIVE = Web3Blockchains[blockchain].currency.address
-  const WRAPPED = Web3Blockchains[blockchain].wrapped.address
-  const ZERO = Web3Blockchains[blockchain].zero
+  const NATIVE = Blockchains[blockchain].currency.address
+  const WRAPPED = Blockchains[blockchain].wrapped.address
+  const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
   const FROM_ACCOUNT_ADDRESS = fromAccount
+  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
@@ -46,13 +47,13 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
         it('fails if trying to convert through a not permitted exchange', async ()=>{
 
           await expect(
-            router.connect(fromAccount).pay({
+            router.connect(fromAccount)[PAY]({
               amountIn: 1,
               paymentAmount: 1,
               feeAmount: 1,
-              tokenInAddress: Web3Blockchains[blockchain].currency.address,
-              exchangeAddress: Web3Exchanges[exchange.name][blockchain].router.address,
-              tokenOutAddress: Web3Blockchains[blockchain].currency.address,
+              tokenInAddress: Blockchains[blockchain].currency.address,
+              exchangeAddress: Exchanges[exchange.name][blockchain].router.address,
+              tokenOutAddress: Blockchains[blockchain].currency.address,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
               exchangeType: 0,
@@ -67,32 +68,32 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
         })
 
         it('approves exchange contract to enable converting payments', async ()=> {
-          await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].router.address, true)
-          if(Web3Exchanges[exchange.name][blockchain].smartRouter) {
-            await router.connect(wallets[0]).enable(Web3Exchanges[exchange.name][blockchain].smartRouter.address, true)
+          await router.connect(wallets[0]).enable(Exchanges[exchange.name][blockchain].router.address, true)
+          if(Exchanges[exchange.name][blockchain].smartRouter) {
+            await router.connect(wallets[0]).enable(Exchanges[exchange.name][blockchain].smartRouter.address, true)
           }
         })
 
         describe('using token approvals', ()=> {
 
           it('requires token approval for the router', async ()=>{
-            await fromTokenContract.connect(fromAccount).approve(router.address, Web3Blockchains[blockchain].maxInt)
+            await fromTokenContract.connect(fromAccount).approve(router.address, Blockchains[blockchain].maxInt)
           })
        
           it('fails if balanceOut is less after payment', async()=>{
 
             const paymentAmount = 9
-            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
             const feeAmount = 1
-            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
             await wallets[0].sendTransaction({ to: router.address, value: ethers.BigNumber.from("100000000000000000") });
 
-            const route = await Web3Exchanges[exchange.name].route({
+            const route = await Exchanges[exchange.name].route({
               blockchain,
               tokenIn: fromToken,
-              tokenOut: Web3Blockchains[blockchain].currency.address,
+              tokenOut: Blockchains[blockchain].currency.address,
               amountOutMin: totalAmount
             })
 
@@ -109,7 +110,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
             await expect(
-              router.connect(fromAccount).pay({
+              router.connect(fromAccount)[PAY]({
                 amountIn: route.amountIn,
                 paymentAmount: paymentAmountBN,
                 feeAmount: feeAmountBN.add(ethers.BigNumber.from("100000000000000000")),
@@ -132,15 +133,15 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
           it('converts TOKEN to NATIVE via exchange as part of the payment', async ()=>{
 
             const paymentAmount = 9
-            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
             const feeAmount = 1
-            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Web3Blockchains[blockchain].currency.decimals)
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
-            const route = await Web3Exchanges[exchange.name].route({
+            const route = await Exchanges[exchange.name].route({
               blockchain,
               tokenIn: fromToken,
-              tokenOut: Web3Blockchains[blockchain].currency.address,
+              tokenOut: Blockchains[blockchain].currency.address,
               amountOutMin: totalAmount
             })
 
@@ -156,7 +157,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
-            await router.connect(fromAccount).pay({
+            await router.connect(fromAccount)[PAY]({
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
@@ -187,9 +188,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), toDecimals)
             const totalAmount = paymentAmount + feeAmount
 
-            const route = await Web3Exchanges[exchange.name].route({
+            const route = await Exchanges[exchange.name].route({
               blockchain,
-              tokenIn: Web3Blockchains[blockchain].currency.address,
+              tokenIn: Blockchains[blockchain].currency.address,
               tokenOut: toToken,
               amountOutMin: totalAmount
             })
@@ -206,7 +207,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await router.connect(fromAccount).pay({
+            await router.connect(fromAccount)[PAY]({
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
@@ -237,7 +238,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), toDecimals)
             const totalAmount = paymentAmount + feeAmount
 
-            const route = await Web3Exchanges[exchange.name].route({
+            const route = await Exchanges[exchange.name].route({
               blockchain,
               tokenIn: fromToken,
               tokenOut: toToken,
@@ -256,7 +257,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await router.connect(fromAccount).pay({
+            await router.connect(fromAccount)[PAY]({
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,

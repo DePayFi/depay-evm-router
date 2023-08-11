@@ -4,6 +4,7 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import './interfaces/IPermit2.sol';
 import './interfaces/IDePayRouterV2.sol';
 import './interfaces/IDePayForwarderV2.sol';
 
@@ -38,22 +39,40 @@ contract DePayRouterV2 is Ownable {
     uint256 value
   );
 
-
-  // Perform a payment (approval granted prior)
-  function pay(IDePayRouterV2.Payment memory payment) external payable returns(bool){
+  // Perform a payment (tokenIn approval has been granted prior)
+  function pay(
+    IDePayRouterV2.Payment calldata payment
+  ) external payable returns(bool){
     uint256 balanceInBefore;
     uint256 balanceOutBefore;
 
     (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
-
+    _payIn(payment);
     _performPayment(payment);
-
     _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
 
     return true;
   }
 
-  function _validatePreConditions(IDePayRouterV2.Payment memory payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
+  // Perform a payment (including permit2 approval)
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IPermit2.PermitSingle memory permitSingle,
+    bytes calldata signature
+  ) external payable returns(bool){
+    uint256 balanceInBefore;
+    uint256 balanceOutBefore;
+
+    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    _permit(permitSingle, signature);
+    _payIn(payment);
+    _performPayment(payment);
+    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
+
+    return true;
+  }
+
+  function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
     // Make sure payment deadline has not been passed, yet
     require(payment.deadline > block.timestamp, "DePay: Payment deadline has passed!");
 
@@ -70,16 +89,36 @@ contract DePayRouterV2 is Ownable {
     } else {
       balanceOutBefore = IERC20(payment.tokenOutAddress).balanceOf(address(this));
     }
+  }
 
+  // permit2
+  function _permit(
+    IPermit2.PermitSingle memory permitSingle,
+    bytes calldata signature
+  ) internal {
+
+    IPermit2(PERMIT2).permit(
+      msg.sender, // owner
+      permitSingle,
+      signature
+    );
+  }
+
+  // pay in using token approval & transferFrom or requiring native pay in
+  function _payIn(
+    IDePayRouterV2.Payment calldata payment
+  ) internal {
     // Make sure that the sender has paid in the correct token & amount
     if(payment.tokenInAddress == NATIVE) {
       require(msg.value >= payment.amountIn, 'DePay: Insufficient amount paid in!');
+    } else if(payment.permit2) {
+      IPermit2(PERMIT2).transferFrom(msg.sender, address(this), uint160(payment.amountIn), payment.tokenInAddress);
     } else {
       IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
     }
   }
 
-  function _performPayment(IDePayRouterV2.Payment memory payment) internal {
+  function _performPayment(IDePayRouterV2.Payment calldata payment) internal {
     // Perform conversion if required
     if(payment.exchangeAddress != address(0)) {
       _convert(payment);
@@ -94,7 +133,7 @@ contract DePayRouterV2 is Ownable {
     }
   }
 
-  function _validatePostConditions(IDePayRouterV2.Payment memory payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
+  function _validatePostConditions(IDePayRouterV2.Payment calldata payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
       require(address(this).balance >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
@@ -110,7 +149,7 @@ contract DePayRouterV2 is Ownable {
     }
   }
 
-  function _convert(IDePayRouterV2.Payment memory payment) internal {
+  function _convert(IDePayRouterV2.Payment calldata payment) internal {
     require(exchanges[payment.exchangeAddress], 'DePay: Exchange has not been approved!');
     bool success;
     if(payment.tokenInAddress == NATIVE) {
@@ -126,7 +165,7 @@ contract DePayRouterV2 is Ownable {
     require(success, "DePay: exchange call failed!");
   }
 
-  function _payReceiver(IDePayRouterV2.Payment memory payment) internal {
+  function _payReceiver(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.receiverType != 0) { // call receiver contract
 
       {
@@ -153,7 +192,7 @@ contract DePayRouterV2 is Ownable {
     }
   }
 
-  function _payFee(IDePayRouterV2.Payment memory payment) internal {
+  function _payFee(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.tokenOutAddress == NATIVE) {
       (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
       require(success, 'DePay: NATIVE fee receiver pay out failed!');

@@ -1,16 +1,17 @@
 import deploy from './_helpers/deploy'
 import now from './_helpers/now'
 import Token from '@depay/web3-tokens-evm'
-import Web3Blockchains from '@depay/web3-blockchains'
+import Blockchains from '@depay/web3-blockchains'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 
 export default ({ blockchain })=>{
 
-  const NATIVE = Web3Blockchains[blockchain].currency.address
-  const WRAPPED = Web3Blockchains[blockchain].wrapped.address
-  const ZERO = Web3Blockchains[blockchain].zero
+  const NATIVE = Blockchains[blockchain].currency.address
+  const WRAPPED = Blockchains[blockchain].wrapped.address
+  const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
+  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
@@ -45,7 +46,7 @@ export default ({ blockchain })=>{
         const paymentReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[2].address)
 
-        await router.connect(wallets[0]).pay({
+        await router.connect(wallets[0])[PAY]({
           amountIn: amountIn,
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
@@ -82,7 +83,7 @@ export default ({ blockchain })=>{
         await wrapperContract.connect(wallets[0]).deposit({ value: amountIn })
         await wrapperContract.connect(wallets[0]).approve(router.address, amountIn)
 
-        await router.connect(wallets[0]).pay({
+        await router.connect(wallets[0])[PAY]({
           amountIn: amountIn,
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,

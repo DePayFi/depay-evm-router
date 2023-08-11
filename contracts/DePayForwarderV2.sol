@@ -26,7 +26,7 @@ contract DePayForwarderV2 is Ownable {
   receive() external payable {}
 
   function forward(
-    IDePayRouterV2.Payment memory payment
+    IDePayRouterV2.Payment calldata payment
   ) external payable notStopped returns(bool){
 
     bool success;
