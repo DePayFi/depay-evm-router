@@ -17,7 +17,6 @@ export default ({ blockchain, token, tokenHolder })=>{
   const provider = ethers.provider
   const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
   const PAY_WITH_PERMIT2 = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256),((address,uint160,uint48,uint48),address,uint256),bytes)'
-  const ESTIMATE = 'estimate((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256),((address,uint160,uint48,uint48),address,uint256),bytes)'
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
@@ -156,70 +155,6 @@ export default ({ blockchain, token, tokenHolder })=>{
 
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
-      })
-
-      it('provides an estimate method allowing you to estimate the gas required', async ()=> {
-
-        const amountIn = 1000000000
-        const paymentAmount = 900000000
-        const feeAmount = 100000000
-        const nonce = 1
-
-        await tokenContract.connect(tokenHolder).transfer(wallets[0].address, amountIn) // move tokens from tokenHolder to payment signer
-
-        const domain = {
-          chainId: "31337", // hardhat
-          name: "Permit2",
-          verifyingContract: permit2Contract.address
-        }
-
-        const types = {
-          PermitSingle: [
-            { name: "details", type: "PermitDetails" },
-            { name: "spender", type: "address" },
-            { name: "sigDeadline", type: "uint256" }
-          ],
-          PermitDetails: [
-            { name: "token", type: "address" },
-            { name: "amount", type: "uint160" },
-            { name: "expiration", type: "uint48" },
-            { name: "nonce", type: "uint48" }
-          ]
-        }
-
-        const data = {
-          details: {
-            token: TOKEN,
-            amount: "1461501637330902918203684832716283019655932542975", // max uint160 for permit2
-            expiration: deadline,
-            nonce
-          },
-          spender: router.address,
-          sigDeadline: deadline
-        }
-
-        const signature = await wallets[0]._signTypedData(domain, types, data)
-
-        const payment = {
-          amountIn,
-          permit2: true,
-          paymentAmount,
-          feeAmount,
-          tokenInAddress: TOKEN,
-          exchangeAddress: ZERO,
-          tokenOutAddress: TOKEN,
-          paymentReceiverAddress: wallets[1].address,
-          feeReceiverAddress: wallets[2].address,
-          exchangeType: 0,
-          receiverType: 0,
-          exchangeCallData: ZERO,
-          receiverCallData: ZERO,
-          deadline,
-        }
-
-        const result = await router.connect(wallets[0]).callStatic[ESTIMATE](payment, data, signature)
-
-        expect(result.gasEstimate.toNumber()>0).to.eq(true)
       })
     })
   })

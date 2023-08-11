@@ -13,7 +13,7 @@ contract DePayRouterV2 is Ownable {
   using SafeERC20 for IERC20;
 
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
-  address public constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // Address of PERMIT2
   address public immutable PERMIT2;
@@ -61,15 +61,6 @@ contract DePayRouterV2 is Ownable {
     return _pay(payment);
   }
 
-  // Estimate a payment (tokenIn approval has been granted prior)
-  function estimate(
-    IDePayRouterV2.Payment calldata payment
-  ) external payable returns(bool result, uint256 gasEstimate){
-    uint256 gasBefore = gasleft();
-    result = _pay(payment);
-    return (result, gasBefore - gasleft());
-  }
-
   // Perform a payment (including permit2 approval), internal
   function _pay(
     IDePayRouterV2.Payment calldata payment,
@@ -95,17 +86,6 @@ contract DePayRouterV2 is Ownable {
     bytes calldata signature
   ) external payable returns(bool){
     return _pay(payment, permitSingle, signature);
-  }
-
-  // Estimate a payment (including permit2 approval)
-  function estimate(
-    IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
-    bytes calldata signature
-  ) external payable returns(bool result, uint256 gasEstimate){
-    uint256 gasBefore = gasleft();
-    result = _pay(payment, permitSingle, signature);
-    return (result, gasBefore - gasleft());
   }
 
   function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {

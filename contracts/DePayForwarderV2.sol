@@ -11,7 +11,7 @@ contract DePayForwarderV2 is Ownable {
   using SafeERC20 for IERC20;
 
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
-  address public constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // toggle to stop forwarding to other contracts
   bool private stop;
