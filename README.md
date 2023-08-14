@@ -48,7 +48,7 @@ Fantom:
 - [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://ftmscan.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
 
 Gnosis:
-- [](https://gnosisscan.io/address/)
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://gnosisscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
 Optimsm: 
 - [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://optimistic.etherscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
