@@ -7,28 +7,28 @@ Optimization Level: 800,000
 ### DePayRouterV2
 
 Ethereum:
-- [](https://etherscan.io/address/)
+- [0xF491525C7655f362716335D526E57b387799d058](https://etherscan.io/address/0xF491525C7655f362716335D526E57b387799d058)
 
 BNB Smart Chain:
-- [](https://bscscan.com/address/)
+- [0xdb3f47b1D7B577E919D639B4FD0EBcEFD4aABb70](https://bscscan.com/address/0xdb3f47b1D7B577E919D639B4FD0EBcEFD4aABb70)
 
 Polygon (POS):
 - [](https://polygonscan.com/address/)
 
 Avalanche:
-- [](https://snowtrace.io/address/)
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://snowtrace.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 Fantom:
-- [](https://ftmscan.com/address/)
+- [0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd](https://ftmscan.com/address/0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd)
 
 Gnosis:
-- [](https://gnosisscan.io/address/)
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://gnosisscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 Optimsm:
-- [](https://optimistic.etherscan.io/address/)
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://optimistic.etherscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 Arbitrum:
-- [](https://arbiscan.io/address/)
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://arbiscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 ### DePayForwarderV2
 
