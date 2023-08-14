@@ -27,8 +27,8 @@ Arbitrum: [](https://arbiscan.io/address/)
 
 Ethereum: [](https://etherscan.io/address/)
 
-BNB Smart Chain:<br/>
-[0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0](https://bscscan.com/address/0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0)
+BNB Smart Chain:
+- [0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0](https://bscscan.com/address/0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0)
 
 Polygon (POS): [](https://polygonscan.com/address/)
 
