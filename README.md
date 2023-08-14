@@ -7,40 +7,54 @@ Optimization Level: 800,000
 ### DePayRouterV2
 
 Ethereum:
-[](https://etherscan.io/address/)
+- [](https://etherscan.io/address/)
 
-BNB Smart Chain: [](https://bscscan.com/address/)
+BNB Smart Chain:
+- [](https://bscscan.com/address/)
 
-Polygon (POS): [](https://polygonscan.com/address/)
+Polygon (POS):
+- [](https://polygonscan.com/address/)
 
-Avalanche: [](https://snowtrace.io/address/)
+Avalanche:
+- [](https://snowtrace.io/address/)
 
-Fantom: [](https://ftmscan.com/address/)
+Fantom:
+- [](https://ftmscan.com/address/)
 
-Gnosis: [](https://gnosisscan.io/address/)
+Gnosis:
+- [](https://gnosisscan.io/address/)
 
-Optimsm: [](https://optimistic.etherscan.io/address/)
+Optimsm:
+- [](https://optimistic.etherscan.io/address/)
 
-Arbitrum: [](https://arbiscan.io/address/)
+Arbitrum:
+- [](https://arbiscan.io/address/)
 
 ### DePayForwarderV2
 
-Ethereum: [](https://etherscan.io/address/)
+Ethereum:
+- [](https://etherscan.io/address/)
 
 BNB Smart Chain:
 - [0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0](https://bscscan.com/address/0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0)
 
-Polygon (POS): [](https://polygonscan.com/address/)
+Polygon (POS):
+- [](https://polygonscan.com/address/)
 
-Avalanche: [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://snowtrace.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+Avalanche:
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://snowtrace.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
-Fantom: [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://ftmscan.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
+Fantom:
+- [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://ftmscan.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
 
-Gnosis: [](https://gnosisscan.io/address/)
+Gnosis:
+- [](https://gnosisscan.io/address/)
 
-Optimsm: [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://optimistic.etherscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+Optimsm: 
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://optimistic.etherscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
-Arbitrum: [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://arbiscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+Arbitrum:
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://arbiscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
 ## Summary
 
