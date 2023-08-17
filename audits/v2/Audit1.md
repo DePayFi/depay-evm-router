@@ -19,6 +19,7 @@
 |||[L02 - Possible Gas Limit Issues](#L02)|
 
 <a name="L01"/>
+
 ## L01 - No Check for 0 Addresses
 
  Affected      | Severity  | Count | Lines |
@@ -28,6 +29,7 @@
 There are no checks for zero addresses in the constructor when setting the PERMIT2 and FORWARDER addresses. This could result in accidental misconfiguration during deployment.
 
 <a name="L02"/>
+
 ## L02 - Possible Gas Limit Issues
 
  Affected      | Severity  | Count | Lines |
