@@ -1,66 +1,76 @@
-## Foundry
+# DePay's EVM Web3 Payment Router.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Deployments
 
-Foundry consists of:
+Optimization Level: 800,000
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+`DePayRouterV2`
 
-## Documentation
+Ethereum: [](https://etherscan.io/address/)
 
-https://book.getfoundry.sh/
+BNB Smart Chain: [](https://bscscan.com/address/)
 
-## Usage
+Polygon (POS): [](https://polygonscan.com/address/)
 
-### Build
+Avalanche: [](https://snowtrace.io/address/)
 
-```shell
-$ forge build
+Fantom: [](https://ftmscan.com/address/)
+
+Gnosis: [](https://gnosisscan.io/address/)
+
+Arbitrum: [](https://arbiscan.io/address/)
+
+Optimsm: [](https://optimistic.etherscan.io/address/)
+
+## Summary
+
+This smart contract enables decentralized payments with auto-conversion and payment-fee extraction.
+
+The main purpose of this smart contract evolves around the `pay` function.
+
+This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE, WRAPPED to NATIVE, NATIVE to WRAPPED and TOKEN_A to TOKEN_B payments.
+
+#### Transfer polyfil
+
+The `DePayRouterV2` emits a `Transfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
+
+This allows to validate native token transfers without checking for internal transfers, but instead rely on Transfer events known from Token transfers.
+
+Standard tokens (e.g. ERC20 etc.) already do emit `Transfer` events as part of their standard.
+
+## Development
+
+### Quick Start
+
+```
+yarn install
+yarn test
 ```
 
-### Test
+### Testing
 
-```shell
-$ forge test
+Test on a specific chain:
+```
+yarn test:<chain>
 ```
 
-### Format
+e.g. `ethereum`, `bsc` etc.
 
-```shell
-$ forge fmt
+Test on all blockchains:
+
+```
+yarn test
 ```
 
-### Gas Snapshots
+Test single files:
 
-```shell
-$ forge snapshot
 ```
-
-### Anvil
-
-```shell
-$ anvil
+npx hardhat test test/bsc/pay_with_exchange_conversion.spec.ts --config hardhat.config.bsc.ts
 ```
 
 ### Deploy
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+1. `yarn flatten`
 
-### Cast
+2. Deploy flatten contract via https://remix.ethereum.org/
 
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
