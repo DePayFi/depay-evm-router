@@ -4,23 +4,57 @@
 
 Optimization Level: 800,000
 
-`DePayRouterV2`
+### DePayRouterV2
 
-Ethereum: [](https://etherscan.io/address/)
+Ethereum:
+- [0xF491525C7655f362716335D526E57b387799d058](https://etherscan.io/address/0xF491525C7655f362716335D526E57b387799d058)
 
-BNB Smart Chain: [](https://bscscan.com/address/)
+BNB Smart Chain:
+- [0xdb3f47b1D7B577E919D639B4FD0EBcEFD4aABb70](https://bscscan.com/address/0xdb3f47b1D7B577E919D639B4FD0EBcEFD4aABb70)
 
-Polygon (POS): [](https://polygonscan.com/address/)
+Polygon (POS):
+- [0x39E7C98BF4ac3E4C394dD600397f5f7Ee3779BE8](https://polygonscan.com/address/0x39E7C98BF4ac3E4C394dD600397f5f7Ee3779BE8)
 
-Avalanche: [](https://snowtrace.io/address/)
+Avalanche:
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://snowtrace.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
-Fantom: [](https://ftmscan.com/address/)
+Fantom:
+- [0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd](https://ftmscan.com/address/0x78C0F1c712A9AA2004C1F401A7307d8bCB62abBd)
 
-Gnosis: [](https://gnosisscan.io/address/)
+Gnosis:
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://gnosisscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
-Arbitrum: [](https://arbiscan.io/address/)
+Optimsm:
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://optimistic.etherscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
-Optimsm: [](https://optimistic.etherscan.io/address/)
+Arbitrum:
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://arbiscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
+
+### DePayForwarderV2
+
+Ethereum:
+- [0xDAC2064178831b8C2Ed5f08b7Cf207C01A989b23](https://etherscan.io/address/0xDAC2064178831b8C2Ed5f08b7Cf207C01A989b23)
+
+BNB Smart Chain:
+- [0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0](https://bscscan.com/address/0x9E710397d1Ea1A4Dc098Fd0d575E0d26886fd0C0)
+
+Polygon (POS):
+- [0x376d6B0F8c9b829aAb0a7478952DEF1F8656D7c4](https://polygonscan.com/address/0x376d6B0F8c9b829aAb0a7478952DEF1F8656D7c4)
+
+Avalanche:
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://snowtrace.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+
+Fantom:
+- [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://ftmscan.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
+
+Gnosis:
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://gnosisscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+
+Optimsm: 
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://optimistic.etherscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+
+Arbitrum:
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://arbiscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
 ## Summary
 
@@ -73,4 +107,3 @@ npx hardhat test test/bsc/pay_with_exchange_conversion.spec.ts --config hardhat.
 1. `yarn flatten`
 
 2. Deploy flatten contract via https://remix.ethereum.org/
-
