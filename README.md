@@ -74,6 +74,29 @@ Standard tokens (e.g. ERC20 etc.) already do emit `Transfer` events as part of t
 
 ## Development
 
+Create an `.env` file with the following content:
+```
+NODE_ENV=development
+
+MNEMONIC="shine romance erase resource daring bean talk right cupboard visa renew galaxy"
+#(0) 0xdde3dc4308A7856D49D1d7303bB630Bccb45Caf9
+#(1) 0x26Fe22F655303151C2ef3b2D097F842ab27Ef940
+#(2) 0x877a79C20028F9ef81e956B43B917703cC22A07A
+#(3) 0x3a36b51c5125A9c064f4Cd2F492989618CF7660E
+
+ARBITRUM_NOVA_RPC_URL=https://arbitrum-nova.blastapi.io/<APIKEY>
+ARBITRUM_ONE_RPC_URL=https://arbitrum-one.blastapi.io/<APIKEY>
+AVALANCHE_RPC_URL=https://ava-mainnet.blastapi.io/<APIKEY>/ext/bc/C/rpc
+BSC_RPC_URL=https://bsc-mainnet.blastapi.io/<APIKEY>
+ETHEREUM_RPC_URL=https://eth-mainnet.blastapi.io/<APIKEY>
+FANTOM_RPC_URL=https://fantom-mainnet.blastapi.io/<APIKEY>
+GNOSIS_RPC_URL=https://gnosis-mainnet.blastapi.io/<APIKEY>
+OPTIMISM_RPC_URL=https://optimism.blockpi.network/v1/rpc/public
+POLYGON_RPC_URL=https://polygon-mainnet.blastapi.io/<APIKEY>
+POLYGON_ZKEVM_RPC_URL=https://polygon-zkevm-mainnet.blastapi.io/<APIKEY>
+ZKSYNC_ERA_RPC_URL=https://mainnet.era.zksync.io
+```
+
 ### Quick Start
 
 ```
