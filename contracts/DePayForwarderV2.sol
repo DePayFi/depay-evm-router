@@ -18,9 +18,9 @@ contract DePayForwarderV2 is Ownable2Step {
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // toggle to stop forwarding to other contracts
-  bool private stop;
+  uint256 private stop;
   modifier notStopped() {
-    if (stop) {
+    if (stop > 0) {
       revert ForwarderHasBeenStopped();
     }
     _;
@@ -59,7 +59,7 @@ contract DePayForwarderV2 is Ownable2Step {
     return true;
   }
 
-  function toggle(bool _stop) external onlyOwner returns(bool){
+  function toggle(uint256 _stop) external onlyOwner returns(bool){
     stop = _stop;
     return true;
   }

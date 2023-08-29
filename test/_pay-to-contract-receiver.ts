@@ -259,7 +259,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
         await expect(
-          forwarder.connect(wallets[1]).toggle(true)
+          forwarder.connect(wallets[1]).toggle(1)
         ).to.be.revertedWith(
           'Ownable: caller is not the owner'
         )
@@ -268,7 +268,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
       it('allows the owner to stop the forwarder', async ()=> {
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
-        await forwarder.connect(wallets[0]).toggle(true)
+        await forwarder.connect(wallets[0]).toggle(1)
       })
 
       it('does not not allow forwarding while the forwarder is stopped', async ()=> {
@@ -299,7 +299,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
       it('allows the owner to reenable the forwarder', async ()=> {
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
-        await forwarder.connect(wallets[0]).toggle(false)
+        await forwarder.connect(wallets[0]).toggle(0)
       })
 
       it('allows forwarding again once the forwarder has been reenabled', async ()=> {

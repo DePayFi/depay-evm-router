@@ -1043,7 +1043,7 @@ contract DePayRouterV2 is Ownable2Step {
 
       if(payment.tokenOutAddress == NATIVE) {
         if(payment.paymentReceiverAddress == address(0)){
-          revert PaymentToZeroAddressNotAllowed()
+          revert PaymentToZeroAddressNotAllowed();
         }
         (bool success,) = payment.paymentReceiverAddress.call{value: payment.paymentAmount}(new bytes(0));
         if(!success) {
@@ -1058,9 +1058,6 @@ contract DePayRouterV2 is Ownable2Step {
 
   function _payFee(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.tokenOutAddress == NATIVE) {
-      if(payment.feeReceiverAddress == address(0)){
-        revert PaymentToZeroAddressNotAllowed()
-      }
       (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
       if(!success) {
         revert NativeFeePaymentFailed();
