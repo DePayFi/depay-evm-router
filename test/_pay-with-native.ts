@@ -102,6 +102,33 @@ export default ({ blockchain })=>{
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
       })
 
+      it('reverts if payment receiver is zero', async ()=> {
+        const amountIn = 1000000000
+        const paymentAmount = 1000000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: ZERO,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
+        ).to.be.revertedWith(
+          'PaymentToZeroAddressNotAllowed()'
+        )
+      })
+
       it('pays payment receiver and fee receiver and emits Transfer polyfil event', async ()=> {
         const amountIn = 1000000000
         const paymentAmount = 900000000
