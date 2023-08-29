@@ -13,7 +13,7 @@ contract DePayRouterV2 is Ownable2Step {
   using SafeERC20 for IERC20;
 
   error PaymentDeadlineReached();
-  error InsufficientAmountPaidIn();
+  error WrongAmountPaidIn();
   error ExchangeNotApproved();
   error NativePaymentFailed();
   error NativeFeePaymentFailed();
@@ -136,8 +136,8 @@ contract DePayRouterV2 is Ownable2Step {
   ) internal {
     // Make sure that the sender has paid in the correct token & amount
     if(payment.tokenInAddress == NATIVE) {
-      if(msg.value < payment.amountIn) {
-        revert InsufficientAmountPaidIn();
+      if(msg.value != payment.amountIn) {
+        revert WrongAmountPaidIn();
       }
     } else if(payment.permit2) {
       IPermit2(PERMIT2).transferFrom(msg.sender, address(this), uint160(payment.amountIn), payment.tokenInAddress);

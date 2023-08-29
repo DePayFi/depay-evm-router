@@ -47,7 +47,29 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 0 })
         ).to.be.revertedWith(
-          'InsufficientAmountPaidIn()'
+          'WrongAmountPaidIn()'
+        )
+      })
+
+      it('fails if too much of native amount was paid in', async ()=> {
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: 1000000000,
+            paymentAmount: 1000000000,
+            feeAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1100000000 })
+        ).to.be.revertedWith(
+          'WrongAmountPaidIn()'
         )
       })
 
