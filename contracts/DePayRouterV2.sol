@@ -12,6 +12,14 @@ contract DePayRouterV2 is Ownable {
 
   using SafeERC20 for IERC20;
 
+  error PaymentDeadlineReached();
+  error InsufficientAmountPaidIn();
+  error ExchangeNotApproved();
+  error NativePaymentFailed();
+  error NativeFeePaymentFailed();
+  error InsufficientBalanceInAfterPayment();
+  error InsufficientBalanceOutAfterPayment();
+
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
@@ -90,7 +98,9 @@ contract DePayRouterV2 is Ownable {
 
   function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
     // Make sure payment deadline has not been passed, yet
-    require(payment.deadline > block.timestamp, "DePay: Payment deadline has passed!");
+    if(payment.deadline < block.timestamp) {
+      revert PaymentDeadlineReached();
+    }
 
     // Store tokenIn balance prior to payment
     if(payment.tokenInAddress == NATIVE) {
@@ -126,7 +136,9 @@ contract DePayRouterV2 is Ownable {
   ) internal {
     // Make sure that the sender has paid in the correct token & amount
     if(payment.tokenInAddress == NATIVE) {
-      require(msg.value >= payment.amountIn, 'DePay: Insufficient amount paid in!');
+      if(msg.value < payment.amountIn) {
+        revert InsufficientAmountPaidIn();
+      }
     } else if(payment.permit2) {
       IPermit2(PERMIT2).transferFrom(msg.sender, address(this), uint160(payment.amountIn), payment.tokenInAddress);
     } else {
@@ -152,21 +164,31 @@ contract DePayRouterV2 is Ownable {
   function _validatePostConditions(IDePayRouterV2.Payment calldata payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
-      require(address(this).balance >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
+      if(address(this).balance < balanceInBefore) {
+        revert InsufficientBalanceInAfterPayment();
+      }
     } else {
-      require(IERC20(payment.tokenInAddress).balanceOf(address(this)) >= balanceInBefore, 'DePay: Insufficient balanceIn after payment!');
+      if(IERC20(payment.tokenInAddress).balanceOf(address(this)) < balanceInBefore) {
+        revert InsufficientBalanceInAfterPayment();
+      }
     }
 
     // Ensure balances of tokenOut remained
     if(payment.tokenOutAddress == NATIVE) {
-      require(address(this).balance >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
+      if(address(this).balance < balanceOutBefore) {
+        revert InsufficientBalanceOutAfterPayment();
+      }
     } else {
-      require(IERC20(payment.tokenOutAddress).balanceOf(address(this)) >= balanceOutBefore, 'DePay: Insufficient balanceOut after payment!');
+      if(IERC20(payment.tokenOutAddress).balanceOf(address(this)) < balanceOutBefore) {
+        revert InsufficientBalanceOutAfterPayment();
+      }
     }
   }
 
   function _convert(IDePayRouterV2.Payment calldata payment) internal {
-    require(exchanges[payment.exchangeAddress], 'DePay: Exchange has not been approved!');
+    if(!exchanges[payment.exchangeAddress]) {
+      revert ExchangeNotApproved();
+    }
     bool success;
     if(payment.tokenInAddress == NATIVE) {
       (success,) = payment.exchangeAddress.call{value: msg.value}(payment.exchangeCallData);
@@ -200,7 +222,9 @@ contract DePayRouterV2 is Ownable {
 
       if(payment.tokenOutAddress == NATIVE) {
         (bool success,) = payment.paymentReceiverAddress.call{value: payment.paymentAmount}(new bytes(0));
-        require(success, 'DePay: NATIVE payment receiver pay out failed!');
+        if(!success) {
+          revert NativePaymentFailed();
+        }
         emit Transfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
       } else {
         IERC20(payment.tokenOutAddress).safeTransfer(payment.paymentReceiverAddress, payment.paymentAmount);
@@ -211,7 +235,9 @@ contract DePayRouterV2 is Ownable {
   function _payFee(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.tokenOutAddress == NATIVE) {
       (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
-      require(success, 'DePay: NATIVE fee receiver pay out failed!');
+      if(!success) {
+        revert NativeFeePaymentFailed();
+      }
       emit Transfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
     } else {
       IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);

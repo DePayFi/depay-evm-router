@@ -63,7 +63,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               deadline,
             },{ value: 1 })
           ).to.be.revertedWith(
-            'DePay: Exchange has not been approved!'
+            'ExchangeNotApproved()'
           )
         })
 
@@ -126,7 +126,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
                 deadline,
               })
             ).to.be.revertedWith(
-              'DePay: Insufficient balanceOut after payment!'
+              'InsufficientBalanceOutAfterPayment()'
             )
           })
 

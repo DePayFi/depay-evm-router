@@ -10,13 +10,18 @@ contract DePayForwarderV2 is Ownable {
 
   using SafeERC20 for IERC20;
 
+  error ForwarderHasBeenStopped();
+  error ForwardingPaymentFailed();
+
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   // toggle to stop forwarding to other contracts
   bool private stop;
   modifier notStopped() {
-    require(!stop, "DePay: Forwarder has been stopped!");
+    if (stop) {
+      revert ForwarderHasBeenStopped();
+    }
     _;
   }
 
@@ -44,7 +49,9 @@ contract DePayForwarderV2 is Ownable {
       (success,) = payment.paymentReceiverAddress.call(payment.receiverCallData);
     }
 
-    require(success, "DePay: forwarding payment to receiver failed!");
+    if(!success) {
+      revert ForwardingPaymentFailed();
+    }
 
     return true;
   }

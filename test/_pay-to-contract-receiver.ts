@@ -260,7 +260,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: 1 })
         ).to.be.revertedWith(
-          'DePay: Forwarder has been stopped!'
+          'ForwarderHasBeenStopped()'
         )
       })
 

@@ -47,7 +47,7 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 0 })
         ).to.be.revertedWith(
-          'DePay: Insufficient amount paid in!'
+          'InsufficientAmountPaidIn()'
         )
       })
 
@@ -134,7 +134,7 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 0 })
         ).to.be.revertedWith(
-          'DePay: Insufficient balanceIn after payment!'
+          'InsufficientBalanceInAfterPayment()'
         )
       })
     })

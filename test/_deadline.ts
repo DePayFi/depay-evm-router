@@ -48,7 +48,7 @@ export default ({ blockchain })=>{
             deadline: 0,
           }, { value: 1000000000 })
         ).to.be.revertedWith(
-          'DePay: Payment deadline has passed!'
+          'PaymentDeadlineReached()'
         )
       })
     })
