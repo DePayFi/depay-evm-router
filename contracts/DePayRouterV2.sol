@@ -16,6 +16,8 @@ contract DePayRouterV2 is Ownable2Step {
   error WrongAmountPaidIn();
   error ExchangeNotApproved();
   error ExchangeCallMissing();
+  error ExchangeCallFailed();
+  error ForwardingPaymentFailed();
   error NativePaymentFailed();
   error NativeFeePaymentFailed();
   error InsufficientBalanceInAfterPayment();
@@ -204,7 +206,9 @@ contract DePayRouterV2 is Ownable2Step {
       }
       (success,) = payment.exchangeAddress.call(payment.exchangeCallData);
     }
-    require(success, "DePay: exchange call failed!");
+    if(!success){
+      revert ExchangeCallFailed();
+    }
   }
 
   function _payReceiver(IDePayRouterV2.Payment calldata payment) internal {
@@ -219,7 +223,9 @@ contract DePayRouterV2 is Ownable2Step {
           IERC20(payment.tokenOutAddress).safeTransfer(FORWARDER, payment.paymentAmount);
           success = IDePayForwarderV2(FORWARDER).forward(payment);
         }
-        require(success, 'DePay: Forwarding payment to contract failed!');
+        if(!success) {
+          revert ForwardingPaymentFailed();
+        }
       }
 
     } else { // just send payment to address
