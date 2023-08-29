@@ -818,10 +818,14 @@ pragma solidity 0.8.18;
 // import 'contracts/interfaces/IDePayRouterV2.sol';
 // import 'contracts/interfaces/IDePayForwarderV2.sol';
 
+/// @title DePayRouterV2
+/// @notice This contract handles payments and token conversions.
+/// @dev Inherit from Ownable2Step for ownership functionalities.
 contract DePayRouterV2 is Ownable2Step {
 
   using SafeERC20 for IERC20;
 
+  // Custom errors
   error PaymentDeadlineReached();
   error WrongAmountPaidIn();
   error ExchangeNotApproved();
@@ -834,34 +838,39 @@ contract DePayRouterV2 is Ownable2Step {
   error InsufficientBalanceInAfterPayment();
   error InsufficientBalanceOutAfterPayment();
 
-  // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
+  /// @notice Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  // Address of PERMIT2
+  /// @notice Address of PERMIT2
   address public immutable PERMIT2;
 
-  // Address of the payment FORWARDER contract
+  /// @notice Address of the payment FORWARDER contract
   address public immutable FORWARDER;
 
-  // List of approved exchanges for conversion
+  /// @notice List of approved exchanges for conversion.
   mapping (address => bool) public exchanges;
 
+  /// @dev Initializes the contract with PERMIT2 and FORWARDER addresses.
+  /// @param _PERMIT2 The address of the PERMIT2 contract.
+  /// @param _FORWARDER The address of the FORWARDER contract.
   constructor (address _PERMIT2, address _FORWARDER) {
     PERMIT2 = _PERMIT2;
     FORWARDER = _FORWARDER;
   }
 
-  // Accepts NATIVE payments, which is required in order to swap from and to NATIVE, especially unwrapping as part of conversions
+  /// @notice Accepts NATIVE payments, which is required in order to swap from and to NATIVE, especially unwrapping as part of conversions.
   receive() external payable {}
 
-  // Transfer polyfil event for internal transfers
+  /// @dev Transfer polyfil event for internal transfers.
   event Transfer(
     address indexed from,
     address indexed to,
     uint256 value
   );
 
-  // Perform a payment (tokenIn approval has been granted prior), internal
+  /// @dev Handles the payment process (tokenIn approval has been granted prior).
+  /// @param payment The payment data.
+  /// @return Returns true if successful.
   function _pay(
     IDePayRouterV2.Payment calldata payment
   ) internal returns(bool){
@@ -876,14 +885,20 @@ contract DePayRouterV2 is Ownable2Step {
     return true;
   }
 
-  // Perform a payment (tokenIn approval has been granted prior), external
+  /// @notice Handles the payment process for external callers.
+  /// @param payment The payment data.
+  /// @return Returns true if successful.
   function pay(
     IDePayRouterV2.Payment calldata payment
   ) external payable returns(bool){
     return _pay(payment);
   }
 
-  // Perform a payment (including permit2 approval), internal
+  /// @dev Handles the payment process with permit2 approval (internal).
+  /// @param payment The payment data.
+  /// @param permitSingle The permit single data.
+  /// @param signature The permit signature.
+  /// @return Returns true if successful.
   function _pay(
     IDePayRouterV2.Payment calldata payment,
     IPermit2.PermitSingle memory permitSingle,
@@ -901,7 +916,11 @@ contract DePayRouterV2 is Ownable2Step {
     return true;
   }
 
-  // Perform a payment (including permit2 approval), external
+  /// @notice Handles the payment process with permit2 approval for external callers.
+  /// @param payment The payment data.
+  /// @param permitSingle The permit single data.
+  /// @param signature The permit signature.
+  /// @return Returns true if successful.
   function pay(
     IDePayRouterV2.Payment calldata payment,
     IPermit2.PermitSingle memory permitSingle,
@@ -910,6 +929,10 @@ contract DePayRouterV2 is Ownable2Step {
     return _pay(payment, permitSingle, signature);
   }
 
+  /// @dev Validates the pre-conditions for a payment.
+  /// @param payment The payment data.
+  /// @return balanceInBefore The balance in before the payment.
+  /// @return balanceOutBefore The balance out before the payment.
   function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
     // Make sure payment deadline has not been passed, yet
     if(payment.deadline < block.timestamp) {
@@ -931,7 +954,9 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
-  // permit2
+  /// @dev Handles permit2 operations.
+  /// @param permitSingle The permit single data.
+  /// @param signature The permit signature.
   function _permit(
     IPermit2.PermitSingle memory permitSingle,
     bytes calldata signature
@@ -944,7 +969,8 @@ contract DePayRouterV2 is Ownable2Step {
     );
   }
 
-  // pay in using token approval & transferFrom or requiring native pay in
+  /// @dev Processes the payIn operations.
+  /// @param payment The payment data.
   function _payIn(
     IDePayRouterV2.Payment calldata payment
   ) internal {
@@ -960,6 +986,8 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
+  /// @dev Processes the payment.
+  /// @param payment The payment data.
   function _performPayment(IDePayRouterV2.Payment calldata payment) internal {
     // Perform conversion if required
     if(payment.exchangeAddress != address(0)) {
@@ -975,6 +1003,10 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
+  /// @dev Validates the post-conditions for a payment.
+  /// @param payment The payment data.
+  /// @param balanceInBefore The balance in before the payment.
+  /// @param balanceOutBefore The balance out before the payment.
   function _validatePostConditions(IDePayRouterV2.Payment calldata payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
@@ -999,6 +1031,8 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
+  /// @dev Handles token conversions.
+  /// @param payment The payment data.
   function _convert(IDePayRouterV2.Payment calldata payment) internal {
     if(!exchanges[payment.exchangeAddress]) {
       revert ExchangeNotApproved();
@@ -1022,6 +1056,8 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
+  /// @dev Processes payment to receiver.
+  /// @param payment The payment data.
   function _payReceiver(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.receiverType != 0) { // call receiver contract
 
@@ -1056,6 +1092,8 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
+  /// @dev Processes fee payments.
+  /// @param payment The payment data.
   function _payFee(IDePayRouterV2.Payment calldata payment) internal {
     if(payment.tokenOutAddress == NATIVE) {
       (bool success,) = payment.feeReceiverAddress.call{value: payment.feeAmount}(new bytes(0));
@@ -1068,17 +1106,20 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
-  // Event emitted if new exchange has been enabled
+  /// @dev Event emitted if new exchange has been enabled.
   event Enabled(
     address indexed exchange
   );
 
-  // Event emitted if an exchange has been disabled
+  /// @dev Event emitted if an exchange has been disabled.
   event Disabled(
     address indexed exchange
   );
 
-  // Enable/Disable an exchange
+  /// @notice Enables or disables an exchange.
+  /// @param exchange The address of the exchange.
+  /// @param enabled A boolean value to enable or disable the exchange.
+  /// @return Returns true if successful.
   function enable(address exchange, bool enabled) external onlyOwner returns(bool) {
     exchanges[exchange] = enabled;
     if(enabled) {
@@ -1089,7 +1130,9 @@ contract DePayRouterV2 is Ownable2Step {
     return true;
   }
 
-  // Allows to withdraw accidentally sent tokens.
+  /// @notice Allows the owner to withdraw accidentally sent tokens.
+  /// @param token The token address.
+  /// @param amount The amount to withdraw.
   function withdraw(
     address token,
     uint amount
