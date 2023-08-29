@@ -11,6 +11,7 @@ contract DePayForwarderV2 is Ownable {
   using SafeERC20 for IERC20;
 
   error ForwarderHasBeenStopped();
+  error NaitvePullNotSupported();
   error ForwardingPaymentFailed();
 
   // Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
@@ -45,6 +46,8 @@ contract DePayForwarderV2 is Ownable {
     } else { // pull
       if(payment.tokenOutAddress != NATIVE) {
         IERC20(payment.tokenOutAddress).safeApprove(payment.paymentReceiverAddress, payment.paymentAmount);
+      } else {
+        revert NaitvePullNotSupported();
       }
       (success,) = payment.paymentReceiverAddress.call(payment.receiverCallData);
     }

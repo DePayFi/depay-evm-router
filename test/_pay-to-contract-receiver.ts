@@ -126,6 +126,38 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
+      it('reverts if user attempts to pull NATIVE into the receiver contract', async ()=> {
+
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+        const amountIn = paymentAmount + feeAmount
+        
+        const callData = receiverContract.interface.encodeFunctionData("receiveNative", [ethers.BigNumber.from(paymentAmount)])
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(receiverContract.address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn,
+            paymentAmount,
+            feeAmount,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: receiverContract.address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 1,
+            exchangeCallData: ZERO,
+            receiverCallData: callData,
+            deadline,
+          }, { value: amountIn })
+        ).to.be.revertedWith(
+          'NaitvePullNotSupported()'
+        )
+      })
+
       it('pays TOKEN into the receiver contract (pull)', async ()=> {
 
         const amountIn = 1000000000
