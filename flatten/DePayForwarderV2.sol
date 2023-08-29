@@ -515,7 +515,7 @@ library SafeERC20 {
 // Dependency file: contracts/interfaces/IPermit2.sol
 
 
-// pragma solidity >=0.8.18 <0.9.0;
+// pragma solidity 0.8.18;
 
 interface IPermit2 {
 
@@ -544,7 +544,7 @@ interface IPermit2 {
 // Dependency file: contracts/interfaces/IDePayRouterV2.sol
 
 
-// pragma solidity >=0.8.18 <0.9.0;
+// pragma solidity 0.8.18;
 
 // import 'contracts/interfaces/IPermit2.sol';
 
@@ -595,7 +595,7 @@ interface IDePayRouterV2 {
 // Root file: contracts/DePayForwarderV2.sol
 
 
-pragma solidity >=0.8.18 <0.9.0;
+pragma solidity 0.8.18;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
