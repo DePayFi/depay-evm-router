@@ -825,6 +825,7 @@ contract DePayRouterV2 is Ownable2Step {
   error PaymentDeadlineReached();
   error WrongAmountPaidIn();
   error ExchangeNotApproved();
+  error ExchangeCallMissing();
   error NativePaymentFailed();
   error NativeFeePaymentFailed();
   error InsufficientBalanceInAfterPayment();
@@ -1001,6 +1002,9 @@ contract DePayRouterV2 is Ownable2Step {
     }
     bool success;
     if(payment.tokenInAddress == NATIVE) {
+      if(payment.exchangeCallData.length == 0) {
+        revert ExchangeCallMissing();
+      }
       (success,) = payment.exchangeAddress.call{value: msg.value}(payment.exchangeCallData);
     } else {
       if(payment.exchangeType == 1) { // pull
