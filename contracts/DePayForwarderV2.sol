@@ -2,11 +2,11 @@
 
 pragma solidity 0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/IDePayRouterV2.sol';
 
-contract DePayForwarderV2 is Ownable {
+contract DePayForwarderV2 is Ownable2Step {
 
   using SafeERC20 for IERC20;
 
