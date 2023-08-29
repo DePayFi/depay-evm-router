@@ -129,5 +129,5 @@ npx hardhat test test/bsc/pay_with_exchange_conversion.spec.ts --config hardhat.
 
 1. `yarn flatten`
 
-2. Deploy flatten contract via https://remix.ethereum.org/
+2. Deploy flatten contract
 

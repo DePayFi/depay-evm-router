@@ -2,7 +2,7 @@ import payWithToken from '../_pay-with-token'
 
 payWithToken({
   blockchain: 'fantom',
-  token: '0x841FAD6EAe12c286d1Fd18d1d525DFfA75C7EFFE', // BOO
-  fromAccount: '0xf778F4D7a14A8CB73d5261f9C61970ef4E7D7842',
+  token: '0xdc301622e621166BD8E82f2cA0A26c13Ad0BE355', // FRAX
+  fromAccount: '0xd6e2F33B33271E97c4011218b88e334448818689',
   reversalReason: 'WERC10: request exceeds allowance',
 })
