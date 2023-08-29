@@ -24,7 +24,7 @@ Fantom:
 Gnosis:
 - [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://gnosisscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
-Optimsm:
+Optimism:
 - [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://optimistic.etherscan.io/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 Arbitrum:
@@ -50,7 +50,7 @@ Fantom:
 Gnosis:
 - [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://gnosisscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
-Optimsm: 
+Optimism: 
 - [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://optimistic.etherscan.io/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
 Arbitrum:
