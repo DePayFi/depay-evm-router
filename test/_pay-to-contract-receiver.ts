@@ -299,7 +299,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
       it('allows the owner to reenable the forwarder', async ()=> {
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
-        await forwarder.connect(wallets[0]).toggle(0)
+        await forwarder.connect(wallets[0]).toggle(2)
       })
 
       it('allows forwarding again once the forwarder has been reenabled', async ()=> {

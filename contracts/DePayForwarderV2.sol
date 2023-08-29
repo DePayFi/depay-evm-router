@@ -22,11 +22,11 @@ contract DePayForwarderV2 is Ownable2Step {
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   /// @dev Toggle to stop forwarding to other contracts
-  uint256 private stop;
+  uint256 private stop = 2;
 
   /// @dev Ensures the forwarder is not stopped.
   modifier notStopped() {
-    if (stop > 0) {
+    if (stop == 1) {
       revert ForwarderHasBeenStopped();
     }
     _;
