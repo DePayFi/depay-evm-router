@@ -147,7 +147,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             deadline,
           })
         ).to.be.revertedWith(
-          'DePay: Insufficient balanceIn after payment!'
+          'InsufficientBalanceInAfterPayment()'
         )
       })
     })

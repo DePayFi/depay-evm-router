@@ -63,7 +63,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               deadline,
             },{ value: 1 })
           ).to.be.revertedWith(
-            'DePay: Exchange has not been approved!'
+            'ExchangeNotApproved()'
           )
         })
 
@@ -126,7 +126,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
                 deadline,
               })
             ).to.be.revertedWith(
-              'DePay: Insufficient balanceOut after payment!'
+              'InsufficientBalanceOutAfterPayment()'
             )
           })
 
@@ -178,6 +178,48 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
             expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
             expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
+          })
+
+          it('fails if NATIVE conversion via exchanges misses calldata', async ()=>{
+
+            const paymentAmount = 9
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), toDecimals)
+            const feeAmount = 1
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), toDecimals)
+            const totalAmount = paymentAmount + feeAmount
+
+            const route = await Exchanges[exchange.name].route({
+              blockchain,
+              tokenIn: Blockchains[blockchain].currency.address,
+              tokenOut: toToken,
+              amountOutMin: totalAmount
+            })
+
+            const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
+            const callData = [] // empty
+
+            const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
+            const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
+
+            await expect(
+              router.connect(fromAccount)[PAY]({
+                amountIn: route.amountIn,
+                paymentAmount: paymentAmountBN,
+                feeAmount: feeAmountBN,
+                tokenInAddress: route.tokenIn,
+                exchangeAddress: transaction.to,
+                tokenOutAddress: route.tokenOut,
+                paymentReceiverAddress: wallets[1].address,
+                feeReceiverAddress: wallets[2].address,
+                exchangeType: exchange.type === 'pull' ? 1 : 2,
+                receiverType: 0,
+                exchangeCallData: callData,
+                receiverCallData: ZERO,
+                deadline,
+              }, { value: route.amountIn })
+            ).to.be.revertedWith(
+              'ExchangeCallMissing'
+            )
           })
 
           it('converts NATIVE to TOKEN via exchanges as part of the payment', async ()=>{

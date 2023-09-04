@@ -126,6 +126,114 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
+      it('prevents anybody but the router to call the forwarder.forward', async ()=> {
+
+        const paymentAmount = ethers.utils.parseEther('1')
+        const forwarderAddress = await router.FORWARDER()
+
+        await wallets[0].sendTransaction({
+          to: forwarderAddress,
+          value: paymentAmount,
+        })
+
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+          forwarderAddress
+        );
+
+        await expect(
+          forwarderContract.forward({
+            amountIn: 0,
+            paymentAmount,
+            feeAmount: ZERO,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[2].address,
+            feeReceiverAddress: ZERO,
+            exchangeType: 0,
+            receiverType: 2,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          })
+        ).to.be.revertedWith(
+          'OnlyCallableByRouter()'
+        )
+      })
+
+      it('allows admin to recover eventually stuck ETH to be withdrawn from forwarder', async ()=> {
+
+        const paymentAmount = ethers.utils.parseEther('1')
+        const forwarderAddress = await router.FORWARDER()
+
+        await wallets[0].sendTransaction({
+          to: forwarderAddress,
+          value: paymentAmount,
+        })
+
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+          forwarderAddress
+        )
+
+        const balanceBefore = await provider.getBalance(wallets[0].address)
+        await forwarderContract.connect(wallets[0]).withdraw(NATIVE, paymentAmount)
+        const balanceAfter = await provider.getBalance(wallets[0].address)
+        expect(balanceAfter > balanceBefore).to.eq(true)
+      })
+
+      it('does not allow others to recover eventually stuck ETH from forwarder', async ()=> {
+
+        const paymentAmount = ethers.utils.parseEther('1')
+        const forwarderAddress = await router.FORWARDER()
+
+        await wallets[0].sendTransaction({
+          to: forwarderAddress,
+          value: paymentAmount,
+        })
+
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+          forwarderAddress
+        )
+
+        await expect(
+          forwarderContract.connect(wallets[1]).withdraw(NATIVE, paymentAmount)
+        ).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
+      })
+
+      it('reverts if user attempts to pull NATIVE into the receiver contract', async ()=> {
+
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+        const amountIn = paymentAmount + feeAmount
+        
+        const callData = receiverContract.interface.encodeFunctionData("receiveNative", [ethers.BigNumber.from(paymentAmount)])
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(receiverContract.address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn,
+            paymentAmount,
+            feeAmount,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: receiverContract.address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 1,
+            exchangeCallData: ZERO,
+            receiverCallData: callData,
+            deadline,
+          }, { value: amountIn })
+        ).to.be.revertedWith(
+          'NaitvePullNotSupported()'
+        )
+      })
+
       it('pays TOKEN into the receiver contract (pull)', async ()=> {
 
         const amountIn = 1000000000
@@ -227,7 +335,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
         await expect(
-          forwarder.connect(wallets[1]).toggle(true)
+          forwarder.connect(wallets[1]).toggle(1)
         ).to.be.revertedWith(
           'Ownable: caller is not the owner'
         )
@@ -236,7 +344,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
       it('allows the owner to stop the forwarder', async ()=> {
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
-        await forwarder.connect(wallets[0]).toggle(true)
+        await forwarder.connect(wallets[0]).toggle(1)
       })
 
       it('does not not allow forwarding while the forwarder is stopped', async ()=> {
@@ -260,14 +368,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: 1 })
         ).to.be.revertedWith(
-          'DePay: Forwarder has been stopped!'
+          'ForwarderHasBeenStopped()'
         )
       })
 
       it('allows the owner to reenable the forwarder', async ()=> {
 
         const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
-        await forwarder.connect(wallets[0]).toggle(false)
+        await forwarder.connect(wallets[0]).toggle(2)
       })
 
       it('allows forwarding again once the forwarder has been reenabled', async ()=> {

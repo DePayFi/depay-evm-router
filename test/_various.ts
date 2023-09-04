@@ -66,7 +66,7 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 1000000000 })
         ).to.be.revertedWith(
-          'DePay: Exchange has not been approved!'
+          'ExchangeNotApproved()'
         )
       })
 
