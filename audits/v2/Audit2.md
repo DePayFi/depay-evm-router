@@ -208,3 +208,6 @@ We recommend the use of a stable version that has been well-tested and acknowled
 #### Can funds that are remaining in the router be extracted by anyone but the admin? If no, explain why not.
 
 - For funds remaining in the router contract, it is impossible for any address to withdraw these funds because the withdraw function has an onlyOwner modifier to moderate who can call the function. It is also pertinent to mention also that with the presence of the \_validatePreConditions and \_validatePostConditions hooks, they are specifically ensuring that users pay the amount they provided in the payment tuple. These hooks affirm the balance of the native or ERC20 tokens in the contract before a user pays into the router and also affirms that there are more in the contract after a successful interaction. If these conditions are not met, they will revert, making it impossible to steal from the contract via other functions since the withdraw function is secured with the onlyOwner modifier.
+
+### Mitigation
+All findings have been improved/mitigated as part of this: https://github.com/DePayFi/depay-evm-router/pull/61
