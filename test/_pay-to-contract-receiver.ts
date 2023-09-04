@@ -126,7 +126,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
-      it('prevents users from extracting NATIVE from the forwarder contract if any is stuck in forwarder', async ()=> {
+      it('prevents anybody but the router to call the forwarder.forward', async ()=> {
 
         const paymentAmount = ethers.utils.parseEther('1')
         const forwarderAddress = await router.FORWARDER()
@@ -157,7 +157,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           })
         ).to.be.revertedWith(
-          'InsufficientBalanceOutAfterForwardedPayment()'
+          'OnlyCallableByRouter()'
         )
       })
 

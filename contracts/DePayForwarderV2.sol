@@ -17,10 +17,13 @@ contract DePayForwarderV2 is Ownable2Step {
   error ForwarderHasBeenStopped();
   error NaitvePullNotSupported();
   error ForwardingPaymentFailed();
-  error InsufficientBalanceOutAfterForwardedPayment();
+  error OnlyCallableByRouter();
 
   /// @notice Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
+  /// @notice Address of the payment ROUTER contract
+  address public ROUTER;
 
   /// @dev Toggle to stop forwarding to other contracts
   uint256 private stop = 2;
@@ -29,6 +32,14 @@ contract DePayForwarderV2 is Ownable2Step {
   modifier notStopped() {
     if (stop == 1) {
       revert ForwarderHasBeenStopped();
+    }
+    _;
+  }
+
+  /// @dev Ensures the forwarder is only callable by the router.
+  modifier onlyRouter() {
+    if (msg.sender != ROUTER) {
+      revert OnlyCallableByRouter();
     }
     _;
   }
@@ -44,12 +55,10 @@ contract DePayForwarderV2 is Ownable2Step {
   /// @return Returns true if payment forwarding was successful.
   function forward(
     IDePayRouterV2.Payment calldata payment
-  ) external payable notStopped returns(bool){
+  ) external payable notStopped onlyRouter returns(bool){
 
     bool success;
-    uint256 nativeBalanceOutBefore;
 
-    (nativeBalanceOutBefore) = _validatePreConditions(payment);
     if(payment.receiverType == 2) { // push
       if(payment.tokenOutAddress == NATIVE) {
         (success,) = payment.paymentReceiverAddress.call{value: payment.paymentAmount}(payment.receiverCallData);
@@ -69,33 +78,8 @@ contract DePayForwarderV2 is Ownable2Step {
     if(!success) {
       revert ForwardingPaymentFailed();
     }
-    _validatePostConditions(payment, nativeBalanceOutBefore);
 
     return true;
-  }
-
-  /// @dev Validates the pre-conditions for a forwarded payment.
-  /// @param payment The payment data.
-  /// @return nativeBalanceOutBefore The balance out before the forwarded payment.
-  function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 nativeBalanceOutBefore) {
-
-    // Store native tokenOut balance prior to forwarding payment.
-    if(payment.tokenOutAddress == NATIVE) {
-      nativeBalanceOutBefore = address(this).balance - msg.value;
-    }
-  }
-
-  /// @dev Validates the post-conditions for a forwarded payment.
-  /// @param payment The payment data.
-  /// @param nativeBalanceOutBefore The native balance out before the forwarded payment.
-  function _validatePostConditions(IDePayRouterV2.Payment calldata payment, uint256 nativeBalanceOutBefore) internal view {
-    
-    // Ensure balances of NATIVE out remained
-    if(payment.tokenOutAddress == NATIVE) {
-      if(address(this).balance < nativeBalanceOutBefore) {
-        revert InsufficientBalanceOutAfterForwardedPayment();
-      }
-    }
   }
 
   /// @notice Allows the owner to toggle the forwarder stop status.
@@ -103,6 +87,14 @@ contract DePayForwarderV2 is Ownable2Step {
   /// @return Returns true if operation was successful.
   function toggle(uint256 _stop) external onlyOwner returns(bool){
     stop = _stop;
+    return true;
+  }
+
+  /// @notice Allows the owner to set the router to restrict forward calls to the router only
+  /// @param _router Address of the router.
+  /// @return Returns true if operation was successful.
+  function setRouter(address _router) external onlyOwner returns(bool){
+    ROUTER = _router;
     return true;
   }
 

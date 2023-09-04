@@ -10,5 +10,7 @@ export default async () => {
   const router = await Router.deploy(PERMIT2, forwarder.address)
   await router.deployed()
 
+  await forwarder.setRouter(router.address)
+
   return router
 }
