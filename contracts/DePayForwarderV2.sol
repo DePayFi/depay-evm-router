@@ -80,7 +80,7 @@ contract DePayForwarderV2 is Ownable2Step {
   function _validatePreConditions(IDePayRouterV2.Payment calldata payment) internal returns(uint256 nativeBalanceOutBefore) {
 
     // Store native tokenOut balance prior to forwarding payment.
-    if(payment.tokenInAddress == NATIVE) {
+    if(payment.tokenOutAddress == NATIVE) {
       nativeBalanceOutBefore = address(this).balance - msg.value;
     }
   }
@@ -91,7 +91,7 @@ contract DePayForwarderV2 is Ownable2Step {
   function _validatePostConditions(IDePayRouterV2.Payment calldata payment, uint256 nativeBalanceOutBefore) internal view {
     
     // Ensure balances of NATIVE out remained
-    if(payment.tokenInAddress == NATIVE) {
+    if(payment.tokenOutAddress == NATIVE) {
       if(address(this).balance < nativeBalanceOutBefore) {
         revert InsufficientBalanceOutAfterForwardedPayment();
       }
