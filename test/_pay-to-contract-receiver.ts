@@ -77,8 +77,8 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: amountIn })
         )
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
         .to.emit(receiverContract, 'Received').withArgs(paymentAmount, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(receiverContract.address)
@@ -406,8 +406,8 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: amountIn })
         )
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
         .to.emit(receiverContract, 'Received').withArgs(paymentAmount, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(receiverContract.address)

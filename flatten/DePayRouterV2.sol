@@ -862,7 +862,7 @@ contract DePayRouterV2 is Ownable2Step {
   receive() external payable {}
 
   /// @dev Transfer polyfil event for internal transfers.
-  event Transfer(
+  event InternalTransfer(
     address indexed from,
     address indexed to,
     uint256 value
@@ -1065,7 +1065,7 @@ contract DePayRouterV2 is Ownable2Step {
         bool success;
         if(payment.tokenOutAddress == NATIVE) {
           success = IDePayForwarderV2(FORWARDER).forward{value: payment.paymentAmount}(payment);
-          emit Transfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
+          emit InternalTransfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
         } else {
           IERC20(payment.tokenOutAddress).safeTransfer(FORWARDER, payment.paymentAmount);
           success = IDePayForwarderV2(FORWARDER).forward(payment);
@@ -1085,7 +1085,7 @@ contract DePayRouterV2 is Ownable2Step {
         if(!success) {
           revert NativePaymentFailed();
         }
-        emit Transfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
+        emit InternalTransfer(msg.sender, payment.paymentReceiverAddress, payment.paymentAmount);
       } else {
         IERC20(payment.tokenOutAddress).safeTransfer(payment.paymentReceiverAddress, payment.paymentAmount);
       }
@@ -1100,7 +1100,7 @@ contract DePayRouterV2 is Ownable2Step {
       if(!success) {
         revert NativeFeePaymentFailed();
       }
-      emit Transfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
+      emit InternalTransfer(msg.sender, payment.feeReceiverAddress, payment.feeAmount);
     } else {
       IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);
     }

@@ -72,9 +72,9 @@ This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIV
 
 #### Transfer polyfil
 
-The `DePayRouterV2` emits a `Transfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
+The `DePayRouterV2` emits a `InternalTransfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
 
-This allows to validate native token transfers without checking for internal transfers, but instead rely on Transfer events known from Token transfers.
+This allows to validate native token transfers without checking for internal transfers, but instead rely on `InternalTransfer` events, similiar to Token `Transfer` events.
 
 Standard tokens (e.g. ERC20 etc.) already do emit `Transfer` events as part of their standard.
 

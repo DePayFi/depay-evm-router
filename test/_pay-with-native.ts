@@ -95,7 +95,7 @@ export default ({ blockchain })=>{
             receiverCallData: ZERO,
             deadline,
           }, { value: 1000000000 })
-        ).to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
+        ).to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
 
@@ -154,8 +154,8 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 1000000000 })
         )
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'Transfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
+        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
