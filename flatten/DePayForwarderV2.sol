@@ -865,6 +865,9 @@ contract DePayForwarderV2 is Ownable2Step {
         revert NaitvePullNotSupported();
       }
       (success,) = payment.paymentReceiverAddress.call(payment.receiverCallData);
+      if(payment.tokenOutAddress != NATIVE) {
+        IERC20(payment.tokenOutAddress).safeApprove(payment.paymentReceiverAddress, 0);
+      }
     }
 
     if(!success) {

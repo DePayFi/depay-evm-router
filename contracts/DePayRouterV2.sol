@@ -240,6 +240,9 @@ contract DePayRouterV2 is Ownable2Step {
         IERC20(payment.tokenInAddress).safeTransfer(payment.exchangeAddress, payment.amountIn);
       }
       (success,) = payment.exchangeAddress.call(payment.exchangeCallData);
+      if(payment.exchangeType == 1) { // pull
+        IERC20(payment.tokenInAddress).safeApprove(payment.exchangeAddress, 0);
+      }
     }
     if(!success){
       revert ExchangeCallFailed();
