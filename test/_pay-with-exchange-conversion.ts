@@ -158,7 +158,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
             await router.connect(fromAccount)[PAY]({
-              amountIn: route.amountIn,
+              amountIn: ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")),
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
               tokenInAddress: route.tokenIn,
