@@ -158,6 +158,56 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
             await router.connect(fromAccount)[PAY]({
+              amountIn: ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")),
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            })
+
+            const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+            const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+
+            expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
+            expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
+          })
+
+          it('keeps continue converting TOKEN to NATIVE and does not get stuck with safeApprove (non zero)', async ()=>{
+
+            const paymentAmount = 9
+            const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
+            const feeAmount = 1
+            const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
+            const totalAmount = paymentAmount + feeAmount
+
+            const route = await Exchanges[exchange.name].route({
+              blockchain,
+              tokenIn: fromToken,
+              tokenOut: Blockchains[blockchain].currency.address,
+              amountOutMin: totalAmount
+            })
+
+            const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
+            const callData = getCallData({
+              address: transaction.to,
+              api: transaction.api,
+              provider: wallets[0],
+              method: transaction.method,
+              params: transaction.params,
+            })
+
+            const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+            const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+            await router.connect(fromAccount)[PAY]({
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
