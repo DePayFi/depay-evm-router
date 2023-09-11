@@ -13,7 +13,7 @@ BNB Smart Chain:
 - [0x7ea09401db4692a8AEF4111b75bD32AE758f552A](https://bscscan.com/address/0x7ea09401db4692a8AEF4111b75bD32AE758f552A)
 
 Polygon (POS):
-- [](https://polygonscan.com/address)
+- [0x50CFAB577623B1359602E11514a9482B061A941e](https://polygonscan.com/address/0x50CFAB577623B1359602E11514a9482B061A941e)
 
 Avalanche:
 - [0xFee05C41195985909DDfc9127Db1f94559c46db3](https://snowtrace.io/address/0xFee05C41195985909DDfc9127Db1f94559c46db3)
@@ -42,7 +42,7 @@ BNB Smart Chain:
 - [0xA3667687D81972E208a5b206aD8b0faeC18cd435](https://bscscan.com/address/0xA3667687D81972E208a5b206aD8b0faeC18cd435)
 
 Polygon (POS):
-- [](https://polygonscan.com/address/)
+- [0x5a5Eb8AcA5Ebb5D98C752eC2343faE31262B58c9](https://polygonscan.com/address/0x5a5Eb8AcA5Ebb5D98C752eC2343faE31262B58c9)
 
 Avalanche:
 - [0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7](https://snowtrace.io/address/0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7)
