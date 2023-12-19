@@ -2,8 +2,8 @@ import payWithExchangeConversion from '../_pay-with-exchange-conversion'
 
 payWithExchangeConversion({
   blockchain: 'fantom',
-  fromToken: '0x321162Cd933E2Be498Cd2267a90534A804051b11', // WBTC
-  fromAccount: '0x632085aA7924DF37f64950C58B9Fe5D9fDBA80ef', // needs to hold enough fromToken, will be impersonated
+  fromToken: '0x9879aBDea01a879644185341F7aF7d8343556B7a', // TUSD
+  fromAccount: '0x98bEDd08B149eD859d879930AD007229BA5B18C9', // needs to hold enough fromToken, will be impersonated
   toToken: '0x841FAD6EAe12c286d1Fd18d1d525DFfA75C7EFFE', // BOO
   exchanges: [
     { name: 'spookyswap', type: 'pull' },
