@@ -21,6 +21,7 @@ export default ({ blockchain })=>{
       let router
       let deadline
       let wrapperContract
+      let exchange
 
       beforeEach(async ()=>{
         wallets = await ethers.getSigners()
@@ -32,8 +33,13 @@ export default ({ blockchain })=>{
         router = await deploy()
       })
 
-      it('approves WRAPPER contract as exchange to convert payments', async ()=> {
-        await router.connect(wallets[0]).enable(WRAPPED, true)
+      it('deploys WETHExchange successfully', async ()=> {
+        const DePayWETHExchange = await ethers.getContractFactory('DePayWETHExchangeV1')
+        exchange = await DePayWETHExchange.deploy(wrapperContract.address)
+      })
+
+      it('approves DePayWETHExchange contract as exchange to convert payments', async ()=> {
+        await router.connect(wallets[0]).enable(exchange.address, true)
       })
 
       it('wraps NATIVE to WRAPPED and pays out WRAPPED', async ()=>{
@@ -41,7 +47,7 @@ export default ({ blockchain })=>{
         const paymentAmount = 900000000
         const feeAmount = 100000000
 
-        const callData = wrapperContract.interface.encodeFunctionData("deposit", [])
+        const callData = exchange.interface.encodeFunctionData("deposit", [])
 
         const paymentReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[2].address)
@@ -51,7 +57,7 @@ export default ({ blockchain })=>{
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
           tokenInAddress: NATIVE,
-          exchangeAddress: WRAPPED,
+          exchangeAddress: exchange.address,
           tokenOutAddress: WRAPPED,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
@@ -75,7 +81,7 @@ export default ({ blockchain })=>{
         const paymentAmount = 900000000
         const feeAmount = 100000000
 
-        const callData = wrapperContract.interface.encodeFunctionData("withdraw", [amountIn])
+        const callData = exchange.interface.encodeFunctionData("withdraw", [amountIn])
 
         const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
@@ -88,11 +94,11 @@ export default ({ blockchain })=>{
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
           tokenInAddress: WRAPPED,
-          exchangeAddress: WRAPPED,
+          exchangeAddress: exchange.address,
           tokenOutAddress: NATIVE,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
-          exchangeType: 0,
+          exchangeType: 2,
           receiverType: 0,
           exchangeCallData: callData,
           receiverCallData: ZERO,
