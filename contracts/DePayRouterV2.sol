@@ -206,32 +206,23 @@ contract DePayRouterV2 is Ownable2Step {
     }
   }
 
-  /// @dev Processes the payIn operations.
+  /// @dev Processes the payIn operations (exlusively for permit2 SignatureTransfer).
   /// @param payment The payment data.
   /// @param permitTransferFromAndSignature permitTransferFromAndSignature for permit2 permitTransferFrom.
   function _payIn(
     IDePayRouterV2.Payment calldata payment,
     IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
   ) internal {
-    if(payment.tokenInAddress == NATIVE) {
-      // Make sure that the sender has paid in the correct token & amount
-      if(msg.value != payment.amountIn) {
-        revert WrongAmountPaidIn();
-      }
-    } else if(payment.permit2) {
       
-      IPermit2(PERMIT2).permitTransferFrom(
-        permitTransferFromAndSignature.permitTransferFrom,
-        IPermit2.SignatureTransferDetails({
-          to: address(this),
-          requestedAmount: payment.amountIn
-        }),
-        msg.sender,
-        permitTransferFromAndSignature.signature
-      );
-    } else {
-      IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
-    }
+    IPermit2(PERMIT2).permitTransferFrom(
+      permitTransferFromAndSignature.permitTransferFrom,
+      IPermit2.SignatureTransferDetails({
+        to: address(this),
+        requestedAmount: payment.amountIn
+      }),
+      msg.sender,
+      permitTransferFromAndSignature.signature
+    );
   }
 
   /// @dev Processes the payment.
