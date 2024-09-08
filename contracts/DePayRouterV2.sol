@@ -84,14 +84,44 @@ contract DePayRouterV2 is Ownable2Step {
     return _pay(payment);
   }
 
-  /// @dev Handles the payment process with permit2 approval (internal).
+  /// @dev Handles the payment process with permit2 SignatureTransfer.
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature The PermitTransferFrom and signature.
+  /// @return Returns true if successful.
+  function _pay(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) internal returns(bool){
+    uint256 balanceInBefore;
+    uint256 balanceOutBefore;
+
+    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    _payIn(payment, permitTransferFromAndSignature);
+    _performPayment(payment);
+    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
+
+    return true;
+  }
+
+  /// @notice Handles the payment process with permit2 SignatureTransfer for external callers.
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature The PermitTransferFrom and signature.
+  /// @return Returns true if successful.
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) external payable returns(bool){
+    return _pay(payment, permitTransferFromAndSignature);
+  }
+
+  /// @dev Handles the payment process with permit2 AllowanceTransfer.
   /// @param payment The payment data.
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   /// @return Returns true if successful.
   function _pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) internal returns(bool){
     uint256 balanceInBefore;
@@ -106,14 +136,14 @@ contract DePayRouterV2 is Ownable2Step {
     return true;
   }
 
-  /// @notice Handles the payment process with permit2 approval for external callers.
+  /// @notice Handles the payment process with permit2 AllowanceTransfer for external callers.
   /// @param payment The payment data.
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   /// @return Returns true if successful.
   function pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) external payable returns(bool){
     return _pay(payment, permitSingle, signature);
@@ -148,7 +178,7 @@ contract DePayRouterV2 is Ownable2Step {
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   function _permit(
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) internal {
 
@@ -164,13 +194,41 @@ contract DePayRouterV2 is Ownable2Step {
   function _payIn(
     IDePayRouterV2.Payment calldata payment
   ) internal {
-    // Make sure that the sender has paid in the correct token & amount
     if(payment.tokenInAddress == NATIVE) {
+      // Make sure that the sender has paid in the correct token & amount
       if(msg.value != payment.amountIn) {
         revert WrongAmountPaidIn();
       }
     } else if(payment.permit2) {
       IPermit2(PERMIT2).transferFrom(msg.sender, address(this), uint160(payment.amountIn), payment.tokenInAddress);
+    } else {
+      IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
+    }
+  }
+
+  /// @dev Processes the payIn operations.
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature permitTransferFromAndSignature for permit2 permitTransferFrom.
+  function _payIn(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) internal {
+    if(payment.tokenInAddress == NATIVE) {
+      // Make sure that the sender has paid in the correct token & amount
+      if(msg.value != payment.amountIn) {
+        revert WrongAmountPaidIn();
+      }
+    } else if(payment.permit2) {
+      
+      IPermit2(PERMIT2).permitTransferFrom(
+        permitTransferFromAndSignature.permitTransferFrom,
+        IPermit2.SignatureTransferDetails({
+          to: address(this),
+          requestedAmount: payment.amountIn
+        }),
+        msg.sender,
+        permitTransferFromAndSignature.signature
+      );
     } else {
       IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
     }

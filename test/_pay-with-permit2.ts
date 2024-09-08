@@ -16,7 +16,8 @@ export default ({ blockchain, token, tokenHolder })=>{
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
   const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
-  const PAY_WITH_PERMIT2 = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256),((address,uint160,uint48,uint48),address,uint256),bytes)'
+  const PAY_WITH_PERMIT2_ALLOWANCE_TRANSFER = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256),((address,uint160,uint48,uint48),address,uint256),bytes)'
+  const PAY_WITH_PERMIT2_SIGNATURE_TRANSFER = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256),(((address,uint256),uint256,uint256),bytes))'
 
   describe(`DePayRouterV2 on ${blockchain}`, ()=> {
 
@@ -47,7 +48,11 @@ export default ({ blockchain, token, tokenHolder })=>{
         )
       })
 
-      it('perfoms payment with a valid permit2 signature', async ()=> {
+      it('requies permit2 to be approved by the payment sender', async ()=>{
+        await tokenContract.connect(wallets[0]).approve(permit2Contract.address, Blockchains[blockchain].maxInt) // approve permit2
+      })
+
+      it('perfoms payment with a valid permit2 AllowanceTransfer', async ()=> {
 
         const amountIn = 1000000000
         const paymentAmount = 900000000
@@ -106,12 +111,10 @@ export default ({ blockchain, token, tokenHolder })=>{
           deadline,
         }
 
-
         const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceBefore = await tokenContract.balanceOf(wallets[2].address)
 
-        await tokenContract.connect(wallets[0]).approve(permit2Contract.address, Blockchains[blockchain].maxInt) // approve permit2
-        await router.connect(wallets[0])[PAY_WITH_PERMIT2](payment, data, signature)
+        await router.connect(wallets[0])[PAY_WITH_PERMIT2_ALLOWANCE_TRANSFER](payment, data, signature)
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceAfter = await tokenContract.balanceOf(wallets[2].address)
@@ -120,7 +123,7 @@ export default ({ blockchain, token, tokenHolder })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
-      it('continues to perfom payments with a stored permit2 allowance', async ()=> {
+      it('continues to perfom payments with a stored permit2 AllowanceTransfer', async ()=> {
 
         const amountIn = 1000000000
         const paymentAmount = 900000000
@@ -149,6 +152,87 @@ export default ({ blockchain, token, tokenHolder })=>{
         const feeReceiverBalanceBefore = await tokenContract.balanceOf(wallets[2].address)
 
         await router.connect(wallets[0])[PAY](payment)
+
+        const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceAfter = await tokenContract.balanceOf(wallets[2].address)
+
+        expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
+        expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+      })
+
+      it('perfoms payment with a valid permit2 SignatureTransfer', async ()=> {
+
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+        const nonce = 0
+
+        await tokenContract.connect(tokenHolder).transfer(wallets[0].address, amountIn) // move tokens from tokenHolder to payment signer
+
+        const domain = {
+          chainId: "31337", // hardhat
+          name: "Permit2",
+          verifyingContract: permit2Contract.address
+        }
+
+        const types = {
+          PermitTransferFrom: [
+            { name: "permitted", type: "TokenPermissions" },
+            { name: "spender", type: "address" },
+            { name: "nonce", type: "uint256" },
+            { name: "deadline", type: "uint256" }
+          ],
+          TokenPermissions: [
+            { name: "token", type: "address" },
+            { name: "amount", type: "uint256" },
+          ]
+        }
+
+        const data = {
+          permitted: {
+            token: TOKEN,
+            amount: amountIn,
+          },
+          spender: router.address,
+          nonce,
+          deadline: deadline
+        }
+
+        const signature = await wallets[0]._signTypedData(domain, types, data)
+
+        const payment = {
+          amountIn,
+          permit2: true,
+          paymentAmount,
+          feeAmount,
+          tokenInAddress: TOKEN,
+          exchangeAddress: ZERO,
+          tokenOutAddress: TOKEN,
+          paymentReceiverAddress: wallets[1].address,
+          feeReceiverAddress: wallets[2].address,
+          exchangeType: 0,
+          receiverType: 0,
+          exchangeCallData: ZERO,
+          receiverCallData: ZERO,
+          deadline,
+        }
+
+        const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceBefore = await tokenContract.balanceOf(wallets[2].address)
+
+        await router.connect(wallets[0])[PAY_WITH_PERMIT2_SIGNATURE_TRANSFER](
+          payment, {
+            permitTransferFrom: {
+               permitted: {
+                token: TOKEN,
+                amount: amountIn,
+              },
+              nonce,
+              deadline: deadline
+            },
+            signature
+          }
+        )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceAfter = await tokenContract.balanceOf(wallets[2].address)
