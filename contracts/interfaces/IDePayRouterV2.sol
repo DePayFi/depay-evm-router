@@ -23,13 +23,23 @@ interface IDePayRouterV2 {
     uint256 deadline;
   }
 
+  struct PermitTransferFromAndSignature {
+    IPermit2.PermitTransferFrom permitTransferFrom;
+    bytes signature;
+  }
+
   function pay(
     Payment calldata payment
   ) external payable returns(bool);
 
   function pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) external payable returns(bool);
+
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) external payable returns(bool);
 

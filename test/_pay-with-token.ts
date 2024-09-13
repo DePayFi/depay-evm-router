@@ -118,7 +118,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
-      it('fails if balaneIn is less after payment', async()=>{
+      it('fails if balanceIn is less after payment', async()=>{
         const amountIn = 1000000000
         const paymentAmount = 1000000000
         const feeAmount = 100000000

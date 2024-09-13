@@ -729,9 +729,27 @@ interface IPermit2 {
     uint256 sigDeadline;
   }
 
+  struct PermitTransferFrom {
+    TokenPermissions permitted;
+    uint256 nonce;
+    uint256 deadline;
+  }
+
+  struct TokenPermissions {
+    address token;
+    uint256 amount;
+  }
+
+  struct SignatureTransferDetails {
+    address to;
+    uint256 requestedAmount;
+  }
+
   function permit(address owner, PermitSingle memory permitSingle, bytes calldata signature) external;
 
   function transferFrom(address from, address to, uint160 amount, address token) external;
+
+  function permitTransferFrom(PermitTransferFrom memory permit, SignatureTransferDetails calldata transferDetails, address owner, bytes calldata signature) external;
 
   function allowance(address user, address token, address spender) external view returns (uint160 amount, uint48 expiration, uint48 nonce);
 
@@ -764,13 +782,23 @@ interface IDePayRouterV2 {
     uint256 deadline;
   }
 
+  struct PermitTransferFromAndSignature {
+    IPermit2.PermitTransferFrom permitTransferFrom;
+    bytes signature;
+  }
+
   function pay(
     Payment calldata payment
   ) external payable returns(bool);
 
   function pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) external payable returns(bool);
+
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) external payable returns(bool);
 
@@ -894,14 +922,44 @@ contract DePayRouterV2 is Ownable2Step {
     return _pay(payment);
   }
 
-  /// @dev Handles the payment process with permit2 approval (internal).
+  /// @dev Handles the payment process with permit2 SignatureTransfer.
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature The PermitTransferFrom and signature.
+  /// @return Returns true if successful.
+  function _pay(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) internal returns(bool){
+    uint256 balanceInBefore;
+    uint256 balanceOutBefore;
+
+    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    _payIn(payment, permitTransferFromAndSignature);
+    _performPayment(payment);
+    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
+
+    return true;
+  }
+
+  /// @notice Handles the payment process with permit2 SignatureTransfer for external callers.
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature The PermitTransferFrom and signature.
+  /// @return Returns true if successful.
+  function pay(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) external payable returns(bool){
+    return _pay(payment, permitTransferFromAndSignature);
+  }
+
+  /// @dev Handles the payment process with permit2 AllowanceTransfer.
   /// @param payment The payment data.
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   /// @return Returns true if successful.
   function _pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) internal returns(bool){
     uint256 balanceInBefore;
@@ -916,14 +974,14 @@ contract DePayRouterV2 is Ownable2Step {
     return true;
   }
 
-  /// @notice Handles the payment process with permit2 approval for external callers.
+  /// @notice Handles the payment process with permit2 AllowanceTransfer for external callers.
   /// @param payment The payment data.
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   /// @return Returns true if successful.
   function pay(
     IDePayRouterV2.Payment calldata payment,
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) external payable returns(bool){
     return _pay(payment, permitSingle, signature);
@@ -958,7 +1016,7 @@ contract DePayRouterV2 is Ownable2Step {
   /// @param permitSingle The permit single data.
   /// @param signature The permit signature.
   function _permit(
-    IPermit2.PermitSingle memory permitSingle,
+    IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) internal {
 
@@ -974,8 +1032,8 @@ contract DePayRouterV2 is Ownable2Step {
   function _payIn(
     IDePayRouterV2.Payment calldata payment
   ) internal {
-    // Make sure that the sender has paid in the correct token & amount
     if(payment.tokenInAddress == NATIVE) {
+      // Make sure that the sender has paid in the correct token & amount
       if(msg.value != payment.amountIn) {
         revert WrongAmountPaidIn();
       }
@@ -984,6 +1042,25 @@ contract DePayRouterV2 is Ownable2Step {
     } else {
       IERC20(payment.tokenInAddress).safeTransferFrom(msg.sender, address(this), payment.amountIn);
     }
+  }
+
+  /// @dev Processes the payIn operations (exlusively for permit2 SignatureTransfer).
+  /// @param payment The payment data.
+  /// @param permitTransferFromAndSignature permitTransferFromAndSignature for permit2 permitTransferFrom.
+  function _payIn(
+    IDePayRouterV2.Payment calldata payment,
+    IDePayRouterV2.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+  ) internal {
+      
+    IPermit2(PERMIT2).permitTransferFrom(
+      permitTransferFromAndSignature.permitTransferFrom,
+      IPermit2.SignatureTransferDetails({
+        to: address(this),
+        requestedAmount: payment.amountIn
+      }),
+      msg.sender,
+      permitTransferFromAndSignature.signature
+    );
   }
 
   /// @dev Processes the payment.

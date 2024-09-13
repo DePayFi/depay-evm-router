@@ -323,10 +323,10 @@
     "@chainsafe/persistent-merkle-tree" "^0.4.2"
     case "^1.6.3"
 
-"@depay/web3-blockchains@^8.4.2":
-  version "8.4.2"
-  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-8.4.2.tgz#3f5f072f337acc334e5f0f097627dd85af85848c"
-  integrity sha512-kvzTy0R7zBqL6w2CSRGm3SO1K9QuYpuOCa0BTMt4O7ATqxFg+uXor3uWjS8oWvlQwOdqLl8WT7aaKT8OD63KXw==
+"@depay/web3-blockchains@^9.5.1":
+  version "9.5.1"
+  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-9.5.1.tgz#1e8f2c65aead5e1cc919f7724bac46fde59f4ba0"
+  integrity sha512-F3nj+rBxZz0VNifM+x6KsExtnv7cZLuZwsRpkraOMXDnRt1jIJbzX3hrklIVaxvNtVX4kPsOZBVgzay7QVOYhw==
 
 "@depay/web3-client-evm@^10.16.3":
   version "10.16.3"
