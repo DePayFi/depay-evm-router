@@ -35,36 +35,36 @@ Arbitrum:
 Base:
 - [](https://basescan.org/address/)
 
-### DePayForwarderV2
+### DePayForwarderV3
 
 DePayForwarderV2 allows to pay into smart contracts.
 
 Ethereum:
-- [0x4D130ae9C3Dcf86e2aE406F16bFbcC798e77C657](https://etherscan.io/address/0x4D130ae9C3Dcf86e2aE406F16bFbcC798e77C657)
+- [](https://etherscan.io/address/)
 
 BNB Smart Chain:
-- [0xA3667687D81972E208a5b206aD8b0faeC18cd435](https://bscscan.com/address/0xA3667687D81972E208a5b206aD8b0faeC18cd435)
+- [](https://bscscan.com/address/)
 
 Polygon (POS):
-- [0x5a5Eb8AcA5Ebb5D98C752eC2343faE31262B58c9](https://polygonscan.com/address/0x5a5Eb8AcA5Ebb5D98C752eC2343faE31262B58c9)
+- [](https://polygonscan.com/address/)
 
 Avalanche:
-- [0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7](https://snowtrace.io/address/0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7)
+- [](https://snowtrace.io/address/)
 
 Fantom:
-- [0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7](https://ftmscan.com/address/0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7)
+- [](https://ftmscan.com/address/)
 
 Gnosis:
-- [0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7](https://gnosisscan.io/address/0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7)
+- [](https://gnosisscan.io/address/)
 
 Optimism: 
-- [0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B](https://optimistic.etherscan.io/address/0xAC3Ec4e420DD78bA86d932501E1f3867dbbfb77B)
+- [](https://optimistic.etherscan.io/address/)
 
 Arbitrum:
-- [0x8698E529E9867eEbcC68b4792daC627cd8870736](https://arbiscan.io/address/0x8698E529E9867eEbcC68b4792daC627cd8870736)
+- [](https://arbiscan.io/address/)
 
 Base:
-- [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://basescan.org/address/0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220)
+- [](https://basescan.org/address/)
 
 ### DePayWETHExchangeV1
 
@@ -105,13 +105,24 @@ The main purpose of this smart contract evolves around the `pay` function.
 
 This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE, WRAPPED to NATIVE, NATIVE to WRAPPED and TOKEN_A to TOKEN_B payments.
 
-#### Transfer polyfil
+#### Payment event
 
-The `DePayRouterV3` emits a `InternalTransfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
+The `DePayRouterV3` emits a `Payment` event for all payments:
 
-This allows to validate native token transfers without checking for internal transfers, but instead rely on `InternalTransfer` events, similiar to Token `Transfer` events.
-
-Standard tokens (e.g. ERC20 etc.) already do emit `Transfer` events as part of their standard.
+```
+event Payment(
+  address indexed from,
+  address indexed to,
+  uint256 indexed deadline,
+  uint256 amountIn,
+  uint256 paymentAmount,
+  uint256 feeAmount,
+  uint256 protocolAmount,
+  address tokenInAddress,
+  address tokenOutAddress,
+  address feeReceiverAddress
+);
+```
 
 ## Development
 
