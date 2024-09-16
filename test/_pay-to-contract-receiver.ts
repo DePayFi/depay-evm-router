@@ -16,9 +16,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
   const FROM_ACCOUNT_ADDRESS = fromAccount
-  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
-  describe(`DePayRouterV2 on ${blockchain}`, ()=> {
+  describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
     describe(`pay to contract receiver`, ()=> {
 
@@ -35,7 +35,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
       beforeEach(async ()=>{
         toDecimals = await (new Token({ blockchain, address: toToken }).decimals())
         wallets = await ethers.getSigners()
-        deadline = now()+ 86400 // 1 day
+        deadline = (now()+3600) * 1000 // 1 hour in milliseconds
         fromTokenContract = new ethers.Contract(fromToken, Token[blockchain]['20'], wallets[0])
         toTokenContract = new ethers.Contract(toToken, Token[blockchain]['20'], wallets[0])
         if(typeof fromAccount === 'undefined') { fromAccount = await impersonate(FROM_ACCOUNT_ADDRESS) }
@@ -65,6 +65,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
@@ -77,8 +78,6 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: amountIn })
         )
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
         .to.emit(receiverContract, 'Received').withArgs(paymentAmount, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(receiverContract.address)
@@ -86,6 +85,49 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+      })
+
+      it('emits Payment event for native token', async ()=> {
+
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+        const amountIn = paymentAmount + feeAmount
+        
+        const callData = receiverContract.interface.encodeFunctionData("receiveNative", [ethers.BigNumber.from(paymentAmount)])
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(receiverContract.address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn,
+            paymentAmount,
+            feeAmount,
+            protocolAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: receiverContract.address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 2,
+            exchangeCallData: ZERO,
+            receiverCallData: callData,
+            deadline,
+          }, { value: amountIn })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          receiverContract.address, // to
+          deadline, // deadline
+          amountIn,
+          paymentAmount,
+          feeAmount,
+          0,
+          NATIVE,
+          NATIVE,
+          wallets[2].address
+        )
       })
 
       it('pays TOKEN into the receiver contract (push)', async ()=> {
@@ -106,6 +148,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            protocolAmount: 0,
             tokenInAddress: fromToken,
             exchangeAddress: ZERO,
             tokenOutAddress: fromToken,
@@ -126,6 +169,51 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
+      it('emits Payment event for token payment', async ()=> {
+
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+
+        const paymentReceiverBalanceBefore = await fromTokenContract.balanceOf(wallets[1].address)
+        const feeReceiverBalanceBefore = await fromTokenContract.balanceOf(wallets[2].address)
+
+        await fromTokenContract.connect(fromAccount).approve(router.address, amountIn)
+
+        const callData = receiverContract.interface.encodeFunctionData("receivePushToken", [fromToken, ethers.BigNumber.from(paymentAmount)])
+
+        await expect(
+          router.connect(fromAccount)[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            protocolAmount: 0,
+            tokenInAddress: fromToken,
+            exchangeAddress: ZERO,
+            tokenOutAddress: fromToken,
+            paymentReceiverAddress: receiverContract.address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 2,
+            exchangeCallData: ZERO,
+            receiverCallData: callData,
+            deadline,
+          })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          fromAccount._address, // from
+          receiverContract.address, // to
+          deadline, // deadline
+          amountIn,
+          paymentAmount,
+          feeAmount,
+          0,
+          fromToken,
+          fromToken,
+          wallets[2].address
+        )
+      })
+
       it('prevents anybody but the router to call the forwarder.forward', async ()=> {
 
         const paymentAmount = ethers.utils.parseEther('1')
@@ -136,7 +224,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           value: paymentAmount,
         })
 
-        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV3')).attach(
           forwarderAddress
         );
 
@@ -145,6 +233,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: 0,
             paymentAmount,
             feeAmount: ZERO,
+            protocolAmount: ZERO,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
@@ -171,7 +260,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           value: paymentAmount,
         })
 
-        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV3')).attach(
           forwarderAddress
         )
 
@@ -191,7 +280,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           value: paymentAmount,
         })
 
-        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV2')).attach(
+        const forwarderContract = (await ethers.getContractFactory('DePayForwarderV3')).attach(
           forwarderAddress
         )
 
@@ -218,6 +307,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
@@ -252,6 +342,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            protocolAmount: 0,
             tokenInAddress: fromToken,
             exchangeAddress: ZERO,
             tokenOutAddress: fromToken,
@@ -311,6 +402,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: route.amountIn,
             paymentAmount: paymentAmountBN,
             feeAmount: feeAmountBN,
+            protocolAmount: 0,
             tokenInAddress: route.tokenIn,
             exchangeAddress: transaction.to,
             tokenOutAddress: route.tokenOut,
@@ -333,7 +425,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
       it('does not allow other to stop the forwarder', async ()=> {
 
-        const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
+        const forwarder = (await ethers.getContractFactory('DePayForwarderV3')).attach(await router.FORWARDER())
         await expect(
           forwarder.connect(wallets[1]).toggle(1)
         ).to.be.revertedWith(
@@ -343,19 +435,20 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
       it('allows the owner to stop the forwarder', async ()=> {
 
-        const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
+        const forwarder = (await ethers.getContractFactory('DePayForwarderV3')).attach(await router.FORWARDER())
         await forwarder.connect(wallets[0]).toggle(1)
       })
 
       it('does not not allow forwarding while the forwarder is stopped', async ()=> {
 
-        const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
+        const forwarder = (await ethers.getContractFactory('DePayForwarderV3')).attach(await router.FORWARDER())
 
         await expect(
           router.connect(wallets[0])[PAY]({
             amountIn: 1,
             paymentAmount: 1,
             feeAmount: 1,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
@@ -374,7 +467,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
 
       it('allows the owner to reenable the forwarder', async ()=> {
 
-        const forwarder = (await ethers.getContractFactory('DePayForwarderV2')).attach(await router.FORWARDER())
+        const forwarder = (await ethers.getContractFactory('DePayForwarderV3')).attach(await router.FORWARDER())
         await forwarder.connect(wallets[0]).toggle(2)
       })
 
@@ -394,6 +487,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
@@ -406,8 +500,6 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             deadline,
           }, { value: amountIn })
         )
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, receiverContract.address, paymentAmount)
         .to.emit(receiverContract, 'Received').withArgs(paymentAmount, paymentAmount)
 
         const paymentReceiverBalanceAfter = await provider.getBalance(receiverContract.address)

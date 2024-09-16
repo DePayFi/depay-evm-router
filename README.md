@@ -4,36 +4,40 @@
 
 Optimization Level: 800,000
 
-### DePayRouterV2
+### DePayRouterV3
+
+Enables Web3 Payments.
 
 Ethereum:
-- [0x6466F27B169C908Ba8174d80aEfa7173CbC3D0c7](https://etherscan.io/address/0x6466F27B169C908Ba8174d80aEfa7173CbC3D0c7)
+- [](https://etherscan.io/address/)
 
 BNB Smart Chain:
-- [0x7ea09401db4692a8AEF4111b75bD32AE758f552A](https://bscscan.com/address/0x7ea09401db4692a8AEF4111b75bD32AE758f552A)
+- [](https://bscscan.com/address/)
 
 Polygon (POS):
-- [0x50CFAB577623B1359602E11514a9482B061A941e](https://polygonscan.com/address/0x50CFAB577623B1359602E11514a9482B061A941e)
+- [](https://polygonscan.com/address/)
 
 Avalanche:
-- [0xFee05C41195985909DDfc9127Db1f94559c46db3](https://snowtrace.io/address/0xFee05C41195985909DDfc9127Db1f94559c46db3)
+- [](https://snowtrace.io/address/)
 
 Fantom:
-- [0xFee05C41195985909DDfc9127Db1f94559c46db3](https://ftmscan.com/address/0xFee05C41195985909DDfc9127Db1f94559c46db3)
+- [](https://ftmscan.com/address/)
 
 Gnosis:
-- [0xFee05C41195985909DDfc9127Db1f94559c46db3](https://gnosisscan.io/address/0xFee05C41195985909DDfc9127Db1f94559c46db3)
+- [](https://gnosisscan.io/address/)
 
 Optimism:
-- [0x8698E529E9867eEbcC68b4792daC627cd8870736](https://optimistic.etherscan.io/address/0x8698E529E9867eEbcC68b4792daC627cd8870736)
+- [](https://optimistic.etherscan.io/address/)
 
 Arbitrum:
-- [0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7](https://arbiscan.io/address/0xA1cfbeeF344A52e18f748fd6a126f9426A40fbc7)
+- [](https://arbiscan.io/address/)
 
 Base:
-- [0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11](https://basescan.org/address/0x8B127D169D232D5F3ebE1C3D06CE343FD7C1AA11)
+- [](https://basescan.org/address/)
 
 ### DePayForwarderV2
+
+DePayForwarderV2 allows to pay into smart contracts.
 
 Ethereum:
 - [0x4D130ae9C3Dcf86e2aE406F16bFbcC798e77C657](https://etherscan.io/address/0x4D130ae9C3Dcf86e2aE406F16bFbcC798e77C657)
@@ -62,6 +66,37 @@ Arbitrum:
 Base:
 - [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://basescan.org/address/0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220)
 
+### DePayWETHExchangeV1
+
+DePayWETHExchangeV1 allows to swap WETH<>ETH both ways for payments.
+
+Ethereum:
+- [0x298f4980525594b3b982779cf74ba76819708D43](https://etherscan.io/address/0x298f4980525594b3b982779cf74ba76819708D43)
+
+BNB Smart Chain:
+- [0xeEb80d14abfB058AA78DE38813fe705c3e3b243E](https://bscscan.com/address/0xeEb80d14abfB058AA78DE38813fe705c3e3b243E)
+
+Polygon (POS):
+- [0xaE59C9d3E055BdFAa583E169aA5Ebe395689476a](https://polygonscan.com/address/0xaE59C9d3E055BdFAa583E169aA5Ebe395689476a)
+
+Avalanche:
+- [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://snowtrace.io/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
+
+Fantom:
+- [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://ftmscan.com/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
+
+Gnosis:
+- [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://gnosisscan.io/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
+
+Optimism: 
+- [0x69594057e2C0224deb1180c7a5Df9ec9d5B611B5](https://optimistic.etherscan.io/address/0x69594057e2C0224deb1180c7a5Df9ec9d5B611B5)
+
+Arbitrum:
+- [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://arbiscan.io/address/0x7E655088214d0657251A51aDccE9109CFd23B5B5)
+
+Base:
+- [0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A](https://basescan.org/address/0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A)
+
 ## Summary
 
 This smart contract enables decentralized payments with auto-conversion and payment-fee extraction.
@@ -72,7 +107,7 @@ This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIV
 
 #### Transfer polyfil
 
-The `DePayRouterV2` emits a `InternalTransfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
+The `DePayRouterV3` emits a `InternalTransfer` event for payments where the receiver token is the native token of the respective chain (e.g. Ether on Ethereum).
 
 This allows to validate native token transfers without checking for internal transfers, but instead rely on `InternalTransfer` events, similiar to Token `Transfer` events.
 
@@ -128,7 +163,7 @@ yarn test
 Test single files:
 
 ```
-npx hardhat test test/bsc/pay_with_exchange_conversion.spec.ts --config hardhat.config.bsc.ts
+npx hardhat test test/ethereum/pay_with_native.spec.ts --config hardhat.config.ethereum.ts
 ```
 
 ### Deploy

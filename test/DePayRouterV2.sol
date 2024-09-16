@@ -2,16 +2,16 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {DePayForwarderV2} from "../contracts/DePayForwarderV2.sol";
-import {DePayRouterV2} from "../contracts/DePayRouterV2.sol";
+import {DePayForwarderV3} from "../contracts/DePayForwarderV3.sol";
+import {DePayRouterV3} from "../contracts/DePayRouterV3.sol";
 
-contract DePayRouterV2Test is Test {
-    DePayForwarderV2 public forwarder;
-    DePayRouterV2 public router;
+contract DePayRouterV3Test is Test {
+    DePayForwarderV3 public forwarder;
+    DePayRouterV3 public router;
 
     function setUp() public {
-        forwarder = new DePayForwarderV2();
-        router = new DePayRouterV2(address(0), address(forwarder));
+        forwarder = new DePayForwarderV3();
+        router = new DePayRouterV3(address(0), address(forwarder));
     }
 
     function test_enable() public {
