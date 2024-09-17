@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity 0.8.18;
+// pragma solidity 0.8.26;
 
 interface IWETH {
 
@@ -15,7 +15,7 @@ interface IWETH {
 // Root file: contracts/DePayWETHExchangeV1.sol
 
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.26;
 
 // import 'contracts/interfaces/IWETH.sol';
 

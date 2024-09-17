@@ -2,7 +2,7 @@
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity 0.8.18;
+// pragma solidity 0.8.26;
 
 interface IPermit2 {
 
@@ -49,7 +49,7 @@ interface IPermit2 {
 // Root file: contracts/interfaces/IDePayRouterV3.sol
 
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.26;
 
 // import 'contracts/interfaces/IPermit2.sol';
 
