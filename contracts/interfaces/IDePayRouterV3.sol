@@ -11,7 +11,7 @@ interface IDePayRouterV3 {
     uint256 paymentAmount;
     uint256 feeAmount;
     uint256 protocolAmount;
-    uint256 deadline;
+    uint256 deadline; // in milliseconds!
     address tokenInAddress;
     address exchangeAddress;
     address tokenOutAddress;
