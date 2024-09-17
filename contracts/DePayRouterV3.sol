@@ -27,6 +27,7 @@ contract DePayRouterV3 is Ownable2Step {
   error PaymentToZeroAddressNotAllowed();
   error InsufficientBalanceInAfterPayment();
   error InsufficientBalanceOutAfterPayment();
+  error InsufficientProtocolAmount();
 
   /// @notice Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -276,6 +277,20 @@ contract DePayRouterV3 is Ownable2Step {
     } else {
       if(IERC20(payment.tokenOutAddress).balanceOf(address(this)) < balanceOutBefore) {
         revert InsufficientBalanceOutAfterPayment();
+      }
+    }
+
+    // Ensure protocolAmount remained within router
+    if(payment.protocolAmount > 0) {
+
+      if(payment.tokenOutAddress == NATIVE) {
+        if((address(this).balance - payment.protocolAmount) < balanceOutBefore) {
+          revert InsufficientProtocolAmount();
+        }
+      } else {
+        if((IERC20(payment.tokenOutAddress).balanceOf(address(this)) - payment.protocolAmount) < balanceOutBefore) {
+          revert InsufficientProtocolAmount();
+        }
       }
     }
   }

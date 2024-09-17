@@ -190,6 +190,56 @@ export default ({ blockchain })=>{
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
       })
 
+      it('pays payment receiver, fee receiver and protocol and emits Payment event to validate transfers easily', async ()=> {
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 50000000
+        const protocolAmount = 50000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const routerBalanceBefore = await provider.getBalance(router.address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            protocolAmount: protocolAmount,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn,
+          paymentAmount,
+          feeAmount,
+          protocolAmount,
+          NATIVE,
+          NATIVE,
+          wallets[2].address
+        )
+
+        const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+        const routerBalanceAfter = await provider.getBalance(router.address)
+
+        expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
+        expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+        expect(routerBalanceAfter).to.eq(routerBalanceBefore.add(protocolAmount))
+      })
+
       it('fails if balanceIn is less after payment', async()=>{
         await wallets[0].sendTransaction({ to: router.address, value: 1000000000 });
         await expect(
@@ -212,6 +262,40 @@ export default ({ blockchain })=>{
         ).to.be.revertedWith(
           'InsufficientBalanceInAfterPayment()'
         )
+      })
+
+      it('fails if protocolAmount is less than specified', async()=>{
+        
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 50000000
+        const protocolAmount = 50000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const routerBalanceBefore = await provider.getBalance(router.address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            protocolAmount: 60000000,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: amountIn })
+        ).to.be.revertedWith(
+          'InsufficientProtocolAmount()'
+        )
+
       })
     })
   })
