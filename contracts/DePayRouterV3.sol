@@ -55,7 +55,7 @@ contract DePayRouterV3 is Ownable2Step {
   event Payment(
     address indexed from,
     address indexed to,
-    uint256 indexed deadline,
+    uint256 indexed deadline, // in milliseconds!
     uint256 amountIn,
     uint256 paymentAmount,
     uint256 feeAmount,
@@ -164,7 +164,7 @@ contract DePayRouterV3 is Ownable2Step {
   /// @return balanceInBefore The balance in before the payment.
   /// @return balanceOutBefore The balance out before the payment.
   function _validatePreConditions(IDePayRouterV3.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
-    // Make sure payment deadline has not been passed, yet
+    // Make sure payment deadline (in milliseconds!) has not been passed, yet
     if(payment.deadline < block.timestamp * 1000) {
       revert PaymentDeadlineReached();
     }
@@ -286,7 +286,7 @@ contract DePayRouterV3 is Ownable2Step {
     emit Payment(
       msg.sender,
       payment.paymentReceiverAddress,
-      payment.deadline,
+      payment.deadline, // in milliseconds!
       payment.amountIn,
       payment.paymentAmount,
       payment.feeAmount,
