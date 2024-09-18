@@ -185,9 +185,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
           it('emits Payment event for TOKEN to NATIVE payments', async ()=>{
 
-            const paymentAmount = 9
+            const paymentAmount = 90
             const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
-            const feeAmount = 1
+            const feeAmount = 10
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
