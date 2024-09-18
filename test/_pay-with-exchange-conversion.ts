@@ -83,9 +83,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
        
           it('fails if balanceOut is less after payment', async()=>{
 
-            const paymentAmount = 9
+            const paymentAmount = 0.1
             const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
-            const feeAmount = 1
+            const feeAmount = 0.01
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
@@ -134,9 +134,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
           it('converts TOKEN to NATIVE via exchange as part of the payment', async ()=>{
 
-            const paymentAmount = 9
+            const paymentAmount = 0.1
             const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
-            const feeAmount = 1
+            const feeAmount = 0.01
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
@@ -185,9 +185,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
           it('emits Payment event for TOKEN to NATIVE payments', async ()=>{
 
-            const paymentAmount = 90
+            const paymentAmount = 0.1
             const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
-            const feeAmount = 10
+            const feeAmount = 0.01
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
             const totalAmount = paymentAmount + feeAmount
 
