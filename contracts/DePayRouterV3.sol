@@ -16,18 +16,18 @@ contract DePayRouterV3 is Ownable2Step {
   using SafeERC20 for IERC20;
 
   // Custom errors
-  error PaymentDeadlineReached();
-  error WrongAmountPaidIn();
-  error ExchangeNotApproved();
-  error ExchangeCallMissing();
-  error ExchangeCallFailed();
-  error ForwardingPaymentFailed();
-  error NativePaymentFailed();
-  error NativeFeePaymentFailed();
-  error PaymentToZeroAddressNotAllowed();
-  error InsufficientBalanceInAfterPayment();
-  error InsufficientBalanceOutAfterPayment();
-  error InsufficientProtocolAmount();
+  error PaymentDeadlineReached(); // 0x17e0bcd9
+  error WrongAmountPaidIn(); // 0xed0842e3
+  error ExchangeNotApproved(); // 0xc35a3932
+  error ExchangeCallMissing(); // 0x6b8072c9
+  error ExchangeCallFailed(); // 0x6d8040c3
+  error ForwardingPaymentFailed(); // 0xc797a224
+  error NativePaymentFailed(); // 0xc7abb1a2
+  error NativeFeePaymentFailed(); // 0x9f06170c
+  error PaymentToZeroAddressNotAllowed(); // 0xec3a80da
+  error InsufficientBalanceInAfterPayment(); // 0x84257541
+  error InsufficientBalanceOutAfterPayment(); // 0x808b9612
+  error InsufficientProtocolAmount(); // 0x8e1ebd3a
 
   /// @notice Address representing the NATIVE token (e.g. ETH, BNB, MATIC, etc.)
   address constant NATIVE = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
