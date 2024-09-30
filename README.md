@@ -35,6 +35,9 @@ Arbitrum:
 Base:
 - [](https://basescan.org/address/)
 
+Worldchain:
+- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
+
 ### DePayForwarderV3
 
 DePayForwarderV2 allows to pay into smart contracts.
@@ -66,9 +69,12 @@ Arbitrum:
 Base:
 - [](https://basescan.org/address/)
 
+Worldchain:
+- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
+
 ### DePayWETHExchangeV1
 
-DePayWETHExchangeV1 allows to swap WETH<>ETH both ways for payments.
+DePayWETHExchangeV1 allows to swap WETH<>ETH both ways when performing payments using the DePay Router.
 
 Ethereum:
 - [0x298f4980525594b3b982779cf74ba76819708D43](https://etherscan.io/address/0x298f4980525594b3b982779cf74ba76819708D43)
@@ -97,15 +103,261 @@ Arbitrum:
 Base:
 - [0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A](https://basescan.org/address/0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A)
 
-## Summary
+Worldchain:
+- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
 
-This smart contract enables decentralized payments with auto-conversion and payment-fee extraction.
+## Functionalities
 
-The main purpose of this smart contract evolves around the `pay` function.
+### pay
 
-This smart contract allows for NATIVE to NATIVE, NATIVE to TOKEN, TOKEN to NATIVE, WRAPPED to NATIVE, NATIVE to WRAPPED and TOKEN_A to TOKEN_B payments.
+The DePay Router smart contract enables decentralized payments with auto-conversion, payment- and protocol-fees.
 
-#### Payment event
+The main purpose of the DePay Router evolves around the `pay` function.
+
+The DePay Router allows for the following payments:
+  
+  - NATIVE to NATIVE
+  - NATIVE to TOKEN
+  - TOKEN to NATIVE
+  - TOKEN to WRAPPED
+  - WRAPPED to NATIVE
+  - WRAPPED to TOKEN
+  - NATIVE to WRAPPED
+  - TOKEN_A to TOKEN_B
+
+The DePay Router offers 3 different `pay` functions which are overloaded and to be differentiated by their method arguments.
+
+The pay funciton of the DePay Router requires a `Payment` struct in order to process a payment. The struct is assembled as follows:
+
+```
+struct Payment {
+  uint256 amountIn;
+  uint256 paymentAmount;
+  uint256 feeAmount;
+  uint256 protocolAmount;
+  uint256 deadline; // in milliseconds!
+  address tokenInAddress;
+  address exchangeAddress;
+  address tokenOutAddress;
+  address paymentReceiverAddress;
+  address feeReceiverAddress;
+  uint8 exchangeType;
+  uint8 receiverType;
+  bool permit2;
+  bytes exchangeCallData;
+  bytes receiverCallData;
+}
+```
+
+#### pay - without any prior approval
+
+Using a blockchains native currency to perform a payment using the DePay Router's `pay` function does not require any upfront approval.
+
+This means payments from:
+
+- NATIVE to NATIVE
+- NATIVE to token
+- NATIVE to WRAPPED
+
+can be performed without any prior approval or signature.
+
+```
+function pay(
+  Payment calldata payment
+) external payable returns(bool);
+```
+
+```
+pay(
+  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
+)
+```
+
+```javascript
+router.connect(senderWallet)[
+  "pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
+]({
+  amountIn: "1000000000",
+  paymentAmount: "1000000000",
+  feeAmount: "0",
+  protocolAmount: "0",
+  deadline: "1727680659852",
+  tokenInAddress: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  exchangeAddress: "0x0000000000000000000000000000000000000000",
+  tokenOutAddress: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+  paymentReceiverAddress: receiverWallet,
+  feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+  exchangeType: 0,
+  receiverType: 0,
+  permit2: false,
+  exchangeCallData: "0x",
+  receiverCallData: "0x",
+}, { value: "1000000000" })
+```
+
+#### pay - with permit2 SignatureTransfer
+
+The `pay` function in the DePay Router enables token-based payments, which can be enabled by upfront [permit2 SignatureTransfers](https://docs.uniswap.org/contracts/permit2/reference/signature-transfer).
+
+Once the payment sender has allowed the permit2 contract as a spender for a given token and signed a permit2 SignatureTransfer for the DePay Router, the following payments can be performed:
+
+- TOKEN to NATIVE
+- TOKEN to WRAPPED
+- TOKEN_A to TOKEN_B
+- WRAPPED to NATIVE
+- WRAPPED to TOKEN
+
+```
+struct TokenPermissions {
+  address token;
+  uint256 amount;
+}
+
+struct PermitTransferFrom {
+  TokenPermissions permitted;
+  uint256 nonce;
+  uint256 deadline;
+}
+
+struct PermitTransferFromAndSignature {
+  IPermit2.PermitTransferFrom permitTransferFrom;
+  bytes signature;
+}
+
+function pay(
+  IDePayRouterV3.Payment calldata payment,
+  PermitTransferFromAndSignature calldata permitTransferFromAndSignature
+) external payable returns(bool);
+```
+
+```
+pay(
+  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),
+  (
+    (
+      (address,uint256),
+      uint256,
+      uint256
+    ),
+    bytes
+  )
+)
+```
+
+```javascript
+const domain = {
+  chainId: "10", // e.g. optimism
+  name: "Permit2",
+  verifyingContract: permit2Contract.address
+}
+
+const types = {
+  PermitTransferFrom: [
+    { name: "permitted", type: "TokenPermissions" },
+    { name: "spender", type: "address" },
+    { name: "nonce", type: "uint256" },
+    { name: "deadline", type: "uint256" }
+  ],
+  TokenPermissions: [
+    { name: "token", type: "address" },
+    { name: "amount", type: "uint256" },
+  ]
+}
+
+const data = {
+  permitted: {
+    token: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    amount: "100000",
+  },
+  spender: routerAddress,
+  nonce,
+  deadline
+}
+
+const signature = await wallets[0]._signTypedData(domain, types, data)
+
+router.connect(senderWallet)[
+  "pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),(((address,uint256),uint256,uint256),bytes))"
+](
+  { // payment
+    amountIn: "100000",
+    paymentAmount: "100000",
+    feeAmount: "0",
+    protocolAmount: "0",
+    deadline: "1727680659852",
+    tokenInAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    exchangeAddress: "0x0000000000000000000000000000000000000000",
+    tokenOutAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    paymentReceiverAddress: receiverWallet,
+    feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+    exchangeType: 0,
+    receiverType: 0,
+    permit2: true,
+    exchangeCallData: "0x",
+    receiverCallData: "0x",
+  },
+  { // PermitTransferFromAndSignature
+    permitTransferFrom: {
+       permitted: {
+        token: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        amount: "100000",
+      },
+      nonce,
+      deadline
+    },
+    signature
+  },
+  { value: 0 }
+)
+```
+
+#### pay - with ERC-20 token approval
+
+The `pay` function in the DePay Router enables token-based payments, which can be enabled by upfront [ERC-20 token approvals](https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#IERC20-approve-address-uint256-).
+
+Once the payment sender has allowed the DePay Router as a spender for a given token, the following payments can be performed:
+
+- TOKEN to NATIVE
+- TOKEN to WRAPPED
+- TOKEN_A to TOKEN_B
+- WRAPPED to NATIVE
+- WRAPPED to TOKEN
+
+```
+function pay(
+  Payment calldata payment
+) external payable returns(bool);
+```
+
+```
+pay(
+  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
+)
+```
+
+```javascript
+const PAY = "pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
+
+router.connect(senderWallet)[PAY]({
+  amountIn: "100000",
+  paymentAmount: "100000",
+  feeAmount: "0",
+  protocolAmount: "0",
+  deadline: "1727680659852",
+  tokenInAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  exchangeAddress: "0x0000000000000000000000000000000000000000",
+  tokenOutAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  paymentReceiverAddress: receiverWallet,
+  feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+  exchangeType: 0,
+  receiverType: 0,
+  permit2: false,
+  exchangeCallData: "0x",
+  receiverCallData: "0x",
+}, { value: 0 })
+```
+
+### Payment Event
 
 The `DePayRouterV3` emits a `Payment` event for all payments:
 
