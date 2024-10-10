@@ -36,7 +36,7 @@ Base:
 - [](https://basescan.org/address/)
 
 Worldchain:
-- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
+- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://worldchain-mainnet.explorer.alchemy.com/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
 
 ### DePayForwarderV3
 
@@ -70,7 +70,7 @@ Base:
 - [](https://basescan.org/address/)
 
 Worldchain:
-- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
+- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://worldchain-mainnet.explorer.alchemy.com/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
 
 ### DePayWETHExchangeV1
 
@@ -104,7 +104,7 @@ Base:
 - [0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A](https://basescan.org/address/0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A)
 
 Worldchain:
-- [](https://worldchain-mainnet.explorer.alchemy.com/address/)
+- [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://worldchain-mainnet.explorer.alchemy.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
 
 ## Functionalities
 
