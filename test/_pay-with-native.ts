@@ -106,6 +106,7 @@ export default ({ blockchain })=>{
           paymentAmount,
           0,
           0,
+          0,
           NATIVE,
           NATIVE,
           ZERO
@@ -178,6 +179,7 @@ export default ({ blockchain })=>{
           paymentAmount,
           feeAmount,
           0,
+          0,
           NATIVE,
           NATIVE,
           wallets[2].address
@@ -226,6 +228,7 @@ export default ({ blockchain })=>{
           paymentAmount,
           feeAmount,
           protocolAmount,
+          0,
           NATIVE,
           NATIVE,
           wallets[2].address

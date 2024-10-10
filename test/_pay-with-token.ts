@@ -92,6 +92,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           paymentAmount,
           0,
           0,
+          0,
           TOKEN,
           TOKEN,
           ZERO
@@ -174,6 +175,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           paymentAmount,
           feeAmount,
           protocolAmount,
+          0,
           TOKEN,
           TOKEN,
           wallets[2].address

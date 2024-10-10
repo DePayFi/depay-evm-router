@@ -6,6 +6,6 @@ payWithExchangeConversion({
   fromAccount: '0x62ac55b745F9B08F1a81DCbbE630277095Cf4Be1', // needs to hold enough fromToken, will be impersonated
   toToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC
   exchanges: [
-    { name: 'uniswap_v3', type: 'push' },
+    { name: 'uniswap_v3', type: 'pull' },
   ]
 })

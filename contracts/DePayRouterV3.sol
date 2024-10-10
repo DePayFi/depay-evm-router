@@ -61,6 +61,7 @@ contract DePayRouterV3 is Ownable2Step {
     uint256 paymentAmount,
     uint256 feeAmount,
     uint256 protocolAmount,
+    uint256 slippageAmount,
     address tokenInAddress,
     address tokenOutAddress,
     address feeReceiverAddress
@@ -79,7 +80,7 @@ contract DePayRouterV3 is Ownable2Step {
     _payIn(payment);
     _performPayment(payment);
     _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment);
+    _emit(payment, balanceOutBefore);
 
     return true;
   }
@@ -108,7 +109,7 @@ contract DePayRouterV3 is Ownable2Step {
     _payIn(payment, permitTransferFromAndSignature);
     _performPayment(payment);
     _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment);
+    _emit(payment, balanceOutBefore);
 
     return true;
   }
@@ -142,7 +143,7 @@ contract DePayRouterV3 is Ownable2Step {
     _payIn(payment);
     _performPayment(payment);
     _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment);
+    _emit(payment, balanceOutBefore);
 
     return true;
   }
@@ -297,7 +298,8 @@ contract DePayRouterV3 is Ownable2Step {
 
   /// @dev Emits payment event.
   /// @param payment The payment data.
-  function _emit(IDePayRouterV3.Payment calldata payment) internal {
+  function _emit(IDePayRouterV3.Payment calldata payment, uint256 balanceOutBefore) internal {
+    uint256 balanceOutNow = payment.tokenOutAddress == NATIVE ? address(this).balance : IERC20(payment.tokenOutAddress).balanceOf(address(this));
     emit Payment(
       msg.sender,
       payment.paymentReceiverAddress,
@@ -306,6 +308,7 @@ contract DePayRouterV3 is Ownable2Step {
       payment.paymentAmount,
       payment.feeAmount,
       payment.protocolAmount,
+      balanceOutNow - balanceOutBefore - payment.protocolAmount,
       payment.tokenInAddress,
       payment.tokenOutAddress,
       payment.feeReceiverAddress

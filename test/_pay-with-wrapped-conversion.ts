@@ -78,6 +78,7 @@ export default ({ blockchain })=>{
           paymentAmount,
           feeAmount,
           0,
+          0,
           NATIVE,
           WRAPPED,
           wallets[2].address

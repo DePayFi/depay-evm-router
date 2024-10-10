@@ -8,6 +8,6 @@ payWithExchangeConversion({
   exchanges: [
     { name: 'pancakeswap_v3', type: 'pull' },
     { name: 'pancakeswap', type: 'pull' },
-    { name: 'uniswap_v3', type: 'push' },
+    { name: 'uniswap_v3', type: 'pull' },
   ]
 })

@@ -370,6 +370,7 @@ event Payment(
   uint256 paymentAmount,
   uint256 feeAmount,
   uint256 protocolAmount,
+  uint256 slippageAmount,
   address tokenInAddress,
   address tokenOutAddress,
   address feeReceiverAddress
@@ -426,7 +427,7 @@ yarn test
 Test single files:
 
 ```
-npx hardhat test test/ethereum/pay_with_native.spec.ts --config hardhat.config.ethereum.ts
+npx hardhat test test/ethereum/pay_with_exchange_conversion.spec.ts --config hardhat.config.ethereum.ts
 ```
 
 ### Deploy

@@ -126,6 +126,7 @@ export default ({ blockchain, token, tokenHolder })=>{
           paymentAmount,
           feeAmount,
           0,
+          0,
           TOKEN,
           TOKEN,
           wallets[2].address
@@ -259,6 +260,7 @@ export default ({ blockchain, token, tokenHolder })=>{
           amountIn,
           paymentAmount,
           feeAmount,
+          0,
           0,
           TOKEN,
           TOKEN,

@@ -124,6 +124,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           paymentAmount,
           feeAmount,
           0,
+          0,
           NATIVE,
           NATIVE,
           wallets[2].address
@@ -207,6 +208,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           amountIn,
           paymentAmount,
           feeAmount,
+          0,
           0,
           fromToken,
           fromToken,

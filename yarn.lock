@@ -287,25 +287,25 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@depay/web3-blockchains@^9.5.1":
-  version "9.5.1"
-  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-9.5.1.tgz#1e8f2c65aead5e1cc919f7724bac46fde59f4ba0"
-  integrity sha512-F3nj+rBxZz0VNifM+x6KsExtnv7cZLuZwsRpkraOMXDnRt1jIJbzX3hrklIVaxvNtVX4kPsOZBVgzay7QVOYhw==
+"@depay/web3-blockchains@^9.6.7":
+  version "9.6.7"
+  resolved "https://registry.yarnpkg.com/@depay/web3-blockchains/-/web3-blockchains-9.6.7.tgz#467853ef8895f6650041f5df792a343a2047f533"
+  integrity sha512-RqVsm/aURJ2npRm0/0qr/GiMdBsGSbRA2GpzG75Vy7qODYScbYjA/CitMjhw9ktzGjiFN9oh/ooq9GBjPIhEdA==
 
-"@depay/web3-client-evm@^10.16.3":
-  version "10.16.3"
-  resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.16.3.tgz#63f736fe8df83b62d2c7d0c9777ccbd7981ffc49"
-  integrity sha512-q1KmFScKgqCeLtg5v3xaQ12l3xNgyKEIgGBCfPXGbsK3kBaG6actZbAugIsK+GzEGwAetKYoM+MmK5P8bt5r6Q==
+"@depay/web3-client-evm@^10.19.1":
+  version "10.19.1"
+  resolved "https://registry.yarnpkg.com/@depay/web3-client-evm/-/web3-client-evm-10.19.1.tgz#88091c94bc9603e2afe7bfb25dceed322ce76181"
+  integrity sha512-smxAPoq+x6bnp3t4ak6g0AJlkHzjD4WuMwOHhTJ4ct2aLs8EiMu0MA54Zebetk5Udpi7B4QgaZKIpwjEL/0J7A==
 
-"@depay/web3-exchanges-evm@^13.2.3":
-  version "13.2.3"
-  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.2.3.tgz#2d15850bd49a5c5d4cac4079742134a61bbb31bd"
-  integrity sha512-MuP0MGilPVECI9hXwLt4whk/ul6TVhTjKegFQV+L3s7HdXevxsPC6TDXd1WQP2u+659l7r6btqqPrSDgEDaWaA==
+"@depay/web3-exchanges-evm@^13.11.0":
+  version "13.11.0"
+  resolved "https://registry.yarnpkg.com/@depay/web3-exchanges-evm/-/web3-exchanges-evm-13.11.0.tgz#5914de87be57d19a34811fd5efe9dcb3fc41e0bb"
+  integrity sha512-2Nd+tigt9IpJO22jnt/TmG4qZnc9GHBVpug/71kMVNZqraNEhTSY73ma98BIhWrigjNjBxpXiHOVkVq6G1F0AA==
 
-"@depay/web3-tokens-evm@^10.1.0":
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/@depay/web3-tokens-evm/-/web3-tokens-evm-10.1.0.tgz#34251da8cf5891caf5078c1d3a3a3d61fe7dd892"
-  integrity sha512-bYS1O0WIyOYgStyhTwJRIroPiiIm04jpgqUcp+R0MUx483rG6vkGfsy1eakf9AMd1sJeu0YsM4URLsgJU0LZwQ==
+"@depay/web3-tokens-evm@^10.4.3":
+  version "10.4.3"
+  resolved "https://registry.yarnpkg.com/@depay/web3-tokens-evm/-/web3-tokens-evm-10.4.3.tgz#00c4eb6160a95f2b67278a398fef9d796df15093"
+  integrity sha512-vdxQCRJlsQw2Xd/MzH+iRx+QVto4kKN/vqk6Iyjl9RAC9CnMiHZWrGU4qTo9dl8QDXVaHf6TNNmT4Jj3cJCjqQ==
 
 "@ensdomains/ens@^0.4.4":
   version "0.4.5"
