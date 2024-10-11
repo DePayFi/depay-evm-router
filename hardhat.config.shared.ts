@@ -16,12 +16,12 @@ var {
   OPTIMISM_RPC_URL,
   AVALANCHE_RPC_URL,
   POLYGON_ZKEVM_RPC_URL,
-  ZKSYNC_ERA_RPC_URL,
+  WORLDCHAIN_RPC_URL,
 } = process.env
 
 const sharedConfig = {
   solidity: {
-    version: '0.8.18',
+    version: '0.8.26',
     settings: {
       optimizer: {
         enabled: true,
@@ -44,5 +44,5 @@ export {
   OPTIMISM_RPC_URL,
   AVALANCHE_RPC_URL,
   POLYGON_ZKEVM_RPC_URL,
-  ZKSYNC_ERA_RPC_URL,
+  WORLDCHAIN_RPC_URL,
 }

@@ -7,5 +7,6 @@ payWithExchangeConversion({
   toToken: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // USDC
   exchanges: [
     { name: 'trader_joe_v2_1', type: 'pull' },
+    { name: 'uniswap_v3', type: 'pull' },
   ]
 })

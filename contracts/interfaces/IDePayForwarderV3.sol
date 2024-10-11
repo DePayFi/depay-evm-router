@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.26;
 
-import './IDePayRouterV2.sol';
+import './IDePayRouterV3.sol';
 
-interface IDePayForwarderV2 {
+interface IDePayForwarderV3 {
 
   function forward(
-    IDePayRouterV2.Payment calldata payment
+    IDePayRouterV3.Payment calldata payment
   ) external payable returns(bool);
 
   function toggle(bool stop) external returns(bool);

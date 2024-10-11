@@ -539,7 +539,7 @@ library SafeERC20 {
 // Root file: contracts/TestReceiver.sol
 
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.26;
 
 // import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
