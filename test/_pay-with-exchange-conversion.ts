@@ -97,12 +97,6 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               tokenOut: Blockchains[blockchain].currency.address,
               amountOutMin: totalAmount
             })
-            console.log({
-              blockchain,
-              tokenIn: fromToken,
-              tokenOut: Blockchains[blockchain].currency.address,
-              amountOutMin: totalAmount
-            })
 
             const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
             const callData = getCallData({

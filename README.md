@@ -36,7 +36,7 @@ Base:
 - [](https://basescan.org/address/)
 
 Worldchain:
-- [0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780](https://worldchain-mainnet.explorer.alchemy.com/address/0x5EC3153BACebb5e49136cF2d457f26f5Df1B6780)
+- [0xC9850b32475f4fdE5c972EA6f967982a3c435D10](https://worldchain-mainnet.explorer.alchemy.com/address/0xC9850b32475f4fdE5c972EA6f967982a3c435D10)
 
 ### DePayForwarderV3
 
