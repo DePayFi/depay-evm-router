@@ -46,7 +46,7 @@ export default ({ blockchain })=>{
             receiverType: 0,
             exchangeCallData: ZERO,
             receiverCallData: ZERO,
-            deadline: 0,
+            deadline: ((now()-500) * 1000),
           }, { value: 1000000000 })
         ).to.be.revertedWith(
           'PaymentDeadlineReached()'

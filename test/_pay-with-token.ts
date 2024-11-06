@@ -60,7 +60,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
 
       it('pays payment receiver', async ()=> {
         const amountIn = 1000000
-        const paymentAmount = 1000000
+        const paymentAmount = 900000
 
         const paymentReceiverBalanceBefore = await tokenContract.balanceOf(wallets[1].address)
 
@@ -88,14 +88,15 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           fromAccount._address, // from
           wallets[1].address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          0,
-          0,
-          0,
-          TOKEN,
-          TOKEN,
-          ZERO
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          0, // feeAmount
+          0, // protocolAmount
+          100000, // slippageInAmount
+          0, // slippageOutAmount
+          TOKEN, // tokenInAddress
+          TOKEN, // tokenOutAddress
+          ZERO // feeReceiverAddress
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
@@ -171,14 +172,15 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           fromAccount._address, // from
           wallets[1].address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          protocolAmount,
-          0,
-          TOKEN,
-          TOKEN,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          protocolAmount, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          TOKEN, // tokenInAddress
+          TOKEN, // tokenOutAddress
+          wallets[2].address // feeReceiverAddress
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)

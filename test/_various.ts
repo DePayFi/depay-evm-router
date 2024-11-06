@@ -97,8 +97,8 @@ export default ({ blockchain })=>{
         )
       })
 
-      it('only allows the owner to approve exchanges', async ()=> {
-        const amountBN = ethers.BigNumber.from('100000000000000')
+      it('only allows the owner to withdraw stuck NATIVE', async ()=> {
+        const amountBN = ethers.BigNumber.from('100000000000000000000')
         await wallets[0].sendTransaction({ to: router.address, value: amountBN })
         const balanceBefore = await provider.getBalance(wallets[0].address)
         await router.connect(wallets[0]).withdraw(NATIVE, amountBN)

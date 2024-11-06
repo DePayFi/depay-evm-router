@@ -122,14 +122,15 @@ export default ({ blockchain, token, tokenHolder })=>{
           wallets[0].address, // from
           wallets[1].address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          0,
-          0,
-          TOKEN,
-          TOKEN,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          TOKEN, // tokenInAddress
+          TOKEN, // tokenOutAddress
+          wallets[2].address // feeReceiverAddress
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
@@ -257,14 +258,15 @@ export default ({ blockchain, token, tokenHolder })=>{
           wallets[0].address, // from
           wallets[1].address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          0,
-          0,
-          TOKEN,
-          TOKEN,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          TOKEN, // tokenInAddress
+          TOKEN, // tokenOutAddress
+          wallets[2].address // feeReceiverAddress
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)

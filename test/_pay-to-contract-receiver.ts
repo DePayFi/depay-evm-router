@@ -120,14 +120,15 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           wallets[0].address, // from
           receiverContract.address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          0,
-          0,
-          NATIVE,
-          NATIVE,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          NATIVE, // tokenOutAddres
+          wallets[2].address // feeReceiverAddress
         )
       })
 
@@ -205,14 +206,15 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           fromAccount._address, // from
           receiverContract.address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          0,
-          0,
-          fromToken,
-          fromToken,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          fromToken, // tokenInAddress
+          fromToken, // tokenOutAddress
+          wallets[2].address // feeReceiverAddress
         )
       })
 

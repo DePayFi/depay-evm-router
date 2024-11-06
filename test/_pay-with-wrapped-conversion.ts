@@ -74,14 +74,15 @@ export default ({ blockchain })=>{
           wallets[0].address, // from
           wallets[1].address, // to
           deadline, // deadline
-          amountIn,
-          paymentAmount,
-          feeAmount,
-          0,
-          0,
-          NATIVE,
-          WRAPPED,
-          wallets[2].address
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          WRAPPED, // tokenOutAddress
+          wallets[2].address // feeReceiverAddress
         )
 
         const paymentReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[1].address)

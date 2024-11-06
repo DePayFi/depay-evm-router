@@ -4,9 +4,9 @@ pragma solidity 0.8.26;
 
 import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import './interfaces/IPermit2.sol';
-import './interfaces/IDePayRouterV3.sol';
 import './interfaces/IDePayForwarderV3.sol';
+import './interfaces/IDePayRouterV3.sol';
+import './interfaces/IPermit2.sol';
 
 /// @title DePayRouterV3
 /// @notice This contract handles payments and token conversions.
@@ -61,7 +61,8 @@ contract DePayRouterV3 is Ownable2Step {
     uint256 paymentAmount,
     uint256 feeAmount,
     uint256 protocolAmount,
-    uint256 slippageAmount,
+    uint256 slippageInAmount,
+    uint256 slippageOutAmount,
     address tokenInAddress,
     address tokenOutAddress,
     address feeReceiverAddress
@@ -73,14 +74,13 @@ contract DePayRouterV3 is Ownable2Step {
   function _pay(
     IDePayRouterV3.Payment calldata payment
   ) internal returns(bool){
-    uint256 balanceInBefore;
-    uint256 balanceOutBefore;
 
-    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    IDePayRouterV3.Balance memory balance = IDePayRouterV3.Balance(0,0,0,0);
+    _validatePreConditions(payment, balance);
     _payIn(payment);
     _performPayment(payment);
-    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment, balanceOutBefore);
+    _validatePostConditions(payment, balance);
+    _emit(payment, balance);
 
     return true;
   }
@@ -102,14 +102,13 @@ contract DePayRouterV3 is Ownable2Step {
     IDePayRouterV3.Payment calldata payment,
     IDePayRouterV3.PermitTransferFromAndSignature calldata permitTransferFromAndSignature
   ) internal returns(bool){
-    uint256 balanceInBefore;
-    uint256 balanceOutBefore;
 
-    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    IDePayRouterV3.Balance memory balance = IDePayRouterV3.Balance(0,0,0,0);
+    _validatePreConditions(payment, balance);
     _payIn(payment, permitTransferFromAndSignature);
     _performPayment(payment);
-    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment, balanceOutBefore);
+    _validatePostConditions(payment, balance);
+    _emit(payment, balance);
 
     return true;
   }
@@ -135,15 +134,14 @@ contract DePayRouterV3 is Ownable2Step {
     IPermit2.PermitSingle calldata permitSingle,
     bytes calldata signature
   ) internal returns(bool){
-    uint256 balanceInBefore;
-    uint256 balanceOutBefore;
 
-    (balanceInBefore, balanceOutBefore) = _validatePreConditions(payment);
+    IDePayRouterV3.Balance memory balance = IDePayRouterV3.Balance(0,0,0,0);
+    _validatePreConditions(payment, balance);
     _permit(permitSingle, signature);
     _payIn(payment);
     _performPayment(payment);
-    _validatePostConditions(payment, balanceInBefore, balanceOutBefore);
-    _emit(payment, balanceOutBefore);
+    _validatePostConditions(payment, balance);
+    _emit(payment, balance);
 
     return true;
   }
@@ -163,9 +161,10 @@ contract DePayRouterV3 is Ownable2Step {
 
   /// @dev Validates the pre-conditions for a payment.
   /// @param payment The payment data.
-  /// @return balanceInBefore The balance in before the payment.
-  /// @return balanceOutBefore The balance out before the payment.
-  function _validatePreConditions(IDePayRouterV3.Payment calldata payment) internal returns(uint256 balanceInBefore, uint256 balanceOutBefore) {
+  function _validatePreConditions(
+    IDePayRouterV3.Payment calldata payment,
+    IDePayRouterV3.Balance memory balance
+  ) internal view {
     // Make sure payment deadline (in milliseconds!) has not been passed, yet
     if(payment.deadline < block.timestamp * 1000) {
       revert PaymentDeadlineReached();
@@ -173,16 +172,16 @@ contract DePayRouterV3 is Ownable2Step {
 
     // Store tokenIn balance prior to payment
     if(payment.tokenInAddress == NATIVE) {
-      balanceInBefore = address(this).balance - msg.value;
+      balance.inBefore = address(this).balance - msg.value;
     } else {
-      balanceInBefore = IERC20(payment.tokenInAddress).balanceOf(address(this));
+      balance.inBefore = IERC20(payment.tokenInAddress).balanceOf(address(this));
     }
 
     // Store tokenOut balance prior to payment
     if(payment.tokenOutAddress == NATIVE) {
-      balanceOutBefore = address(this).balance - msg.value;
+      balance.outBefore = address(this).balance - msg.value;
     } else {
-      balanceOutBefore = IERC20(payment.tokenOutAddress).balanceOf(address(this));
+      balance.outBefore = IERC20(payment.tokenOutAddress).balanceOf(address(this));
     }
   }
 
@@ -256,61 +255,70 @@ contract DePayRouterV3 is Ownable2Step {
 
   /// @dev Validates the post-conditions for a payment.
   /// @param payment The payment data.
-  /// @param balanceInBefore The balance in before the payment.
-  /// @param balanceOutBefore The balance out before the payment.
-  function _validatePostConditions(IDePayRouterV3.Payment calldata payment, uint256 balanceInBefore, uint256 balanceOutBefore) internal view {
+  function _validatePostConditions(
+    IDePayRouterV3.Payment calldata payment,
+    IDePayRouterV3.Balance memory balance
+  ) internal view {
     // Ensure balances of tokenIn remained
     if(payment.tokenInAddress == NATIVE) {
-      if(address(this).balance < balanceInBefore) {
-        revert InsufficientBalanceInAfterPayment();
-      }
+      balance.inAfter = address(this).balance;
     } else {
-      if(IERC20(payment.tokenInAddress).balanceOf(address(this)) < balanceInBefore) {
-        revert InsufficientBalanceInAfterPayment();
-      }
+      balance.inAfter = IERC20(payment.tokenInAddress).balanceOf(address(this));
+    }
+
+    if(balance.inAfter < balance.inBefore) {
+      revert InsufficientBalanceInAfterPayment();
     }
 
     // Ensure balances of tokenOut remained
     if(payment.tokenOutAddress == NATIVE) {
-      if(address(this).balance < balanceOutBefore) {
-        revert InsufficientBalanceOutAfterPayment();
-      }
+      balance.outAfter = address(this).balance;
     } else {
-      if(IERC20(payment.tokenOutAddress).balanceOf(address(this)) < balanceOutBefore) {
-        revert InsufficientBalanceOutAfterPayment();
-      }
+      balance.outAfter = IERC20(payment.tokenOutAddress).balanceOf(address(this));
+    }
+
+    if(balance.outAfter < balance.outBefore) {
+      revert InsufficientBalanceOutAfterPayment();
     }
 
     // Ensure protocolAmount remained within router
     if(payment.protocolAmount > 0) {
-
-      if(payment.tokenOutAddress == NATIVE) {
-        if((address(this).balance - payment.protocolAmount) < balanceOutBefore) {
-          revert InsufficientProtocolAmount();
-        }
-      } else {
-        if((IERC20(payment.tokenOutAddress).balanceOf(address(this)) - payment.protocolAmount) < balanceOutBefore) {
-          revert InsufficientProtocolAmount();
-        }
+      if((balance.outAfter - payment.protocolAmount) < balance.outBefore) {
+        revert InsufficientProtocolAmount();
       }
     }
   }
 
   /// @dev Emits payment event.
   /// @param payment The payment data.
-  function _emit(IDePayRouterV3.Payment calldata payment, uint256 balanceOutBefore) internal {
-    uint256 balanceOutNow = payment.tokenOutAddress == NATIVE ? address(this).balance : IERC20(payment.tokenOutAddress).balanceOf(address(this));
+  function _emit(
+    IDePayRouterV3.Payment calldata payment,
+    IDePayRouterV3.Balance memory balance
+  ) internal {
     emit Payment(
+      // from
       msg.sender,
+      // to
       payment.paymentReceiverAddress,
-      payment.deadline, // in milliseconds!
+      // deadline in milliseconds!
+      payment.deadline,
+      // amountIn
       payment.amountIn,
+      // paymentAmount
       payment.paymentAmount,
+      // feeAmount
       payment.feeAmount,
+      // protocolAmount
       payment.protocolAmount,
-      balanceOutNow - balanceOutBefore - payment.protocolAmount,
+      // slippageInAmount
+      payment.tokenInAddress != payment.tokenOutAddress ? balance.inAfter - balance.inBefore : balance.inAfter - balance.inBefore - payment.protocolAmount,
+      // slippageOutAmount
+      payment.tokenInAddress != payment.tokenOutAddress ? balance.outAfter - balance.outBefore - payment.protocolAmount : 0,
+      // tokenInAddress
       payment.tokenInAddress,
+      // tokenOutAddress
       payment.tokenOutAddress,
+      // feeReceiverAddress
       payment.feeReceiverAddress
     );
   }

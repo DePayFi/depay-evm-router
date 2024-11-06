@@ -198,6 +198,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountOutMin: totalAmount
             })
 
+            const slippageInBN = ethers.BigNumber.from("21")
+            const amountInBN = ethers.BigNumber.from(route.amountIn).add(slippageInBN)
+
             const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
             const callData = getCallData({
               address: transaction.to,
@@ -210,43 +213,41 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
 
-            await expect(
-              router.connect(fromAccount)[PAY]({
-                amountIn: ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")),
-                paymentAmount: paymentAmountBN,
-                feeAmount: feeAmountBN,
-                protocolAmount: 0,
-                tokenInAddress: route.tokenIn,
-                exchangeAddress: transaction.to,
-                tokenOutAddress: route.tokenOut,
-                paymentReceiverAddress: wallets[1].address,
-                feeReceiverAddress: wallets[2].address,
-                exchangeType: exchange.type === 'pull' ? 1 : 2,
-                receiverType: 0,
-                exchangeCallData: callData,
-                receiverCallData: ZERO,
-                deadline,
-              })
-            )
-            .to.emit(router, 'Payment').withArgs(
-              fromAccount._address, // from
-              wallets[1].address, // to
-              deadline, // deadline
-              ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")),
-              paymentAmountBN,
-              feeAmountBN,
-              0,
-              (amount) => {
-                expect(amount).to.be.closeTo(
-                  paymentAmountBN.add(feeAmountBN).mul(5).div(1000), // slippage
-                  paymentAmountBN.add(feeAmountBN).mul(1).div(10000) // tollerance
-                )
-              },
-              route.tokenIn,
-              route.tokenOut,
-              wallets[2].address
-            )
+            const tx = await router.connect(fromAccount)[PAY]({
+              amountIn: amountInBN,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              protocolAmount: 0,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            })
+
+            const receipt = await tx.wait()
+            const event = receipt.events.find((e) => e.event === 'Payment')
             
+            expect(event.args.from).to.eq(fromAccount._address)
+            expect(event.args.to).to.eq(wallets[1].address)
+            expect(event.args.deadline).to.eq(deadline)
+            expect(event.args.amountIn).to.eq(ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")))
+            expect(event.args.paymentAmount).to.eq(paymentAmountBN)
+            expect(event.args.feeAmount).to.eq(feeAmountBN)
+            expect(event.args.protocolAmount).to.eq(0)
+            expect(event.args.slippageInAmount).to.eq(slippageInBN)
+            expect(event.args.slippageOutAmount).to.be.closeTo(
+              paymentAmountBN.add(feeAmountBN).mul(5).div(1000), // slippageOut 0.5%
+              paymentAmountBN.add(feeAmountBN).mul(9).div(1000) // tollerance 0.9%
+            )
+            expect(event.args.tokenInAddress).to.eq(route.tokenIn)
+            expect(event.args.tokenOutAddress).to.eq(route.tokenOut)
+            expect(event.args.feeReceiverAddress).to.eq(wallets[2].address)
           })
 
           it('keeps continue converting TOKEN to NATIVE and does not get stuck with safeApprove (non zero)', async ()=>{
@@ -308,14 +309,6 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), toDecimals)
             const totalAmount = paymentAmount + feeAmount
 
-            const route = await Exchanges[exchange.name].route({
-              blockchain,
-              tokenIn: Blockchains[blockchain].currency.address,
-              tokenOut: toToken,
-              amountOutMin: totalAmount
-            })
-
-            const transaction = await route.getTransaction({ account: router.address, inputTokenPushed: exchange.type === 'push' })
             const callData = [] // empty
 
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
@@ -323,13 +316,13 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
             await expect(
               router.connect(fromAccount)[PAY]({
-                amountIn: route.amountIn,
+                amountIn: 1,
                 paymentAmount: paymentAmountBN,
                 feeAmount: feeAmountBN,
                 protocolAmount: 0,
-                tokenInAddress: route.tokenIn,
-                exchangeAddress: transaction.to,
-                tokenOutAddress: route.tokenOut,
+                tokenInAddress: Blockchains[blockchain].currency.address,
+                exchangeAddress: Exchanges[exchange.name][blockchain].router.address,
+                tokenOutAddress: toToken,
                 paymentReceiverAddress: wallets[1].address,
                 feeReceiverAddress: wallets[2].address,
                 exchangeType: exchange.type === 'pull' ? 1 : 2,
@@ -337,7 +330,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
                 exchangeCallData: callData,
                 receiverCallData: ZERO,
                 deadline,
-              }, { value: route.amountIn })
+              }, { value: 1 })
             ).to.be.revertedWith(
               'ExchangeCallMissing'
             )
@@ -421,42 +414,41 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await expect(
-              await router.connect(fromAccount)[PAY]({
-                amountIn: route.amountIn,
-                paymentAmount: paymentAmountBN,
-                feeAmount: feeAmountBN,
-                protocolAmount: 0,
-                tokenInAddress: route.tokenIn,
-                exchangeAddress: transaction.to,
-                tokenOutAddress: route.tokenOut,
-                paymentReceiverAddress: wallets[1].address,
-                feeReceiverAddress: wallets[2].address,
-                exchangeType: exchange.type === 'pull' ? 1 : 2,
-                receiverType: 0,
-                exchangeCallData: callData,
-                receiverCallData: ZERO,
-                deadline,
-              }, { value: route.amountIn })
+            const tx = await router.connect(fromAccount)[PAY]({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              protocolAmount: 0,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            }, { value: route.amountIn })
+
+            const receipt = await tx.wait()
+            const event = receipt.events.find((e) => e.event === 'Payment')
+            
+            expect(event.args.from).to.eq(fromAccount._address)
+            expect(event.args.to).to.eq(wallets[1].address)
+            expect(event.args.deadline).to.eq(deadline)
+            expect(event.args.amountIn).to.eq(route.amountIn)
+            expect(event.args.paymentAmount).to.eq(paymentAmountBN)
+            expect(event.args.feeAmount).to.eq(feeAmountBN)
+            expect(event.args.protocolAmount).to.eq(0)
+            expect(event.args.slippageInAmount).to.eq(0)
+            expect(event.args.slippageOutAmount).to.be.closeTo(
+              paymentAmountBN.add(feeAmountBN).mul(5).div(1000), // slippageOut 0.5%
+              paymentAmountBN.add(feeAmountBN).mul(9).div(1000) // tollerance 0.9%
             )
-            .to.emit(router, 'Payment').withArgs(
-              fromAccount._address, // from
-              wallets[1].address, // to
-              deadline, // deadline
-              route.amountIn,
-              paymentAmountBN,
-              feeAmountBN,
-              0,
-              (amount) => {
-                expect(amount).to.be.closeTo(
-                  paymentAmountBN.add(feeAmountBN).mul(5).div(1000), // slippage
-                  paymentAmountBN.add(feeAmountBN).mul(1).div(10000) // tollerance
-                )
-              },
-              route.tokenIn,
-              route.tokenOut,
-              wallets[2].address
-            )
+            expect(event.args.tokenInAddress).to.eq(route.tokenIn)
+            expect(event.args.tokenOutAddress).to.eq(route.tokenOut)
+            expect(event.args.feeReceiverAddress).to.eq(wallets[2].address)
           })
 
           it('keeps protocol amount and calculates slippageAmount accordingly', async ()=>{
@@ -488,42 +480,41 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[1].address)
             const feeReceiverBalanceBefore = await toTokenContract.balanceOf(wallets[2].address)
 
-            await expect(
-              await router.connect(fromAccount)[PAY]({
-                amountIn: route.amountIn,
-                paymentAmount: paymentAmountBN,
-                feeAmount: feeAmountBN,
-                protocolAmount: protocolAmountBN,
-                tokenInAddress: route.tokenIn,
-                exchangeAddress: transaction.to,
-                tokenOutAddress: route.tokenOut,
-                paymentReceiverAddress: wallets[1].address,
-                feeReceiverAddress: wallets[2].address,
-                exchangeType: exchange.type === 'pull' ? 1 : 2,
-                receiverType: 0,
-                exchangeCallData: callData,
-                receiverCallData: ZERO,
-                deadline,
-              }, { value: route.amountIn })
+            const tx = await router.connect(fromAccount)[PAY]({
+              amountIn: route.amountIn,
+              paymentAmount: paymentAmountBN,
+              feeAmount: feeAmountBN,
+              protocolAmount: protocolAmountBN,
+              tokenInAddress: route.tokenIn,
+              exchangeAddress: transaction.to,
+              tokenOutAddress: route.tokenOut,
+              paymentReceiverAddress: wallets[1].address,
+              feeReceiverAddress: wallets[2].address,
+              exchangeType: exchange.type === 'pull' ? 1 : 2,
+              receiverType: 0,
+              exchangeCallData: callData,
+              receiverCallData: ZERO,
+              deadline,
+            }, { value: route.amountIn })
+
+            const receipt = await tx.wait()
+            const event = receipt.events.find((e) => e.event === 'Payment')
+            
+            expect(event.args.from).to.eq(fromAccount._address)
+            expect(event.args.to).to.eq(wallets[1].address)
+            expect(event.args.deadline).to.eq(deadline)
+            expect(event.args.amountIn).to.eq(route.amountIn)
+            expect(event.args.paymentAmount).to.eq(paymentAmountBN)
+            expect(event.args.feeAmount).to.eq(feeAmountBN)
+            expect(event.args.protocolAmount).to.eq(protocolAmountBN)
+            expect(event.args.slippageInAmount).to.eq(0)
+            expect(event.args.slippageOutAmount).to.be.closeTo(
+              paymentAmountBN.add(feeAmountBN).mul(5).div(1000), // slippageOut 0.5%
+              paymentAmountBN.add(feeAmountBN).mul(9).div(1000) // tollerance 0.9%
             )
-            .to.emit(router, 'Payment').withArgs(
-              fromAccount._address, // from
-              wallets[1].address, // to
-              deadline, // deadline
-              route.amountIn,
-              paymentAmountBN,
-              feeAmountBN,
-              protocolAmountBN,
-              (amount) => {
-                expect(amount).to.be.closeTo(
-                  paymentAmountBN.add(feeAmountBN).sub(protocolAmountBN).mul(5).div(1000), // slippage
-                  paymentAmountBN.add(feeAmountBN).sub(protocolAmountBN).mul(1).div(10000) // tollerance
-                )
-              },
-              route.tokenIn,
-              route.tokenOut,
-              wallets[2].address
-            )
+            expect(event.args.tokenInAddress).to.eq(route.tokenIn)
+            expect(event.args.tokenOutAddress).to.eq(route.tokenOut)
+            expect(event.args.feeReceiverAddress).to.eq(wallets[2].address)
           })
 
           it('converts TOKEN to TOKEN via exchanges as part of the payment', async ()=>{

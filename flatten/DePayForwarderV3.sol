@@ -783,6 +783,13 @@ interface IDePayRouterV3 {
     bytes receiverCallData;
   }
 
+  struct Balance {
+    uint256 inBefore;
+    uint256 inAfter;
+    uint256 outBefore;
+    uint256 outAfter;
+  }
+
   struct PermitTransferFromAndSignature {
     IPermit2.PermitTransferFrom permitTransferFrom;
     bytes signature;
