@@ -33,14 +33,14 @@ Arbitrum:
 - [](https://arbiscan.io/address/)
 
 Base:
-- [](https://basescan.org/address/)
+- [0x8B62F604499c1204573664447D445690E0A0011b](https://basescan.org/address/0x8B62F604499c1204573664447D445690E0A0011b)
 
 Worldchain:
 - [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://worldchain-mainnet.explorer.alchemy.com/address/0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220)
 
 ### DePayForwarderV3
 
-DePayForwarderV2 allows to pay into smart contracts.
+Allows to pay into smart contracts.
 
 Ethereum:
 - [](https://etherscan.io/address/)
@@ -67,7 +67,7 @@ Arbitrum:
 - [](https://arbiscan.io/address/)
 
 Base:
-- [](https://basescan.org/address/)
+- [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://basescan.org/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
 
 Worldchain:
 - [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://worldchain-mainnet.explorer.alchemy.com/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
