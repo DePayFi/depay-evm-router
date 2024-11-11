@@ -9,28 +9,28 @@ Optimization Level: 800,000
 Enables Web3 Payments.
 
 Ethereum:
-- [](https://etherscan.io/address/)
+- [0x47e06F93D35De5241C49693f4CB0890320c6D500](https://etherscan.io/address/0x47e06F93D35De5241C49693f4CB0890320c6D500)
 
 BNB Smart Chain:
-- [](https://bscscan.com/address/)
+- [0xD7274986A3F6F9A4c8a506999B3C427E04408391](https://bscscan.com/address/0xD7274986A3F6F9A4c8a506999B3C427E04408391)
 
 Polygon (POS):
-- [](https://polygonscan.com/address/)
+- [0x6DFf786D6AAb5A49594fe10c991270A71DA83b31](https://polygonscan.com/address/0x6DFf786D6AAb5A49594fe10c991270A71DA83b31)
 
 Avalanche:
-- [](https://snowtrace.io/address/)
+- [0x86bcEE95cef7D34FaAfA1412d815B7a7C6834865](https://snowtrace.io/address/0x86bcEE95cef7D34FaAfA1412d815B7a7C6834865)
 
 Fantom:
-- [](https://ftmscan.com/address/)
+- [0x558302715e3011Be6695605c11A65526D2ba2245](https://ftmscan.com/address/0x558302715e3011Be6695605c11A65526D2ba2245)
 
 Gnosis:
-- [](https://gnosisscan.io/address/)
+- [0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F](https://gnosisscan.io/address/0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F)
 
 Optimism:
-- [](https://optimistic.etherscan.io/address/)
+- [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://optimistic.etherscan.io/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
 
 Arbitrum:
-- [](https://arbiscan.io/address/)
+- [0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F](https://arbiscan.io/address/0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F)
 
 Base:
 - [0x8B62F604499c1204573664447D445690E0A0011b](https://basescan.org/address/0x8B62F604499c1204573664447D445690E0A0011b)
@@ -43,28 +43,28 @@ Worldchain:
 Allows to pay into smart contracts.
 
 Ethereum:
-- [](https://etherscan.io/address/)
+- [0x7Ee254de9CB67Ed661261148b969E069aACa3432](https://etherscan.io/address/0x7Ee254de9CB67Ed661261148b969E069aACa3432)
 
 BNB Smart Chain:
-- [](https://bscscan.com/address/)
+- [0x1F74246Fb876477f81dB32804c2CE64B1f4d2ef5](https://bscscan.com/address/0x1F74246Fb876477f81dB32804c2CE64B1f4d2ef5)
 
 Polygon (POS):
-- [](https://polygonscan.com/address/)
+- [0xea30b5af68F800DebfF93E1a6464F4F92Ab395EC](https://polygonscan.com/address/0xea30b5af68F800DebfF93E1a6464F4F92Ab395EC)
 
 Avalanche:
-- [](https://snowtrace.io/address/)
+- [0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F](https://snowtrace.io/address/0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F)
 
 Fantom:
-- [](https://ftmscan.com/address/)
+- [0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206](https://ftmscan.com/address/0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206)
 
 Gnosis:
-- [](https://gnosisscan.io/address/)
+- [0x8B62F604499c1204573664447D445690E0A0011b](https://gnosisscan.io/address/0x8B62F604499c1204573664447D445690E0A0011b)
 
 Optimism: 
-- [](https://optimistic.etherscan.io/address/)
+- [0x864F165a58e74349cf9C7925217F10B58040db86](https://optimistic.etherscan.io/address/0x864F165a58e74349cf9C7925217F10B58040db86)
 
 Arbitrum:
-- [](https://arbiscan.io/address/)
+- [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://arbiscan.io/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
 
 Base:
 - [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://basescan.org/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
