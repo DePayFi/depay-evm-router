@@ -15,9 +15,9 @@ export default ({ blockchain, token, tokenHolder })=>{
   const TOKEN = token
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
-  const PAY_WITH_PERMIT2_ALLOWANCE_TRANSFER = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),((address,uint160,uint48,uint48),address,uint256),bytes)'
-  const PAY_WITH_PERMIT2_SIGNATURE_TRANSFER = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),(((address,uint256),uint256,uint256),bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY_WITH_PERMIT2_ALLOWANCE_TRANSFER = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),((address,uint160,uint48,uint48),address,uint256),bytes)'
+  const PAY_WITH_PERMIT2_SIGNATURE_TRANSFER = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),(((address,uint256),uint256,uint256),bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -99,12 +99,14 @@ export default ({ blockchain, token, tokenHolder })=>{
           permit2: true,
           paymentAmount,
           feeAmount,
+          feeAmount2: 0,
           protocolAmount: 0,
           tokenInAddress: TOKEN,
           exchangeAddress: ZERO,
           tokenOutAddress: TOKEN,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 0,
           receiverType: 0,
           exchangeCallData: ZERO,
@@ -125,12 +127,14 @@ export default ({ blockchain, token, tokenHolder })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           TOKEN, // tokenInAddress
           TOKEN, // tokenOutAddress
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
@@ -153,12 +157,14 @@ export default ({ blockchain, token, tokenHolder })=>{
           permit2: true,
           paymentAmount,
           feeAmount,
+          feeAmount2: 0,
           protocolAmount: 0,
           tokenInAddress: TOKEN,
           exchangeAddress: ZERO,
           tokenOutAddress: TOKEN,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 0,
           receiverType: 0,
           exchangeCallData: ZERO,
@@ -223,12 +229,14 @@ export default ({ blockchain, token, tokenHolder })=>{
           permit2: true,
           paymentAmount,
           feeAmount,
+          feeAmount2: 0,
           protocolAmount: 0,
           tokenInAddress: TOKEN,
           exchangeAddress: ZERO,
           tokenOutAddress: TOKEN,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 0,
           receiverType: 0,
           exchangeCallData: ZERO,
@@ -261,12 +269,14 @@ export default ({ blockchain, token, tokenHolder })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           TOKEN, // tokenInAddress
           TOKEN, // tokenOutAddress
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO, // feeReceiverAddress2
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)

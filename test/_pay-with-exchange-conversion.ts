@@ -15,7 +15,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
   const FROM_ACCOUNT_ADDRESS = fromAccount
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -51,12 +51,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: 1,
               paymentAmount: 1,
               feeAmount: 1,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: Blockchains[blockchain].currency.address,
               exchangeAddress: Exchanges[exchange.name][blockchain].router.address,
               tokenOutAddress: Blockchains[blockchain].currency.address,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: 0,
               receiverType: 0,
               exchangeCallData: ZERO,
@@ -115,12 +117,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
                 amountIn: route.amountIn,
                 paymentAmount: paymentAmountBN,
                 feeAmount: feeAmountBN.add(ethers.BigNumber.from("100000000000000000")),
+                feeAmount2: 0,
                 protocolAmount: 0,
                 tokenInAddress: route.tokenIn,
                 exchangeAddress: transaction.to,
                 tokenOutAddress: route.tokenOut,
                 paymentReceiverAddress: wallets[1].address,
                 feeReceiverAddress: wallets[2].address,
+                feeReceiverAddress2: ZERO,
                 exchangeType: exchange.type === 'pull' ? 1 : 2,
                 receiverType: 0,
                 exchangeCallData: callData,
@@ -163,12 +167,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")),
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -189,7 +195,9 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             const paymentAmountBN = ethers.utils.parseUnits(paymentAmount.toString(), Blockchains[blockchain].currency.decimals)
             const feeAmount = 0.01
             const feeAmountBN = ethers.utils.parseUnits(feeAmount.toString(), Blockchains[blockchain].currency.decimals)
-            const totalAmount = paymentAmount + feeAmount
+            const feeAmount2 = 0.015
+            const feeAmount2BN = ethers.utils.parseUnits(feeAmount2.toString(), Blockchains[blockchain].currency.decimals)
+            const totalAmount = paymentAmount + feeAmount + feeAmount2
 
             const route = await Exchanges[exchange.name].route({
               blockchain,
@@ -212,17 +220,20 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
 
             const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
             const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+            const feeReceiver2BalanceBefore = await provider.getBalance(wallets[3].address)
 
             const tx = await router.connect(fromAccount)[PAY]({
               amountIn: amountInBN,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: feeAmount2BN,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: wallets[3].address,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -239,6 +250,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             expect(event.args.amountIn).to.eq(ethers.BigNumber.from(route.amountIn).add(ethers.BigNumber.from("21")))
             expect(event.args.paymentAmount).to.eq(paymentAmountBN)
             expect(event.args.feeAmount).to.eq(feeAmountBN)
+            expect(event.args.feeAmount2).to.eq(feeAmount2BN)
             expect(event.args.protocolAmount).to.eq(0)
             expect(event.args.slippageInAmount).to.eq(slippageInBN)
             expect(event.args.slippageOutAmount).to.be.closeTo(
@@ -248,6 +260,15 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
             expect(event.args.tokenInAddress).to.eq(route.tokenIn)
             expect(event.args.tokenOutAddress).to.eq(route.tokenOut)
             expect(event.args.feeReceiverAddress).to.eq(wallets[2].address)
+            expect(event.args.feeReceiverAddress2).to.eq(wallets[3].address)
+
+            const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+            const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+            const feeReceiver2BalanceAfter = await provider.getBalance(wallets[3].address)
+
+            expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmountBN))
+            expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmountBN))
+            expect(feeReceiver2BalanceAfter).to.eq(feeReceiver2BalanceBefore.add(feeAmount2BN))
           })
 
           it('keeps continue converting TOKEN to NATIVE and does not get stuck with safeApprove (non zero)', async ()=>{
@@ -281,12 +302,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -319,12 +342,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
                 amountIn: 1,
                 paymentAmount: paymentAmountBN,
                 feeAmount: feeAmountBN,
+                feeAmount2: 0,
                 protocolAmount: 0,
                 tokenInAddress: Blockchains[blockchain].currency.address,
                 exchangeAddress: Exchanges[exchange.name][blockchain].router.address,
                 tokenOutAddress: toToken,
                 paymentReceiverAddress: wallets[1].address,
                 feeReceiverAddress: wallets[2].address,
+                feeReceiverAddress2: ZERO,
                 exchangeType: exchange.type === 'pull' ? 1 : 2,
                 receiverType: 0,
                 exchangeCallData: callData,
@@ -367,12 +392,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -418,12 +445,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -484,12 +513,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: protocolAmountBN,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,
@@ -548,12 +579,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchanges })=>{
               amountIn: route.amountIn,
               paymentAmount: paymentAmountBN,
               feeAmount: feeAmountBN,
+              feeAmount2: 0,
               protocolAmount: 0,
               tokenInAddress: route.tokenIn,
               exchangeAddress: transaction.to,
               tokenOutAddress: route.tokenOut,
               paymentReceiverAddress: wallets[1].address,
               feeReceiverAddress: wallets[2].address,
+              feeReceiverAddress2: ZERO,
               exchangeType: exchange.type === 'pull' ? 1 : 2,
               receiverType: 0,
               exchangeCallData: callData,

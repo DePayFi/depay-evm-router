@@ -10,7 +10,7 @@ export default ({ blockchain })=>{
   const WRAPPED = Blockchains[blockchain].wrapped.address
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -36,12 +36,14 @@ export default ({ blockchain })=>{
             amountIn: 1000000000,
             paymentAmount: 1000000000,
             feeAmount: 1,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,

@@ -11,7 +11,7 @@ export default ({ blockchain })=>{
   const WRAPPED = Blockchains[blockchain].wrapped.address
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -57,12 +57,14 @@ export default ({ blockchain })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: exchange.address,
             tokenOutAddress: WRAPPED,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: callData,
@@ -77,12 +79,14 @@ export default ({ blockchain })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           NATIVE, // tokenInAddress
           WRAPPED, // tokenOutAddress
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
         )
 
         const paymentReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[1].address)
@@ -110,12 +114,14 @@ export default ({ blockchain })=>{
           amountIn: amountIn,
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
+          feeAmount2: 0,
           protocolAmount: 0,
           tokenInAddress: WRAPPED,
           exchangeAddress: exchange.address,
           tokenOutAddress: NATIVE,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 2,
           receiverType: 0,
           exchangeCallData: callData,

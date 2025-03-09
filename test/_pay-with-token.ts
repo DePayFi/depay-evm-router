@@ -13,7 +13,7 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
   const TOKEN = token
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -41,12 +41,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             amountIn: 1000000000,
             paymentAmount: 1000000000,
             feeAmount: 0,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: TOKEN,
             exchangeAddress: ZERO,
             tokenOutAddress: TOKEN,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -71,12 +73,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: 0,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: TOKEN,
             exchangeAddress: ZERO,
             tokenOutAddress: TOKEN,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -91,12 +95,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           0, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           100000, // slippageInAmount
           0, // slippageOutAmount
           TOKEN, // tokenInAddress
           TOKEN, // tokenOutAddress
-          ZERO // feeReceiverAddress
+          ZERO, // feeReceiverAddress
+          ZERO, // feeReceiverAddress2
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
@@ -117,12 +123,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           amountIn: amountIn,
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
+          feeAmount2: 0,
           protocolAmount: 0,
           tokenInAddress: TOKEN,
           exchangeAddress: ZERO,
           tokenOutAddress: TOKEN,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 0,
           receiverType: 0,
           exchangeCallData: ZERO,
@@ -155,12 +163,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: protocolAmount,
             tokenInAddress: TOKEN,
             exchangeAddress: ZERO,
             tokenOutAddress: TOKEN,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -175,12 +185,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           protocolAmount, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           TOKEN, // tokenInAddress
           TOKEN, // tokenOutAddress
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO, // feeReceiverAddress2
         )
 
         const paymentReceiverBalanceAfter = await tokenContract.balanceOf(wallets[1].address)
@@ -209,12 +221,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: TOKEN,
             exchangeAddress: ZERO,
             tokenOutAddress: TOKEN,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -237,12 +251,14 @@ export default ({ blockchain, token, fromAccount, reversalReason })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 6000,
             tokenInAddress: TOKEN,
             exchangeAddress: ZERO,
             tokenOutAddress: TOKEN,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,

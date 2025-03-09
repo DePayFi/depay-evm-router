@@ -134,6 +134,7 @@ struct Payment {
   uint256 amountIn;
   uint256 paymentAmount;
   uint256 feeAmount;
+  uint256 feeAmount2;
   uint256 protocolAmount;
   uint256 deadline; // in milliseconds!
   address tokenInAddress;
@@ -141,6 +142,7 @@ struct Payment {
   address tokenOutAddress;
   address paymentReceiverAddress;
   address feeReceiverAddress;
+  address feeReceiverAddress2;
   uint8 exchangeType;
   uint8 receiverType;
   bool permit2;
@@ -169,17 +171,18 @@ function pay(
 
 ```
 pay(
-  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
+  (uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
 )
 ```
 
 ```javascript
 router.connect(senderWallet)[
-  "pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
+  "pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
 ]({
   amountIn: "1000000000",
   paymentAmount: "1000000000",
   feeAmount: "0",
+  feeAmount2: "0",
   protocolAmount: "0",
   deadline: "1727680659852",
   tokenInAddress: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
@@ -187,6 +190,7 @@ router.connect(senderWallet)[
   tokenOutAddress: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
   paymentReceiverAddress: receiverWallet,
   feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+  feeReceiverAddress2: "0x0000000000000000000000000000000000000000",
   exchangeType: 0,
   receiverType: 0,
   permit2: false,
@@ -232,7 +236,7 @@ function pay(
 
 ```
 pay(
-  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),
+  (uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes),
   (
     (
       (address,uint256),
@@ -283,6 +287,7 @@ router.connect(senderWallet)[
     amountIn: "100000",
     paymentAmount: "100000",
     feeAmount: "0",
+    feeAmount2: "0",
     protocolAmount: "0",
     deadline: "1727680659852",
     tokenInAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
@@ -290,6 +295,7 @@ router.connect(senderWallet)[
     tokenOutAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     paymentReceiverAddress: receiverWallet,
     feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+    feeReceiverAddress2: "0x0000000000000000000000000000000000000000",
     exchangeType: 0,
     receiverType: 0,
     permit2: true,
@@ -331,17 +337,18 @@ function pay(
 
 ```
 pay(
-  (uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
+  (uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes)
 )
 ```
 
 ```javascript
-const PAY = "pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
+const PAY = "pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))"
 
 router.connect(senderWallet)[PAY]({
   amountIn: "100000",
   paymentAmount: "100000",
   feeAmount: "0",
+  feeAmount2: "0",
   protocolAmount: "0",
   deadline: "1727680659852",
   tokenInAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
@@ -349,6 +356,7 @@ router.connect(senderWallet)[PAY]({
   tokenOutAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   paymentReceiverAddress: receiverWallet,
   feeReceiverAddress: "0x0000000000000000000000000000000000000000",
+  feeReceiverAddress2: "0x0000000000000000000000000000000000000000",
   exchangeType: 0,
   receiverType: 0,
   permit2: false,
@@ -369,11 +377,13 @@ event Payment(
   uint256 amountIn,
   uint256 paymentAmount,
   uint256 feeAmount,
+  uint256 feeAmount2,
   uint256 protocolAmount,
   uint256 slippageAmount,
   address tokenInAddress,
   address tokenOutAddress,
-  address feeReceiverAddress
+  address feeReceiverAddress,
+  address feeReceiverAddress2,
 );
 ```
 

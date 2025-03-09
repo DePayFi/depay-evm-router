@@ -769,6 +769,7 @@ interface IDePayRouterV3 {
     uint256 amountIn;
     uint256 paymentAmount;
     uint256 feeAmount;
+    uint256 feeAmount2;
     uint256 protocolAmount;
     uint256 deadline; // in milliseconds!
     address tokenInAddress;
@@ -776,6 +777,7 @@ interface IDePayRouterV3 {
     address tokenOutAddress;
     address paymentReceiverAddress;
     address feeReceiverAddress;
+    address feeReceiverAddress2;
     uint8 exchangeType;
     uint8 receiverType;
     bool permit2;
@@ -898,12 +900,14 @@ contract DePayRouterV3 is Ownable2Step {
     uint256 amountIn,
     uint256 paymentAmount,
     uint256 feeAmount,
+    uint256 feeAmount2,
     uint256 protocolAmount,
     uint256 slippageInAmount,
     uint256 slippageOutAmount,
     address tokenInAddress,
     address tokenOutAddress,
-    address feeReceiverAddress
+    address feeReceiverAddress,
+    address feeReceiverAddress2
   );
 
   /// @dev Handles the payment process (tokenIn approval for router has been granted prior).
@@ -1089,6 +1093,11 @@ contract DePayRouterV3 is Ownable2Step {
     if(payment.feeReceiverAddress != address(0)) {
       _payFee(payment);
     }
+
+    // Perform payment to feeReceiver2
+    if(payment.feeReceiverAddress2 != address(0)) {
+      _payFee2(payment);
+    }
   }
 
   /// @dev Validates the post-conditions for a payment.
@@ -1146,6 +1155,8 @@ contract DePayRouterV3 is Ownable2Step {
       payment.paymentAmount,
       // feeAmount
       payment.feeAmount,
+      // feeAmount2
+      payment.feeAmount2,
       // protocolAmount
       payment.protocolAmount,
       // slippageInAmount
@@ -1157,7 +1168,9 @@ contract DePayRouterV3 is Ownable2Step {
       // tokenOutAddress
       payment.tokenOutAddress,
       // feeReceiverAddress
-      payment.feeReceiverAddress
+      payment.feeReceiverAddress,
+      // feeReceiverAddress2
+      payment.feeReceiverAddress2
     );
   }
 
@@ -1233,6 +1246,19 @@ contract DePayRouterV3 is Ownable2Step {
       }
     } else {
       IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress, payment.feeAmount);
+    }
+  }
+
+  /// @dev Processes fee2 payments.
+  /// @param payment The payment data.
+  function _payFee2(IDePayRouterV3.Payment calldata payment) internal {
+    if(payment.tokenOutAddress == NATIVE) {
+      (bool success,) = payment.feeReceiverAddress2.call{value: payment.feeAmount2}(new bytes(0));
+      if(!success) {
+        revert NativeFeePaymentFailed();
+      }
+    } else {
+      IERC20(payment.tokenOutAddress).safeTransfer(payment.feeReceiverAddress2, payment.feeAmount2);
     }
   }
 

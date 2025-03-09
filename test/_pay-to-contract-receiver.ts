@@ -16,7 +16,7 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
   const FROM_ACCOUNT_ADDRESS = fromAccount
-  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
   describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
@@ -65,12 +65,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: wallets[3].address,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -103,12 +105,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -123,12 +127,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           NATIVE, // tokenInAddress
           NATIVE, // tokenOutAddres
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO, // feeReceiverAddress2
         )
       })
 
@@ -150,12 +156,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: fromToken,
             exchangeAddress: ZERO,
             tokenOutAddress: fromToken,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -189,12 +197,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: fromToken,
             exchangeAddress: ZERO,
             tokenOutAddress: fromToken,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -209,12 +219,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
           amountIn, // amountIn
           paymentAmount, // paymentAmount
           feeAmount, // feeAmount
+          0, // feeAmount2
           0, // protocolAmount
           0, // slippageInAmount
           0, // slippageOutAmount
           fromToken, // tokenInAddress
           fromToken, // tokenOutAddress
-          wallets[2].address // feeReceiverAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
         )
       })
 
@@ -237,12 +249,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: 0,
             paymentAmount,
             feeAmount: ZERO,
+            feeAmount2: ZERO,
             protocolAmount: ZERO,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[2].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -311,12 +325,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 1,
             exchangeCallData: ZERO,
@@ -346,12 +362,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: fromToken,
             exchangeAddress: ZERO,
             tokenOutAddress: fromToken,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 1,
             exchangeCallData: ZERO,
@@ -406,12 +424,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: route.amountIn,
             paymentAmount: paymentAmountBN,
             feeAmount: feeAmountBN,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: route.tokenIn,
             exchangeAddress: transaction.to,
             tokenOutAddress: route.tokenOut,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: exchange.type === 'pull' ? 1 : 2,
             receiverType: 1,
             exchangeCallData,
@@ -452,12 +472,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn: 1,
             paymentAmount: 1,
             feeAmount: 1,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
@@ -491,12 +513,14 @@ export default ({ blockchain, fromToken, fromAccount, toToken, exchange })=>{
             amountIn,
             paymentAmount,
             feeAmount,
+            feeAmount2: 0,
             protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: receiverContract.address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 2,
             exchangeCallData: ZERO,
