@@ -437,7 +437,7 @@ yarn test
 Test single files:
 
 ```
-npx hardhat test test/arbitrum/pay_with_exchange_conversion.spec.ts --config hardhat.config.arbitrum.ts
+npx hardhat test test/optimism/pay_with_exchange_conversion.spec.ts --config hardhat.config.optimism.ts
 ```
 
 ### Deploy
