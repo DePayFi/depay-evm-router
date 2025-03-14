@@ -219,7 +219,7 @@ export default ({ blockchain, token, tokenHolder })=>{
           },
           spender: router.address,
           nonce,
-          deadline: deadline
+          deadline: Math.floor(deadline/1000)
         }
 
         const signature = await wallets[0]._signTypedData(domain, types, data)
@@ -256,7 +256,7 @@ export default ({ blockchain, token, tokenHolder })=>{
                   amount: amountIn,
                 },
                 nonce,
-                deadline: deadline
+                deadline: Math.floor(deadline/1000)
               },
               signature
             }
