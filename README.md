@@ -9,68 +9,62 @@ Optimization Level: 800,000
 Enables Web3 Payments.
 
 Ethereum:
-- [0x47e06F93D35De5241C49693f4CB0890320c6D500](https://etherscan.io/address/0x47e06F93D35De5241C49693f4CB0890320c6D500)
+- [0x365f7B56D2fB16C8Af89D7d33b420E4e013461e8](https://etherscan.io/address/0x365f7B56D2fB16C8Af89D7d33b420E4e013461e8)
 
 BNB Smart Chain:
-- [0xD7274986A3F6F9A4c8a506999B3C427E04408391](https://bscscan.com/address/0xD7274986A3F6F9A4c8a506999B3C427E04408391)
+- [0x5F565EDfB9C446976a9F9910631cfeDb6A87220c](https://bscscan.com/address/0x5F565EDfB9C446976a9F9910631cfeDb6A87220c)
 
 Polygon (POS):
-- [0x6DFf786D6AAb5A49594fe10c991270A71DA83b31](https://polygonscan.com/address/0x6DFf786D6AAb5A49594fe10c991270A71DA83b31)
+- [0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019](https://polygonscan.com/address/0xe04b08Dfc6CaA0F4Ec523a3Ae283Ece7efE00019)
 
 Avalanche:
-- [0x328FE8bbd30487BB7b5A8eEb909f892E9E229271](https://snowtrace.io/address/0x328FE8bbd30487BB7b5A8eEb909f892E9E229271)
-
-Fantom:
-- [0x558302715e3011Be6695605c11A65526D2ba2245](https://ftmscan.com/address/0x558302715e3011Be6695605c11A65526D2ba2245)
+- [0x39E7C98BF4ac3E4C394dD600397f5f7Ee3779BE8](https://snowtrace.io/address/0x39E7C98BF4ac3E4C394dD600397f5f7Ee3779BE8)
 
 Gnosis:
-- [0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F](https://gnosisscan.io/address/0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F)
+- [0x328FE8bbd30487BB7b5A8eEb909f892E9E229271](https://gnosisscan.io/address/0x328FE8bbd30487BB7b5A8eEb909f892E9E229271)
 
 Optimism:
 - [0x558302715e3011Be6695605c11A65526D2ba2245](https://optimistic.etherscan.io/address/0x558302715e3011Be6695605c11A65526D2ba2245)
 
 Arbitrum:
-- [0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F](https://arbiscan.io/address/0x8C69bAcfe665d9f5e8BCF8F6B8DE4FD41226930F)
+- [0x328FE8bbd30487BB7b5A8eEb909f892E9E229271](https://arbiscan.io/address/0x328FE8bbd30487BB7b5A8eEb909f892E9E229271)
 
 Base:
-- [0x8B62F604499c1204573664447D445690E0A0011b](https://basescan.org/address/0x8B62F604499c1204573664447D445690E0A0011b)
+- [0x48825133EF08327535D0b24d73779E82BE6Ea4d9](https://basescan.org/address/0x48825133EF08327535D0b24d73779E82BE6Ea4d9)
 
 Worldchain:
-- [0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220](https://worldchain-mainnet.explorer.alchemy.com/address/0x0Dfb7137bC64b63F7a0de7Cb9CDa178702666220)
+- [0x886eb82a7e5E7310F66A0E83748662A17E391eb0](https://worldscan.org/address/0x886eb82a7e5E7310F66A0E83748662A17E391eb0)
 
 ### DePayForwarderV3
 
 Allows to pay into smart contracts.
 
 Ethereum:
-- [0x7Ee254de9CB67Ed661261148b969E069aACa3432](https://etherscan.io/address/0x7Ee254de9CB67Ed661261148b969E069aACa3432)
+- [0x61e1b824F97cDe70b73438481ECc8A5Ca380eB87](https://etherscan.io/address/0x61e1b824F97cDe70b73438481ECc8A5Ca380eB87)
 
 BNB Smart Chain:
-- [0x1F74246Fb876477f81dB32804c2CE64B1f4d2ef5](https://bscscan.com/address/0x1F74246Fb876477f81dB32804c2CE64B1f4d2ef5)
+- [0x9D7B9B0F1f8b39d3667C2C8e6A391166F535a477](https://bscscan.com/address/0x9D7B9B0F1f8b39d3667C2C8e6A391166F535a477)
 
 Polygon (POS):
-- [0xea30b5af68F800DebfF93E1a6464F4F92Ab395EC](https://polygonscan.com/address/0xea30b5af68F800DebfF93E1a6464F4F92Ab395EC)
+- [0xA47D5E0e6684D3ad73F3b94d9DAf18a2f5F97688](https://polygonscan.com/address/0xA47D5E0e6684D3ad73F3b94d9DAf18a2f5F97688)
 
 Avalanche:
-- [0xd3967a248Bd105CE5511FF5a8136548ADC78E64e](https://snowtrace.io/address/0xd3967a248Bd105CE5511FF5a8136548ADC78E64e)
-
-Fantom:
-- [0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206](https://ftmscan.com/address/0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206)
+- [0x376d6B0F8c9b829aAb0a7478952DEF1F8656D7c4](https://snowtrace.io/address/0x376d6B0F8c9b829aAb0a7478952DEF1F8656D7c4)
 
 Gnosis:
-- [0x8B62F604499c1204573664447D445690E0A0011b](https://gnosisscan.io/address/0x8B62F604499c1204573664447D445690E0A0011b)
+- [0xd3967a248Bd105CE5511FF5a8136548ADC78E64e](https://gnosisscan.io/address/0xd3967a248Bd105CE5511FF5a8136548ADC78E64e)
 
 Optimism: 
 - [0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206](https://optimistic.etherscan.io/address/0x2fd0a07a4F73285d0eBa8176426BF9B8c0121206)
 
 Arbitrum:
-- [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://arbiscan.io/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
+- [0xd3967a248Bd105CE5511FF5a8136548ADC78E64e](https://arbiscan.io/address/0xd3967a248Bd105CE5511FF5a8136548ADC78E64e)
 
 Base:
 - [0xc14318b5D57DB31491dc50295e581a79E56f8A7a](https://basescan.org/address/0xc14318b5D57DB31491dc50295e581a79E56f8A7a)
 
 Worldchain:
-- [0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb](https://worldchain-mainnet.explorer.alchemy.com/address/0xa0bEd124a09ac2Bd941b10349d8d224fe3c955eb)
+- [0xFee05C41195985909DDfc9127Db1f94559c46db3](https://worldscan.org/address/0xFee05C41195985909DDfc9127Db1f94559c46db3)
 
 ### DePayWETHExchangeV1
 
@@ -88,9 +82,6 @@ Polygon (POS):
 Avalanche:
 - [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://snowtrace.io/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
 
-Fantom:
-- [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://ftmscan.com/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
-
 Gnosis:
 - [0x2d0a6275eaDa0d03226919ce6D93661E589B2d59](https://gnosisscan.io/address/0x2d0a6275eaDa0d03226919ce6D93661E589B2d59)
 
@@ -101,10 +92,10 @@ Arbitrum:
 - [0x7E655088214d0657251A51aDccE9109CFd23B5B5](https://arbiscan.io/address/0x7E655088214d0657251A51aDccE9109CFd23B5B5)
 
 Base:
-- [0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A](https://basescan.org/address/0xD1711710843B125a6a01FfDF9b95fDc3064BeF7A)
+- [0x8206ba765BDD4770B08B807a8819a66A9F035A08](https://basescan.org/address/0x8206ba765BDD4770B08B807a8819a66A9F035A08)
 
 Worldchain:
-- [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://worldchain-mainnet.explorer.alchemy.com/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
+- [0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b](https://worldscan.org/address/0x2CA727BC33915823e3D05fe043d310B8c5b2dC5b)
 
 ## Functionalities
 
@@ -404,7 +395,6 @@ ARBITRUM_ONE_RPC_URL=https://arbitrum-one.blastapi.io/<APIKEY>
 AVALANCHE_RPC_URL=https://ava-mainnet.blastapi.io/<APIKEY>/ext/bc/C/rpc
 BSC_RPC_URL=https://bsc-mainnet.blastapi.io/<APIKEY>
 ETHEREUM_RPC_URL=https://eth-mainnet.blastapi.io/<APIKEY>
-FANTOM_RPC_URL=https://fantom-mainnet.blastapi.io/<APIKEY>
 GNOSIS_RPC_URL=https://gnosis-mainnet.blastapi.io/<APIKEY>
 OPTIMISM_RPC_URL=https://optimism.blockpi.network/v1/rpc/public
 POLYGON_RPC_URL=https://polygon-mainnet.blastapi.io/<APIKEY>
