@@ -10,9 +10,9 @@ export default ({ blockchain })=>{
   const WRAPPED = Blockchains[blockchain].wrapped.address
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
-  describe(`DePayRouterV2 on ${blockchain}`, ()=> {
+  describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
     describe(`pay with NATIVE`, ()=> {
 
@@ -22,7 +22,7 @@ export default ({ blockchain })=>{
 
       beforeEach(async ()=>{
         wallets = await ethers.getSigners()
-        deadline = now()+ 86400 // 1 day
+        deadline = (now()+3600) * 1000 // 1 hour in milliseconds
       })
 
       it('deploys router successfully', async ()=> {
@@ -35,11 +35,14 @@ export default ({ blockchain })=>{
             amountIn: 1000000000,
             paymentAmount: 1000000000,
             feeAmount: 0,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -57,11 +60,14 @@ export default ({ blockchain })=>{
             amountIn: 1000000000,
             paymentAmount: 1000000000,
             feeAmount: 0,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -73,7 +79,7 @@ export default ({ blockchain })=>{
         )
       })
 
-      it('pays payment receiver and emits Transfer polyfil event', async ()=> {
+      it('pays payment receiver and emits Payment event to validate internal transfers easily', async ()=> {
         const amountIn = 1000000000
         const paymentAmount = 1000000000
 
@@ -84,18 +90,36 @@ export default ({ blockchain })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: 0,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
             receiverCallData: ZERO,
             deadline,
           }, { value: 1000000000 })
-        ).to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
+        ).to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          0, // feeAmount
+          0, // feeAmount2
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          NATIVE, // tokenOutAddress
+          ZERO, // feeReceiverAddress
+          ZERO, // feeReceiverAddress2
+        )
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
 
@@ -113,11 +137,14 @@ export default ({ blockchain })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: 0,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: ZERO,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -129,7 +156,7 @@ export default ({ blockchain })=>{
         )
       })
 
-      it('pays payment receiver and fee receiver and emits Transfer polyfil event', async ()=> {
+      it('pays payment receiver and fee receiver and emits Payment event to validate transfers easily', async ()=> {
         const amountIn = 1000000000
         const paymentAmount = 900000000
         const feeAmount = 100000000
@@ -142,11 +169,14 @@ export default ({ blockchain })=>{
             amountIn: amountIn,
             paymentAmount: paymentAmount,
             feeAmount: feeAmount,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -154,14 +184,140 @@ export default ({ blockchain })=>{
             deadline,
           }, { value: 1000000000 })
         )
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[2].address, feeAmount)
-        .to.emit(router, 'InternalTransfer').withArgs(wallets[0].address, wallets[1].address, paymentAmount)
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // feeAmount2
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          NATIVE, // tokenOutAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
+        )
 
         const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
         const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
 
         expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+      })
+
+      it('pays payment receiver and fee receivers and emits Payment event to validate transfers easily', async ()=> {
+        const amountIn = 1150000000
+        const paymentAmount = 900000000
+        const feeAmount = 100000000
+        const feeAmount2 = 150000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const feeReceiver2BalanceBefore = await provider.getBalance(wallets[3].address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            feeAmount2: feeAmount2,
+            protocolAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: wallets[3].address,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: amountIn })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          feeAmount2, // feeAmount2
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          NATIVE, // tokenOutAddress
+          wallets[2].address, // feeReceiverAddress
+          wallets[3].address, // feeReceiverAddress2
+        )
+
+        const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+        const feeReceiver2BalanceAfter = await provider.getBalance(wallets[3].address)
+
+        expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
+        expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+        expect(feeReceiver2BalanceAfter).to.eq(feeReceiver2BalanceBefore.add(feeAmount2))
+      })
+
+      it('pays payment receiver, fee receiver and protocol and emits Payment event to validate transfers easily', async ()=> {
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 40000000
+        const protocolAmount = 30000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const routerBalanceBefore = await provider.getBalance(router.address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            feeAmount2: 0,
+            protocolAmount: protocolAmount,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // feeAmount2
+          protocolAmount, // protocolAmount
+          30000000, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          NATIVE, // tokenOutAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
+        )
+
+        const paymentReceiverBalanceAfter = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceAfter = await provider.getBalance(wallets[2].address)
+        const routerBalanceAfter = await provider.getBalance(router.address)
+
+        // expect(paymentReceiverBalanceAfter).to.eq(paymentReceiverBalanceBefore.add(paymentAmount))
+        // expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(feeAmount))
+        // expect(routerBalanceAfter).to.eq(routerBalanceBefore.add(protocolAmount))
       })
 
       it('fails if balanceIn is less after payment', async()=>{
@@ -171,11 +327,14 @@ export default ({ blockchain })=>{
             amountIn: 0,
             paymentAmount: 1000000000,
             feeAmount: 0,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
@@ -185,6 +344,42 @@ export default ({ blockchain })=>{
         ).to.be.revertedWith(
           'InsufficientBalanceInAfterPayment()'
         )
+      })
+
+      it('fails if protocolAmount is less than specified', async()=>{
+        
+        const amountIn = 1000000000
+        const paymentAmount = 900000000
+        const feeAmount = 50000000
+        const protocolAmount = 50000000
+
+        const paymentReceiverBalanceBefore = await provider.getBalance(wallets[1].address)
+        const feeReceiverBalanceBefore = await provider.getBalance(wallets[2].address)
+        const routerBalanceBefore = await provider.getBalance(router.address)
+
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            feeAmount2: feeAmount,
+            protocolAmount: 60000000,
+            tokenInAddress: NATIVE,
+            exchangeAddress: ZERO,
+            tokenOutAddress: NATIVE,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: ZERO,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: amountIn })
+        ).to.be.revertedWith(
+          'InsufficientProtocolAmount()'
+        )
+
       })
     })
   })

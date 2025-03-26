@@ -10,9 +10,9 @@ export default ({ blockchain })=>{
   const WRAPPED = Blockchains[blockchain].wrapped.address
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
-  describe(`DePayRouterV2 on ${blockchain}`, ()=> {
+  describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
     describe(`DEADLINE`, ()=> {
 
@@ -22,7 +22,7 @@ export default ({ blockchain })=>{
 
       beforeEach(async ()=>{
         wallets = await ethers.getSigners()
-        deadline = now()+ 86400 // 1 day
+        deadline = (now()+3600) * 1000 // 1 hour in milliseconds
       })
 
       it('deploys router successfully', async ()=> {
@@ -36,16 +36,19 @@ export default ({ blockchain })=>{
             amountIn: 1000000000,
             paymentAmount: 1000000000,
             feeAmount: 1,
+            feeAmount2: 0,
+            protocolAmount: 0,
             tokenInAddress: NATIVE,
             exchangeAddress: ZERO,
             tokenOutAddress: NATIVE,
             paymentReceiverAddress: wallets[1].address,
             feeReceiverAddress: ZERO,
+            feeReceiverAddress2: ZERO,
             exchangeType: 0,
             receiverType: 0,
             exchangeCallData: ZERO,
             receiverCallData: ZERO,
-            deadline: 0,
+            deadline: ((now()-500) * 1000),
           }, { value: 1000000000 })
         ).to.be.revertedWith(
           'PaymentDeadlineReached()'

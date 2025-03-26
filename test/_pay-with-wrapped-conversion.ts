@@ -11,9 +11,9 @@ export default ({ blockchain })=>{
   const WRAPPED = Blockchains[blockchain].wrapped.address
   const ZERO = Blockchains[blockchain].zero
   const provider = ethers.provider
-  const PAY = 'pay((uint256,bool,uint256,uint256,address,address,address,address,address,uint8,uint8,bytes,bytes,uint256))'
+  const PAY = 'pay((uint256,uint256,uint256,uint256,uint256,uint256,address,address,address,address,address,address,uint8,uint8,bool,bytes,bytes))'
 
-  describe(`DePayRouterV2 on ${blockchain}`, ()=> {
+  describe(`DePayRouterV3 on ${blockchain}`, ()=> {
 
     describe(`pay with WRAPPED conversion`, ()=> {
 
@@ -25,7 +25,7 @@ export default ({ blockchain })=>{
 
       beforeEach(async ()=>{
         wallets = await ethers.getSigners()
-        deadline = now()+ 86400 // 1 day
+        deadline = (now()+3600) * 1000 // 1 hour in milliseconds
         wrapperContract = new ethers.Contract(WRAPPED, Token[blockchain].WRAPPED, wallets[0])
       })
 
@@ -52,21 +52,42 @@ export default ({ blockchain })=>{
         const paymentReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceBefore = await wrapperContract.balanceOf(wallets[2].address)
 
-        await router.connect(wallets[0])[PAY]({
-          amountIn: amountIn,
-          paymentAmount: paymentAmount,
-          feeAmount: feeAmount,
-          tokenInAddress: NATIVE,
-          exchangeAddress: exchange.address,
-          tokenOutAddress: WRAPPED,
-          paymentReceiverAddress: wallets[1].address,
-          feeReceiverAddress: wallets[2].address,
-          exchangeType: 0,
-          receiverType: 0,
-          exchangeCallData: callData,
-          receiverCallData: ZERO,
-          deadline,
-        }, { value: 1000000000 })
+        await expect(
+          router.connect(wallets[0])[PAY]({
+            amountIn: amountIn,
+            paymentAmount: paymentAmount,
+            feeAmount: feeAmount,
+            feeAmount2: 0,
+            protocolAmount: 0,
+            tokenInAddress: NATIVE,
+            exchangeAddress: exchange.address,
+            tokenOutAddress: WRAPPED,
+            paymentReceiverAddress: wallets[1].address,
+            feeReceiverAddress: wallets[2].address,
+            feeReceiverAddress2: ZERO,
+            exchangeType: 0,
+            receiverType: 0,
+            exchangeCallData: callData,
+            receiverCallData: ZERO,
+            deadline,
+          }, { value: 1000000000 })
+        )
+        .to.emit(router, 'Payment').withArgs(
+          wallets[0].address, // from
+          wallets[1].address, // to
+          deadline, // deadline
+          amountIn, // amountIn
+          paymentAmount, // paymentAmount
+          feeAmount, // feeAmount
+          0, // feeAmount2
+          0, // protocolAmount
+          0, // slippageInAmount
+          0, // slippageOutAmount
+          NATIVE, // tokenInAddress
+          WRAPPED, // tokenOutAddress
+          wallets[2].address, // feeReceiverAddress
+          ZERO // feeReceiverAddress2
+        )
 
         const paymentReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[1].address)
         const feeReceiverBalanceAfter = await await wrapperContract.balanceOf(wallets[2].address)
@@ -93,11 +114,14 @@ export default ({ blockchain })=>{
           amountIn: amountIn,
           paymentAmount: paymentAmount,
           feeAmount: feeAmount,
+          feeAmount2: 0,
+          protocolAmount: 0,
           tokenInAddress: WRAPPED,
           exchangeAddress: exchange.address,
           tokenOutAddress: NATIVE,
           paymentReceiverAddress: wallets[1].address,
           feeReceiverAddress: wallets[2].address,
+          feeReceiverAddress2: ZERO,
           exchangeType: 2,
           receiverType: 0,
           exchangeCallData: callData,

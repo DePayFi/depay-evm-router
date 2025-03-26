@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Test on Optimism
+name: Test on Worldchain
 
 # Controls when the action will run.
 on:
@@ -15,13 +15,13 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  test-on-optimism:
+  test-on-worldchain:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     env:
       MNEMONIC: ${{secrets.MNEMONIC}}
-      OPTIMISM_RPC_URL: ${{secrets.OPTIMISM_RPC_URL}}
+      WORLDCHAIN_RPC_URL: ${{secrets.WORLDCHAIN_RPC_URL}}
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -39,6 +39,6 @@ jobs:
 
       - name: Compile
         run: yarn compile
-        
+
       - name: Run test
-        run: yarn test:optimism
+        run: yarn test:worldchain
